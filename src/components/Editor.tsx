@@ -64,6 +64,11 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     }
   };
 
+  const handleSelectElement = (element: Element) => {
+    setSelectedItem(element);
+    setSelectedItemType('element');
+  };
+
   const handleCreateElement = () => {
     if (!currentScene) return;
 
@@ -180,6 +185,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             scene={currentScene}
             selectedElement={selectedItemType === 'element' ? selectedItem as Element : null}
             onElementMove={handleElementMove}
+            onElementSelect={handleSelectElement}
             onCanvasClick={handleCanvasClick}
             projectName={project.name}
           />

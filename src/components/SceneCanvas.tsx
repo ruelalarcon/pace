@@ -6,6 +6,7 @@ interface SceneCanvasProps {
   scene: Scene | null;
   selectedElement: Element | null;
   onElementMove: (elementId: string, x: number, y: number) => void;
+  onElementSelect: (element: Element) => void;
   onCanvasClick: () => void;
   projectName: string;
 }
@@ -14,6 +15,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   scene,
   selectedElement,
   onElementMove,
+  onElementSelect,
   onCanvasClick,
   projectName
 }) => {
@@ -26,6 +28,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
   const handleMouseDown = useCallback((e: React.MouseEvent, element: Element) => {
     e.stopPropagation();
+    onElementSelect(element);
 
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -38,7 +41,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       offsetX,
       offsetY
     });
-  }, []);
+  }, [onElementSelect]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragging || !canvasRef.current) return;
