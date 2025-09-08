@@ -102,7 +102,3 @@
   font-size: 13px;
   font-weight: 500;
 }
-
-.tree-node-children {
-  /* Children are handled by the recursive rendering with increased padding */
-}

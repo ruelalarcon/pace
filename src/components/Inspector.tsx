@@ -92,8 +92,8 @@ const Inspector: React.FC<InspectorProps> = ({
           />
           {scene.backgroundImage && (
             <div className="image-preview">
-              <img 
-                src={`http://localhost:3001${scene.backgroundImage}`} 
+              <img
+                src={`http://localhost:3001${scene.backgroundImage}`}
                 alt="Background"
                 className="preview-image"
               />
@@ -165,8 +165,8 @@ const Inspector: React.FC<InspectorProps> = ({
           />
           {element.image && (
             <div className="image-preview">
-              <img 
-                src={`http://localhost:3001${element.image}`} 
+              <img
+                src={`http://localhost:3001${element.image}`}
                 alt="Element"
                 className="preview-image"
               />
@@ -202,7 +202,7 @@ const Inspector: React.FC<InspectorProps> = ({
         </div>
       </div>
       <div className="inspector-content">
-        {selectedItemType === 'scene' 
+        {selectedItemType === 'scene'
           ? renderSceneProperties(selectedItem as Scene)
           : renderElementProperties(selectedItem as Element)
         }

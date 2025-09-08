@@ -7,9 +7,9 @@ interface FileUploadProps {
   className?: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ 
-  onFileUpload, 
-  accept = "*/*", 
+const FileUpload: React.FC<FileUploadProps> = ({
+  onFileUpload,
+  accept = "*/*",
   label = "Choose File",
   className = ""
 }) => {

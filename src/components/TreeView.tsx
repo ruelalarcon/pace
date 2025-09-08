@@ -9,11 +9,11 @@ interface TreeViewProps {
   selectedId: string | null;
 }
 
-const TreeView: React.FC<TreeViewProps> = ({ 
-  treeData, 
-  onSelectItem, 
+const TreeView: React.FC<TreeViewProps> = ({
+  treeData,
+  onSelectItem,
   onCreateScene,
-  selectedId 
+  selectedId
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
   const [isCreatingScene, setIsCreatingScene] = useState(false);
@@ -43,7 +43,7 @@ const TreeView: React.FC<TreeViewProps> = ({
 
     return (
       <div key={node.id} className="tree-node">
-        <div 
+        <div
           className={`tree-node-content ${isSelected ? 'selected' : ''}`}
           style={{ paddingLeft: `${depth * 20 + 12}px` }}
           onClick={() => onSelectItem(node)}
@@ -66,7 +66,7 @@ const TreeView: React.FC<TreeViewProps> = ({
             <span className="tree-node-name">{node.name}</span>
           </div>
         </div>
-        
+
         {hasChildren && isExpanded && (
           <div className="tree-node-children">
             {node.children!.map(child => renderTreeNode(child, depth + 1))}
@@ -80,7 +80,7 @@ const TreeView: React.FC<TreeViewProps> = ({
     <div className="tree-view">
       <div className="tree-header">
         <h3 className="tree-title">Project Structure</h3>
-        <button 
+        <button
           className="btn btn-primary btn-small"
           onClick={() => setIsCreatingScene(true)}
         >
@@ -125,7 +125,7 @@ const TreeView: React.FC<TreeViewProps> = ({
               </div>
             </div>
             <div className="modal-footer">
-              <button 
+              <button
                 className="btn btn-secondary"
                 onClick={() => {
                   setIsCreatingScene(false);
@@ -134,7 +134,7 @@ const TreeView: React.FC<TreeViewProps> = ({
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="btn btn-primary"
                 onClick={handleCreateScene}
                 disabled={!newSceneName.trim()}

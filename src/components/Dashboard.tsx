@@ -68,13 +68,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1 className="dashboard-title">Pace Editor</h1>
-        <p className="dashboard-subtitle">Point and Click Adventure Game Editor</p>
+        <h1 className="dashboard-title">PACE Editor</h1>
+        <p className="dashboard-subtitle">Point-and-Click Engine</p>
       </div>
 
       <div className="dashboard-content">
         <div className="dashboard-actions">
-          <button 
+          <button
             className="btn btn-primary"
             onClick={() => setIsCreating(true)}
           >
@@ -90,8 +90,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
             </div>
           ) : (
             projects.map((project) => (
-              <div 
-                key={project.name} 
+              <div
+                key={project.name}
                 className="project-card"
                 onClick={() => onOpenProject(project.name)}
               >
@@ -137,7 +137,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               </div>
             </div>
             <div className="modal-footer">
-              <button 
+              <button
                 className="btn btn-secondary"
                 onClick={() => {
                   setIsCreating(false);
@@ -146,7 +146,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               >
                 Cancel
               </button>
-              <button 
+              <button
                 className="btn btn-primary"
                 onClick={handleCreateProject}
                 disabled={!newProjectName.trim()}

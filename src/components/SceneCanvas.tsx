@@ -26,7 +26,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
   const handleMouseDown = useCallback((e: React.MouseEvent, element: Element) => {
     e.stopPropagation();
-    
+
     const rect = canvasRef.current?.getBoundingClientRect();
     if (!rect) return;
 
@@ -62,7 +62,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
   const renderElement = (element: Element) => {
     const isSelected = selectedElement?.id === element.id;
-    
+
     return (
       <div
         key={element.id}
@@ -86,7 +86,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
             <span className="element-name">{element.name}</span>
           </div>
         )}
-        
+
         {isSelected && (
           <div className="element-selection-outline" />
         )}
@@ -113,13 +113,13 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
         onMouseUp={handleMouseUp}
         onClick={handleCanvasClick}
         style={{
-          backgroundImage: scene.backgroundImage 
+          backgroundImage: scene.backgroundImage
             ? `url(http://localhost:3001${scene.backgroundImage})`
             : undefined
         }}
       >
         {scene.elements.map(renderElement)}
-        
+
         {!scene.backgroundImage && (
           <div className="canvas-placeholder">
             <p>Click on the scene in the inspector to set a background image</p>

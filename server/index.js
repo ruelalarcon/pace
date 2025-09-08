@@ -41,14 +41,14 @@ app.get('/api/projects', async (req, res) => {
   try {
     const projectsDir = path.join(__dirname, '../Projects');
     const projects = [];
-    
+
     const entries = await fs.readdir(projectsDir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       if (entry.isDirectory()) {
         const projectPath = path.join(projectsDir, entry.name);
         const projectJsonPath = path.join(projectPath, 'project.json');
-        
+
         try {
           const projectData = await fs.readFile(projectJsonPath, 'utf-8');
           const project = JSON.parse(projectData);
@@ -65,7 +65,7 @@ app.get('/api/projects', async (req, res) => {
         }
       }
     }
-    
+
     res.json(projects);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -77,7 +77,7 @@ app.post('/api/projects', async (req, res) => {
   try {
     const { name } = req.body;
     const projectPath = path.join(__dirname, '../Projects', name);
-    
+
     // Check if project already exists
     try {
       await fs.access(projectPath);
@@ -85,22 +85,22 @@ app.post('/api/projects', async (req, res) => {
     } catch {
       // Project doesn't exist, continue
     }
-    
+
     // Create project directory
     await fs.mkdir(projectPath, { recursive: true });
-    
+
     // Create project.json
     const projectData = {
       name,
       scenes: [],
       createdAt: new Date().toISOString()
     };
-    
+
     await fs.writeFile(
       path.join(projectPath, 'project.json'),
       JSON.stringify(projectData, null, 2)
     );
-    
+
     res.json(projectData);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -112,10 +112,10 @@ app.get('/api/projects/:projectName', async (req, res) => {
   try {
     const { projectName } = req.params;
     const projectPath = path.join(__dirname, '../Projects', projectName, 'project.json');
-    
+
     const projectData = await fs.readFile(projectPath, 'utf-8');
     const project = JSON.parse(projectData);
-    
+
     res.json(project);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -127,9 +127,9 @@ app.put('/api/projects/:projectName', async (req, res) => {
   try {
     const { projectName } = req.params;
     const projectPath = path.join(__dirname, '../Projects', projectName, 'project.json');
-    
+
     await fs.writeFile(projectPath, JSON.stringify(req.body, null, 2));
-    
+
     res.json(req.body);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -143,7 +143,7 @@ app.post('/api/projects/:projectName/upload', upload.single('file'), (req, res) 
     if (!file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
-    
+
     res.json({
       filename: file.filename,
       path: `/projects/${req.params.projectName}/${file.filename}`
