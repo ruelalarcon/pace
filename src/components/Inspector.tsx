@@ -8,6 +8,7 @@ interface InspectorProps {
   selectedItemType: 'scene' | 'element' | null;
   onUpdateScene: (scene: Scene) => void;
   onUpdateElement: (element: Element) => void;
+  onDeleteItem: (id: string, type: 'scene' | 'element') => void;
   projectName: string;
 }
 
@@ -16,9 +17,11 @@ const Inspector: React.FC<InspectorProps> = ({
   selectedItemType,
   onUpdateScene,
   onUpdateElement,
+  onDeleteItem,
   projectName
 }) => {
   const [localValues, setLocalValues] = useState<Record<string, any>>({});
+  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
   const getLocalValue = (key: string, defaultValue: any) => {
     return localValues[key] !== undefined ? localValues[key] : defaultValue;
@@ -82,6 +85,21 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderSceneProperties = (scene: Scene) => (
     <div className="inspector-properties">
+      <div className="property-group">
+        <label className="property-label">Name</label>
+        <input
+          type="text"
+          className="input property-input"
+          value={getLocalValue('name', scene.name)}
+          onChange={(e) => setLocalValue('name', e.target.value)}
+          onBlur={() => commitLocalValue('name')}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              commitLocalValue('name');
+            }
+          }}
+        />
+      </div>
       <div className="property-group">
         <label className="property-label">Background Image</label>
         <div className="property-value">
@@ -178,6 +196,13 @@ const Inspector: React.FC<InspectorProps> = ({
     </div>
   );
 
+  const handleDelete = () => {
+    if (selectedItem && selectedItemType) {
+      onDeleteItem(selectedItem.id, selectedItemType);
+      setIsDeleteConfirmVisible(false);
+    }
+  };
+
   if (!selectedItem || !selectedItemType) {
     return (
       <div className="inspector">
@@ -206,7 +231,43 @@ const Inspector: React.FC<InspectorProps> = ({
           ? renderSceneProperties(selectedItem as Scene)
           : renderElementProperties(selectedItem as Element)
         }
+
+        <div className="inspector-actions">
+          <button
+            className="btn btn-danger"
+            onClick={() => setIsDeleteConfirmVisible(true)}
+          >
+            Delete {selectedItemType}
+          </button>
+        </div>
       </div>
+
+      {isDeleteConfirmVisible && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Confirm Deletion</h2>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete "{selectedItem.name}"? This action cannot be undone.</p>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setIsDeleteConfirmVisible(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDelete}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

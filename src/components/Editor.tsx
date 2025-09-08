@@ -141,6 +141,42 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     handleUpdateElement({ ...updatedElement, x, y });
   };
 
+  const handleDeleteItem = (id: string, type: 'scene' | 'element') => {
+    let updatedProject: Project;
+
+    if (type === 'scene') {
+      updatedProject = {
+        ...project,
+        scenes: project.scenes.filter(scene => scene.id !== id)
+      };
+
+      if (currentScene?.id === id) {
+        const newCurrentScene = updatedProject.scenes.length > 0 ? updatedProject.scenes[0] : null;
+        setCurrentScene(newCurrentScene);
+      }
+    } else {
+      if (!currentScene) return;
+
+      const updatedScene = {
+        ...currentScene,
+        elements: currentScene.elements.filter(element => element.id !== id)
+      };
+
+      updatedProject = {
+        ...project,
+        scenes: project.scenes.map(scene =>
+          scene.id === currentScene.id ? updatedScene : scene
+        )
+      };
+
+      setCurrentScene(updatedScene);
+    }
+
+    onUpdateProject(updatedProject);
+    setSelectedItem(null);
+    setSelectedItemType(null);
+  };
+
   const handleCanvasClick = () => {
     if (currentScene) {
       setSelectedItem(currentScene);
@@ -197,6 +233,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             selectedItemType={selectedItemType}
             onUpdateScene={handleUpdateScene}
             onUpdateElement={handleUpdateElement}
+            onDeleteItem={handleDeleteItem}
             projectName={project.name}
           />
         </div>

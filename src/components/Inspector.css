@@ -94,3 +94,19 @@
   margin: 4px 0 0 0;
   word-break: break-all;
 }
+
+.inspector-actions {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #555;
+}
+
+.btn-danger {
+  background-color: #d9534f;
+  color: white;
+  width: 100%;
+}
+
+.btn-danger:hover {
+  background-color: #c9302c;
+}
