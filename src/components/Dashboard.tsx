@@ -11,6 +11,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
 
   useEffect(() => {
     loadProjects();
@@ -49,6 +50,25 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       }
     } catch (error) {
       console.error('Error creating project:', error);
+    }
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/projects/${projectToDelete.name}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProjectToDelete(null);
+        loadProjects();
+      } else {
+        alert('Failed to delete project.');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
     }
   };
 
@@ -95,6 +115,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 className="project-card"
                 onClick={() => onOpenProject(project.name)}
               >
+                <button
+                  className="delete-project-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setProjectToDelete(project);
+                  }}
+                >
+                  &times;
+                </button>
                 <div className="project-card-header">
                   <h3 className="project-name">{project.name}</h3>
                 </div>
@@ -152,6 +181,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 disabled={!newProjectName.trim()}
               >
                 Create
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {projectToDelete && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Delete Project</h2>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete the project "<strong>{projectToDelete.name}</strong>"?</p>
+              <p>This action is irreversible and will delete all associated files.</p>
+            </div>
+            <div className="modal-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setProjectToDelete(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-danger"
+                onClick={handleDeleteProject}
+              >
+                Delete Project
               </button>
             </div>
           </div>

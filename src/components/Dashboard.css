@@ -89,6 +89,34 @@
   box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
 }
 
+.delete-project-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  background-color: #444;
+  color: #ccc;
+  font-size: 20px;
+  line-height: 26px;
+  text-align: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.project-card:hover .delete-project-btn {
+  opacity: 1;
+}
+
+.delete-project-btn:hover {
+  background-color: #d9534f;
+  color: white;
+}
+
 .project-card-header {
   margin-bottom: 12px;
 }

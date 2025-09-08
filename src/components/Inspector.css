@@ -58,6 +58,15 @@
   gap: 6px;
 }
 
+.property-group-row {
+  display: flex;
+  gap: 8px;
+}
+
+.property-group-row .property-group {
+  flex: 1;
+}
+
 .property-label {
   font-size: 12px;
   font-weight: 600;

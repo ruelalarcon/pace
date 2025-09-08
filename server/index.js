@@ -136,6 +136,20 @@ app.put('/api/projects/:projectName', async (req, res) => {
   }
 });
 
+// Delete project
+app.delete('/api/projects/:projectName', async (req, res) => {
+  try {
+    const { projectName } = req.params;
+    const projectPath = path.join(__dirname, '../Projects', projectName);
+
+    await fs.rm(projectPath, { recursive: true, force: true });
+
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Upload file to project
 app.post('/api/projects/:projectName/upload', upload.single('file'), (req, res) => {
   try {

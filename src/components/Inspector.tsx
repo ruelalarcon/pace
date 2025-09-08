@@ -101,6 +101,22 @@ const Inspector: React.FC<InspectorProps> = ({
         />
       </div>
       <div className="property-group">
+        <label className="property-label">Aspect Ratio</label>
+        <input
+          type="text"
+          className="input property-input"
+          value={getLocalValue('aspectRatio', scene.aspectRatio)}
+          onChange={(e) => setLocalValue('aspectRatio', e.target.value)}
+          onBlur={() => commitLocalValue('aspectRatio')}
+          placeholder="e.g., 16:9"
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              commitLocalValue('aspectRatio');
+            }
+          }}
+        />
+      </div>
+      <div className="property-group">
         <label className="property-label">Background Image</label>
         <div className="property-value">
           <FileUpload
@@ -141,36 +157,76 @@ const Inspector: React.FC<InspectorProps> = ({
         />
       </div>
 
-      <div className="property-group">
-        <label className="property-label">X Position</label>
-        <input
-          type="number"
-          className="input property-input"
-          value={getLocalValue('x', element.x)}
-          onChange={(e) => setLocalValue('x', parseInt(e.target.value) || 0)}
-          onBlur={() => commitLocalValue('x')}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              commitLocalValue('x');
-            }
-          }}
-        />
+      <div className="property-group-row">
+        <div className="property-group">
+          <label className="property-label">X Position</label>
+          <input
+            type="number"
+            step="0.01"
+            className="input property-input"
+            value={getLocalValue('x', element.x)}
+            onChange={(e) => setLocalValue('x', parseFloat(e.target.value) || 0)}
+            onBlur={() => commitLocalValue('x')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('x');
+              }
+            }}
+          />
+        </div>
+
+        <div className="property-group">
+          <label className="property-label">Y Position</label>
+          <input
+            type="number"
+            step="0.01"
+            className="input property-input"
+            value={getLocalValue('y', element.y)}
+            onChange={(e) => setLocalValue('y', parseFloat(e.target.value) || 0)}
+            onBlur={() => commitLocalValue('y')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('y');
+              }
+            }}
+          />
+        </div>
       </div>
 
-      <div className="property-group">
-        <label className="property-label">Y Position</label>
-        <input
-          type="number"
-          className="input property-input"
-          value={getLocalValue('y', element.y)}
-          onChange={(e) => setLocalValue('y', parseInt(e.target.value) || 0)}
-          onBlur={() => commitLocalValue('y')}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              commitLocalValue('y');
-            }
-          }}
-        />
+      <div className="property-group-row">
+        <div className="property-group">
+          <label className="property-label">Width</label>
+          <input
+            type="number"
+            step="0.01"
+            className="input property-input"
+            value={getLocalValue('width', element.width)}
+            onChange={(e) => setLocalValue('width', parseFloat(e.target.value) || 0)}
+            onBlur={() => commitLocalValue('width')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('width');
+              }
+            }}
+          />
+        </div>
+
+        <div className="property-group">
+          <label className="property-label">Height</label>
+          <input
+            type="number"
+            step="0.01"
+            className="input property-input"
+            value={getLocalValue('height', element.height)}
+            onChange={(e) => setLocalValue('height', parseFloat(e.target.value) || 0)}
+            onBlur={() => commitLocalValue('height')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('height');
+              }
+            }}
+          />
+        </div>
       </div>
 
       <div className="property-group">

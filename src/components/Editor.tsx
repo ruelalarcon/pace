@@ -37,7 +37,8 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     const newScene: Scene = {
       id: `scene_${Date.now()}`,
       name: sceneName,
-      elements: []
+      elements: [],
+      aspectRatio: '16:9'
     };
 
     const updatedProject = {
@@ -75,8 +76,10 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     const newElement: Element = {
       id: `element_${Date.now()}`,
       name: `Element ${currentScene.elements.length + 1}`,
-      x: 100,
-      y: 100
+      x: 0.5,
+      y: 0.5,
+      width: 0.1,
+      height: 0.1
     };
 
     const updatedScene = {

@@ -1,8 +1,11 @@
 .scene-canvas-container {
   flex: 1;
   display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: auto;
   background-color: #1a1a1a;
+  padding: 20px;
 }
 
 .scene-canvas-empty {
@@ -20,10 +23,9 @@
 
 .scene-canvas {
   position: relative;
-  min-width: 800px;
-  min-height: 600px;
   width: 100%;
-  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   background-color: #2a2a2a;
   background-size: cover;
   background-position: center;
@@ -62,8 +64,8 @@
 }
 
 .element-image {
-  max-width: 100px;
-  max-height: 100px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   pointer-events: none;
   border-radius: 4px;
@@ -77,8 +79,11 @@
   font-size: 12px;
   font-weight: 500;
   border: 2px solid #005a9e;
-  min-width: 60px;
-  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .element-name {
