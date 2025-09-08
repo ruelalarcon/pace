@@ -85,7 +85,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderSceneProperties = (scene: Scene) => (
     <div className="inspector-properties">
-      <div className="property-group">
+      <div className="property-group" title="The name of the scene.">
         <label className="property-label">Name</label>
         <input
           type="text"
@@ -100,7 +100,7 @@ const Inspector: React.FC<InspectorProps> = ({
           }}
         />
       </div>
-      <div className="property-group">
+      <div className="property-group" title="The aspect ratio of the scene, e.g., 16:9, 4:3.">
         <label className="property-label">Aspect Ratio</label>
         <input
           type="text"
@@ -116,7 +116,7 @@ const Inspector: React.FC<InspectorProps> = ({
           }}
         />
       </div>
-      <div className="property-group">
+      <div className="property-group" title="The background image for the scene.">
         <label className="property-label">Background Image</label>
         <div className="property-value">
           <FileUpload
@@ -141,7 +141,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderElementProperties = (element: Element) => (
     <div className="inspector-properties">
-      <div className="property-group">
+      <div className="property-group" title="The name of the element.">
         <label className="property-label">Name</label>
         <input
           type="text"
@@ -158,7 +158,7 @@ const Inspector: React.FC<InspectorProps> = ({
       </div>
 
       <div className="property-group-row">
-        <div className="property-group">
+        <div className="property-group" title="The horizontal position of the element's center, relative to the scene width (0 to 1).">
           <label className="property-label">X Position</label>
           <input
             type="number"
@@ -175,7 +175,7 @@ const Inspector: React.FC<InspectorProps> = ({
           />
         </div>
 
-        <div className="property-group">
+        <div className="property-group" title="The vertical position of the element's center, relative to the scene height (0 to 1).">
           <label className="property-label">Y Position</label>
           <input
             type="number"
@@ -194,7 +194,7 @@ const Inspector: React.FC<InspectorProps> = ({
       </div>
 
       <div className="property-group-row">
-        <div className="property-group">
+        <div className="property-group" title="The width of the element, relative to the scene width (0 to 1).">
           <label className="property-label">Width</label>
           <input
             type="number"
@@ -211,7 +211,7 @@ const Inspector: React.FC<InspectorProps> = ({
           />
         </div>
 
-        <div className="property-group">
+        <div className="property-group" title="The height of the element, relative to the scene height (0 to 1).">
           <label className="property-label">Height</label>
           <input
             type="number"
@@ -229,7 +229,7 @@ const Inspector: React.FC<InspectorProps> = ({
         </div>
       </div>
 
-      <div className="property-group">
+      <div className="property-group" title="The image for the element.">
         <label className="property-label">Image</label>
         <div className="property-value">
           <FileUpload
