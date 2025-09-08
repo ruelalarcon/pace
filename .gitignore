@@ -1,0 +1,8 @@
+# JavaScript Environment
+node_modules/
+
+# Environment
+.env
+
+# User Projects
+Projects/

@@ -1,0 +1,110 @@
+.scene-canvas-container {
+  flex: 1;
+  display: flex;
+  overflow: auto;
+  background-color: #1a1a1a;
+}
+
+.scene-canvas-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+.scene-canvas-empty p {
+  margin: 0;
+  font-size: 16px;
+}
+
+.scene-canvas {
+  position: relative;
+  min-width: 800px;
+  min-height: 600px;
+  width: 100%;
+  height: 100%;
+  background-color: #2a2a2a;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: default;
+  user-select: none;
+}
+
+.canvas-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #666;
+  pointer-events: none;
+}
+
+.canvas-placeholder p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.scene-element {
+  position: absolute;
+  cursor: grab;
+  z-index: 10;
+}
+
+.scene-element.selected {
+  z-index: 20;
+}
+
+.scene-element:active {
+  cursor: grabbing;
+}
+
+.element-image {
+  max-width: 100px;
+  max-height: 100px;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+.element-placeholder {
+  background-color: #007acc;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 2px solid #005a9e;
+  min-width: 60px;
+  text-align: center;
+}
+
+.element-name {
+  pointer-events: none;
+}
+
+.element-selection-outline {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid #007acc;
+  border-radius: 4px;
+  pointer-events: none;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}

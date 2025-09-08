@@ -1,0 +1,108 @@
+.tree-view {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.tree-header {
+  padding: 12px;
+  border-bottom: 1px solid #555;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #333;
+}
+
+.tree-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  color: #fff;
+}
+
+.tree-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tree-empty {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+}
+
+.tree-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.tree-nodes {
+  padding: 8px 0;
+}
+
+.tree-node {
+  user-select: none;
+}
+
+.tree-node-content {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  min-height: 32px;
+}
+
+.tree-node-content:hover {
+  background-color: #3a3a3a;
+}
+
+.tree-node-content.selected {
+  background-color: #007acc;
+  color: #fff;
+}
+
+.tree-node-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.tree-expand-button {
+  background: none;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 2px;
+  font-size: 10px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tree-expand-button.expanded {
+  transform: rotate(90deg);
+}
+
+.tree-expand-button:hover {
+  color: #fff;
+}
+
+.tree-node-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.tree-node-name {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.tree-node-children {
+  /* Children are handled by the recursive rendering with increased padding */
+}

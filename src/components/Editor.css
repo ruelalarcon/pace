@@ -1,0 +1,70 @@
+.editor {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+}
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #555;
+}
+
+.editor-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.current-scene {
+  font-size: 14px;
+  color: #007acc;
+  font-weight: 500;
+}
+
+.editor-content {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.editor-sidebar {
+  width: 280px;
+  background-color: #2a2a2a;
+  border-right: 1px solid #555;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  overflow: hidden;
+}
+
+.scene-toolbar {
+  padding: 8px 12px;
+  background-color: #333;
+  border-bottom: 1px solid #555;
+  display: flex;
+  gap: 8px;
+}
+
+.editor-inspector {
+  width: 300px;
+  background-color: #2a2a2a;
+  border-left: 1px solid #555;
+}
