@@ -126,11 +126,47 @@ app.get('/api/projects/:projectName', async (req, res) => {
 app.put('/api/projects/:projectName', async (req, res) => {
   try {
     const { projectName } = req.params;
-    const projectPath = path.join(__dirname, '../Projects', projectName, 'project.json');
+    const updatedProject = req.body;
+    const projectPathDir = path.join(__dirname, '../Projects', projectName);
+    const projectJsonPath = path.join(projectPathDir, 'project.json');
 
-    await fs.writeFile(projectPath, JSON.stringify(req.body, null, 2));
+    // 1. Write the updated project.json
+    await fs.writeFile(projectJsonPath, JSON.stringify(updatedProject, null, 2));
 
-    res.json(req.body);
+    // 2. Build a set of all used resources
+    const usedResources = new Set();
+    if (updatedProject.scenes) {
+      for (const scene of updatedProject.scenes) {
+        if (scene.backgroundImage) usedResources.add(path.basename(scene.backgroundImage));
+        if (scene.music) usedResources.add(path.basename(scene.music));
+        if (scene.elements) {
+          for (const element of scene.elements) {
+            if (element.image) usedResources.add(path.basename(element.image));
+            if (element.onClickSound) usedResources.add(path.basename(element.onClickSound));
+            if (element.onClickMusicChange) usedResources.add(path.basename(element.onClickMusicChange));
+          }
+        }
+      }
+    }
+
+    // 3. Get all files currently in the project directory
+    const directoryFiles = await fs.readdir(projectPathDir);
+
+    // 4. Compare and delete unused files
+    for (const fileName of directoryFiles) {
+      if (fileName === 'project.json') continue;
+
+      if (!usedResources.has(fileName)) {
+        try {
+          await fs.unlink(path.join(projectPathDir, fileName));
+          console.log(`Cleaned up unused file: ${fileName}`);
+        } catch (err) {
+          console.error(`Error deleting unused file ${fileName}:`, err);
+        }
+      }
+    }
+
+    res.json(updatedProject);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

@@ -9,6 +9,8 @@ export interface Scene {
   name: string;
   backgroundImage?: string;
   aspectRatio: string; // e.g., "16:9"
+  music?: string;
+  sceneText?: string;
   elements: Element[];
 }
 
@@ -20,6 +22,12 @@ export interface Element {
   width: number; // Relative size (0-1)
   height: number; // Relative size (0-1)
   image?: string;
+  destinationScene?: string; // Scene ID
+  onClickText?: string;
+  onClickSound?: string;
+  onClickMusicChange?: string;
+  highlightOnHover?: boolean;
+  highlightColor?: string;
 }
 
 export interface TreeNode {

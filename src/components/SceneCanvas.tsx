@@ -25,6 +25,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     offsetX: number;
     offsetY: number;
   } | null>(null);
+  const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
 
   const handleMouseDown = useCallback((e: React.MouseEvent, element: Element) => {
     e.stopPropagation();
@@ -74,6 +75,13 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
   const renderElement = (element: Element) => {
     const isSelected = selectedElement?.id === element.id;
+    const isHovered = hoveredElementId === element.id;
+
+    const highlightStyle: React.CSSProperties = {};
+    if (isHovered && element.highlightOnHover && !dragging) {
+      highlightStyle.filter = `drop-shadow(0 0 8px ${element.highlightColor || '#ffffff'})`;
+      highlightStyle.zIndex = 30;
+    }
 
     return (
       <div
@@ -84,9 +92,12 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
           top: `calc(${element.y * 100}% - ${element.height * 100 / 2}%)`,
           width: `${element.width * 100}%`,
           height: `${element.height * 100}%`,
-          cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab'
+          cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab',
+          ...highlightStyle
         }}
         onMouseDown={(e) => handleMouseDown(e, element)}
+        onMouseEnter={() => setHoveredElementId(element.id)}
+        onMouseLeave={() => setHoveredElementId(null)}
       >
         {element.image ? (
           <img

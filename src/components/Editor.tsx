@@ -38,7 +38,9 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       id: `scene_${Date.now()}`,
       name: sceneName,
       elements: [],
-      aspectRatio: '16:9'
+      aspectRatio: '16:9',
+      music: '',
+      sceneText: ''
     };
 
     const updatedProject = {
@@ -79,7 +81,13 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       x: 0.5,
       y: 0.5,
       width: 0.1,
-      height: 0.1
+      height: 0.1,
+      destinationScene: '',
+      onClickText: '',
+      onClickSound: '',
+      onClickMusicChange: '',
+      highlightOnHover: true,
+      highlightColor: '#ffffff'
     };
 
     const updatedScene = {
@@ -234,6 +242,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
           <Inspector
             selectedItem={selectedItem}
             selectedItemType={selectedItemType}
+            scenes={project.scenes}
             onUpdateScene={handleUpdateScene}
             onUpdateElement={handleUpdateElement}
             onDeleteItem={handleDeleteItem}

@@ -6,6 +6,7 @@ import './Inspector.css';
 interface InspectorProps {
   selectedItem: Scene | Element | null;
   selectedItemType: 'scene' | 'element' | null;
+  scenes: Scene[];
   onUpdateScene: (scene: Scene) => void;
   onUpdateElement: (element: Element) => void;
   onDeleteItem: (id: string, type: 'scene' | 'element') => void;
@@ -15,6 +16,7 @@ interface InspectorProps {
 const Inspector: React.FC<InspectorProps> = ({
   selectedItem,
   selectedItemType,
+  scenes,
   onUpdateScene,
   onUpdateElement,
   onDeleteItem,
@@ -75,11 +77,70 @@ const Inspector: React.FC<InspectorProps> = ({
     }
   };
 
+  const handleRemoveBackgroundImage = () => {
+    if (selectedItemType === 'scene' && selectedItem) {
+      const scene = selectedItem as Scene;
+      onUpdateScene({ ...scene, backgroundImage: '' });
+    }
+  };
+
+  const handleMusicUpload = async (file: File) => {
+    const musicPath = await handleFileUpload(file);
+    if (musicPath && selectedItemType === 'scene' && selectedItem) {
+      const scene = selectedItem as Scene;
+      onUpdateScene({ ...scene, music: musicPath });
+    }
+  };
+
+  const handleRemoveMusic = () => {
+    if (selectedItemType === 'scene' && selectedItem) {
+      const scene = selectedItem as Scene;
+      onUpdateScene({ ...scene, music: '' });
+    }
+  };
+
   const handleElementImageUpload = async (file: File) => {
     const imagePath = await handleFileUpload(file);
     if (imagePath && selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
       onUpdateElement({ ...element, image: imagePath });
+    }
+  };
+
+  const handleRemoveElementImage = () => {
+    if (selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, image: '' });
+    }
+  };
+
+  const handleSoundUpload = async (file: File) => {
+    const soundPath = await handleFileUpload(file);
+    if (soundPath && selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, onClickSound: soundPath });
+    }
+  };
+
+  const handleRemoveSound = () => {
+    if (selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, onClickSound: '' });
+    }
+  };
+
+  const handleMusicChangeUpload = async (file: File) => {
+    const musicPath = await handleFileUpload(file);
+    if (musicPath && selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, onClickMusicChange: musicPath });
+    }
+  };
+
+  const handleRemoveMusicChange = () => {
+    if (selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, onClickMusicChange: '' });
     }
   };
 
@@ -125,16 +186,45 @@ const Inspector: React.FC<InspectorProps> = ({
             label="Choose Image"
           />
           {scene.backgroundImage && (
-            <div className="image-preview">
-              <img
-                src={`http://localhost:3001${scene.backgroundImage}`}
-                alt="Background"
-                className="preview-image"
-              />
-              <p className="image-path">{scene.backgroundImage}</p>
+            <div className="file-info">
+              <div className="image-preview">
+                <img
+                  src={`http://localhost:3001${scene.backgroundImage}`}
+                  alt="Background"
+                  className="preview-image"
+                />
+              </div>
+              <p className="file-path">{scene.backgroundImage}</p>
+              <button onClick={handleRemoveBackgroundImage} className="btn-remove-file">&times;</button>
             </div>
           )}
         </div>
+      </div>
+      <div className="property-group" title="Music that plays when this scene is active.">
+        <label className="property-label">Music</label>
+        <div className="property-value">
+          <FileUpload
+            onFileUpload={handleMusicUpload}
+            accept="audio/*"
+            label="Choose Music"
+          />
+          {scene.music && (
+            <div className="file-info">
+              <p className="file-path">{scene.music}</p>
+              <button onClick={handleRemoveMusic} className="btn-remove-file">&times;</button>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="property-group" title="Text that displays in a textbox when the scene is entered.">
+        <label className="property-label">Scene Text</label>
+        <textarea
+          className="input property-input"
+          value={getLocalValue('sceneText', scene.sceneText || '')}
+          onChange={(e) => setLocalValue('sceneText', e.target.value)}
+          onBlur={() => commitLocalValue('sceneText')}
+          rows={4}
+        />
       </div>
     </div>
   );
@@ -238,16 +328,100 @@ const Inspector: React.FC<InspectorProps> = ({
             label="Choose Image"
           />
           {element.image && (
-            <div className="image-preview">
-              <img
-                src={`http://localhost:3001${element.image}`}
-                alt="Element"
-                className="preview-image"
-              />
-              <p className="image-path">{element.image}</p>
+            <div className="file-info">
+              <div className="image-preview">
+                <img
+                  src={`http://localhost:3001${element.image}`}
+                  alt="Element"
+                  className="preview-image"
+                />
+              </div>
+              <p className="file-path">{element.image}</p>
+              <button onClick={handleRemoveElementImage} className="btn-remove-file">&times;</button>
             </div>
           )}
         </div>
+      </div>
+
+      <div className="property-group" title="The scene to go to when this element is clicked.">
+        <label className="property-label">Destination Scene</label>
+        <select
+          className="input property-input"
+          value={element.destinationScene || ''}
+          onChange={(e) => onUpdateElement({ ...element, destinationScene: e.target.value })}
+        >
+          <option value="">None</option>
+          {scenes.map(scene => (
+            <option key={scene.id} value={scene.id}>
+              {scene.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="property-group" title="Text that displays when the element is clicked.">
+        <label className="property-label">On-Click Text</label>
+        <textarea
+          className="input property-input"
+          value={getLocalValue('onClickText', element.onClickText || '')}
+          onChange={(e) => setLocalValue('onClickText', e.target.value)}
+          onBlur={() => commitLocalValue('onClickText')}
+          rows={4}
+        />
+      </div>
+
+      <div className="property-group" title="A sound that plays when the element is clicked.">
+        <label className="property-label">On-Click Sound</label>
+        <div className="property-value">
+          <FileUpload
+            onFileUpload={handleSoundUpload}
+            accept="audio/*"
+            label="Choose Sound"
+          />
+          {element.onClickSound && (
+            <div className="file-info">
+              <p className="file-path">{element.onClickSound}</p>
+              <button onClick={handleRemoveSound} className="btn-remove-file">&times;</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="property-group" title="Change the music when the element is clicked.">
+        <label className="property-label">On-Click Music Change</label>
+        <div className="property-value">
+          <FileUpload
+            onFileUpload={handleMusicChangeUpload}
+            accept="audio/*"
+            label="Choose Music"
+          />
+          {element.onClickMusicChange && (
+            <div className="file-info">
+              <p className="file-path">{element.onClickMusicChange}</p>
+              <button onClick={handleRemoveMusicChange} className="btn-remove-file">&times;</button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="property-group-row" title="If enabled, the element will glow when the mouse is over it.">
+        <label className="property-label-row">Highlight on Hover</label>
+        <input
+          type="checkbox"
+          checked={element.highlightOnHover}
+          onChange={(e) => onUpdateElement({ ...element, highlightOnHover: e.target.checked })}
+        />
+      </div>
+
+      <div className="property-group-row" title="The color of the highlight glow.">
+        <label className="property-label-row">Highlight Color</label>
+        <input
+          type="color"
+          className="input-color"
+          value={element.highlightColor || '#ffffff'}
+          disabled={!element.highlightOnHover}
+          onChange={(e) => onUpdateElement({ ...element, highlightColor: e.target.value })}
+        />
       </div>
     </div>
   );
