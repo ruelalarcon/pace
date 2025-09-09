@@ -247,6 +247,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             onUpdateElement={handleUpdateElement}
             onDeleteItem={handleDeleteItem}
             projectName={project.name}
+            currentSceneId={currentScene?.id}
           />
         </div>
       </div>

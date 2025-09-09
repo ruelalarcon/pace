@@ -11,6 +11,7 @@ interface InspectorProps {
   onUpdateElement: (element: Element) => void;
   onDeleteItem: (id: string, type: 'scene' | 'element') => void;
   projectName: string;
+  currentSceneId?: string | null;
 }
 
 const Inspector: React.FC<InspectorProps> = ({
@@ -20,7 +21,8 @@ const Inspector: React.FC<InspectorProps> = ({
   onUpdateScene,
   onUpdateElement,
   onDeleteItem,
-  projectName
+  projectName,
+  currentSceneId
 }) => {
   const [localValues, setLocalValues] = useState<Record<string, any>>({});
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
@@ -351,7 +353,9 @@ const Inspector: React.FC<InspectorProps> = ({
           onChange={(e) => onUpdateElement({ ...element, destinationScene: e.target.value })}
         >
           <option value="">None</option>
-          {scenes.map(scene => (
+          {scenes
+            .filter(scene => scene.id !== currentSceneId)
+            .map(scene => (
             <option key={scene.id} value={scene.id}>
               {scene.name}
             </option>
