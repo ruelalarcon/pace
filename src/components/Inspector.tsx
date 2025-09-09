@@ -56,7 +56,7 @@ const Inspector: React.FC<InspectorProps> = ({
     formData.append('file', file);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${projectName}/upload`, {
+      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(projectName)}/upload`, {
         method: 'POST',
         body: formData,
       });

@@ -196,7 +196,7 @@ app.post('/api/projects/:projectName/upload', upload.single('file'), (req, res) 
 
     res.json({
       filename: file.filename,
-      path: `/projects/${req.params.projectName}/${file.filename}`
+      path: `/projects/${encodeURIComponent(req.params.projectName)}/${encodeURIComponent(file.filename)}`
     });
   } catch (error) {
     res.status(500).json({ error: error.message });

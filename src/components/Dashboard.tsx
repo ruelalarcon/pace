@@ -57,7 +57,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     if (!projectToDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${projectToDelete.name}`, {
+      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(projectToDelete.name)}`, {
         method: 'DELETE',
       });
 

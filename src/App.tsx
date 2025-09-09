@@ -11,7 +11,7 @@ function App() {
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${projectName}`);
+      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(projectName)}`);
       const project = await response.json();
       setCurrentProject(project);
     } catch (error) {
@@ -26,16 +26,16 @@ function App() {
 
   const handleUpdateProject = async (updatedProject: Project) => {
     if (!currentProject) return;
-    
+
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${currentProject.name}`, {
+      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(currentProject.name)}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedProject),
       });
-      
+
       if (response.ok) {
         setCurrentProject(updatedProject);
       }
@@ -56,8 +56,8 @@ function App() {
   return (
     <div className="App">
       {currentProject ? (
-        <Editor 
-          project={currentProject} 
+        <Editor
+          project={currentProject}
           onUpdateProject={handleUpdateProject}
           onCloseProject={handleCloseProject}
         />
