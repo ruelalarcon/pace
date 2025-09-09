@@ -19,8 +19,8 @@ export interface Element {
   name: string;
   x: number; // Center position, relative (0-1)
   y: number; // Center position, relative (0-1)
-  width: number; // Relative size (0-1)
-  height: number; // Relative size (0-1)
+  scale: number; // Relative size (0-1)
+  aspectRatio: number; // width / height
   image?: string;
   destinationScene?: string; // Scene ID
   onClickText?: string;

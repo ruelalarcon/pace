@@ -34,8 +34,12 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const canvasRect = canvasRef.current?.getBoundingClientRect();
     if (!canvasRect) return;
 
-    const elAbsX = element.x * canvasRect.width - (element.width * canvasRect.width / 2);
-    const elAbsY = element.y * canvasRect.height - (element.height * canvasRect.height / 2);
+    const sceneAspectRatio = canvasRect.width / canvasRect.height;
+    const elementHeight = element.scale;
+    const elementWidth = (element.scale * element.aspectRatio) / sceneAspectRatio;
+
+    const elAbsX = element.x * canvasRect.width - (elementWidth * canvasRect.width / 2);
+    const elAbsY = element.y * canvasRect.height - (elementHeight * canvasRect.height / 2);
 
     const offsetX = e.clientX - canvasRect.left - elAbsX;
     const offsetY = e.clientY - canvasRect.top - elAbsY;
@@ -54,11 +58,15 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const selectedEl = scene?.elements.find(el => el.id === dragging.elementId);
     if (!selectedEl) return;
 
+    const sceneAspectRatio = canvasRect.width / canvasRect.height;
+    const elementHeight = selectedEl.scale;
+    const elementWidth = (selectedEl.scale * selectedEl.aspectRatio) / sceneAspectRatio;
+
     const absX = e.clientX - canvasRect.left - dragging.offsetX;
     const absY = e.clientY - canvasRect.top - dragging.offsetY;
 
-    const relX = (absX + (selectedEl.width * canvasRect.width / 2)) / canvasRect.width;
-    const relY = (absY + (selectedEl.height * canvasRect.height / 2)) / canvasRect.height;
+    const relX = (absX + (elementWidth * canvasRect.width / 2)) / canvasRect.width;
+    const relY = (absY + (elementHeight * canvasRect.height / 2)) / canvasRect.height;
 
     onElementMove(dragging.elementId, relX, relY);
   }, [dragging, onElementMove, scene]);
@@ -77,6 +85,16 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const isSelected = selectedElement?.id === element.id;
     const isHovered = hoveredElementId === element.id;
 
+    const canvasRect = canvasRef.current?.getBoundingClientRect();
+    let width = '10%';
+    let height = '10%';
+
+    if (canvasRect) {
+      const sceneAspectRatio = canvasRect.width / canvasRect.height;
+      height = `${element.scale * 100}%`;
+      width = `${(element.scale * element.aspectRatio / sceneAspectRatio) * 100}%`;
+    }
+
     const highlightStyle: React.CSSProperties = {};
     if (isHovered && element.highlightOnHover && !dragging) {
       highlightStyle.filter = `drop-shadow(0 0 8px ${element.highlightColor || '#ffffff'})`;
@@ -88,10 +106,10 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
         key={element.id}
         className={`scene-element ${isSelected ? 'selected' : ''}`}
         style={{
-          left: `calc(${element.x * 100}% - ${element.width * 100 / 2}%)`,
-          top: `calc(${element.y * 100}% - ${element.height * 100 / 2}%)`,
-          width: `${element.width * 100}%`,
-          height: `${element.height * 100}%`,
+          left: `calc(${element.x * 100}% - (${width}) / 2)`,
+          top: `calc(${element.y * 100}% - (${height}) / 2)`,
+          width: width,
+          height: height,
           cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab',
           ...highlightStyle
         }}

@@ -105,7 +105,20 @@ const Inspector: React.FC<InspectorProps> = ({
     const imagePath = await handleFileUpload(file);
     if (imagePath && selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
-      onUpdateElement({ ...element, image: imagePath });
+
+      const img = new Image();
+      img.onload = () => {
+        const imageAspectRatio = img.width / img.height;
+
+        onUpdateElement({
+          ...element,
+          image: imagePath,
+          scale: 0.2,
+          aspectRatio: imageAspectRatio,
+        });
+        URL.revokeObjectURL(img.src);
+      };
+      img.src = URL.createObjectURL(file);
     }
   };
 
@@ -285,40 +298,21 @@ const Inspector: React.FC<InspectorProps> = ({
         </div>
       </div>
 
-      <div className="property-group-row">
-        <div className="property-group" title="The width of the element, relative to the scene width (0 to 1).">
-          <label className="property-label">Width</label>
-          <input
-            type="number"
-            step="0.01"
-            className="input property-input"
-            value={getLocalValue('width', element.width)}
-            onChange={(e) => setLocalValue('width', parseFloat(e.target.value) || 0)}
-            onBlur={() => commitLocalValue('width')}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                commitLocalValue('width');
-              }
-            }}
-          />
-        </div>
-
-        <div className="property-group" title="The height of the element, relative to the scene height (0 to 1).">
-          <label className="property-label">Height</label>
-          <input
-            type="number"
-            step="0.01"
-            className="input property-input"
-            value={getLocalValue('height', element.height)}
-            onChange={(e) => setLocalValue('height', parseFloat(e.target.value) || 0)}
-            onBlur={() => commitLocalValue('height')}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                commitLocalValue('height');
-              }
-            }}
-          />
-        </div>
+      <div className="property-group" title="The scale of the element, where 1 is the full height of the scene.">
+        <label className="property-label">Scale</label>
+        <input
+          type="number"
+          step="0.01"
+          className="input property-input"
+          value={getLocalValue('scale', element.scale)}
+          onChange={(e) => setLocalValue('scale', parseFloat(e.target.value) || 0)}
+          onBlur={() => commitLocalValue('scale')}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              commitLocalValue('scale');
+            }
+          }}
+        />
       </div>
 
       <div className="property-group" title="The image for the element.">
