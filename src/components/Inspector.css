@@ -33,6 +33,42 @@
   padding: 16px;
 }
 
+/* Field Tooltips */
+.property-group.has-tooltip,
+.property-group-row.has-tooltip {
+  position: relative;
+}
+
+.field-tooltip {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  margin-top: 6px;
+  background-color: var(--surface0);
+  color: var(--subtext0);
+  border: 1px solid var(--surface1);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  line-height: 1.4;
+  box-shadow: var(--shadow-sm);
+  opacity: 0;
+  transform: translateY(-4px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 50;
+  max-width: 360px;
+}
+
+.property-group.has-tooltip:hover .field-tooltip,
+.property-group.has-tooltip:focus-within .field-tooltip,
+.property-group-row.has-tooltip:hover .field-tooltip,
+.property-group-row.has-tooltip:focus-within .field-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 .inspector-empty {
   display: flex;
   align-items: center;

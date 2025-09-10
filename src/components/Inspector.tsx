@@ -173,7 +173,7 @@ const Inspector: React.FC<InspectorProps> = ({
 
   const renderSceneProperties = (scene: Scene) => (
     <div className="inspector-properties">
-      <div className="property-group" title="The name of the scene.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Name</label>
         <input
           type="text"
@@ -187,8 +187,9 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
+        <div className="field-tooltip">The name of the scene.</div>
       </div>
-      <div className="property-group" title="The aspect ratio of the scene, e.g., 16:9, 4:3.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Aspect Ratio</label>
         <input
           type="text"
@@ -203,8 +204,9 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
+        <div className="field-tooltip">The aspect ratio of the scene (e.g., 16:9, 4:3).</div>
       </div>
-      <div className="property-group" title="The background image for the scene.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Background Image</label>
         <div className="property-value">
           <FileUpload
@@ -226,8 +228,9 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
+        <div className="field-tooltip">The background image displayed for this scene.</div>
       </div>
-      <div className="property-group" title="Music that plays when this scene is active.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Music</label>
         <div className="property-value">
           <FileUpload
@@ -242,8 +245,9 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
+        <div className="field-tooltip">Music that plays when this scene is active.</div>
       </div>
-      <div className="property-group" title="Text that displays in a textbox when the scene is entered.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Scene Text</label>
         <textarea
           className="input property-input"
@@ -252,13 +256,14 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('sceneText')}
           rows={4}
         />
+        <div className="field-tooltip">Text that displays in a textbox when the scene is entered.</div>
       </div>
     </div>
   );
 
   const renderElementProperties = (element: Element) => (
     <div className="inspector-properties">
-      <div className="property-group" title="The name of the element.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Name</label>
         <input
           type="text"
@@ -272,10 +277,11 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
+        <div className="field-tooltip">The name of the element.</div>
       </div>
 
       <div className="property-group-row">
-        <div className="property-group" title="The horizontal position of the element's center, relative to the scene width (0 to 1).">
+        <div className="property-group has-tooltip">
           <label className="property-label">X Position</label>
           <input
             type="text"
@@ -289,9 +295,10 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
+          <div className="field-tooltip">Horizontal center position (0 to 1).</div>
         </div>
 
-        <div className="property-group" title="The vertical position of the element's center, relative to the scene height (0 to 1).">
+        <div className="property-group has-tooltip">
           <label className="property-label">Y Position</label>
           <input
             type="text"
@@ -305,11 +312,12 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
+          <div className="field-tooltip">Vertical center position (0 to 1).</div>
         </div>
       </div>
 
       <div className="property-group-row">
-        <div className="property-group" title="The scale of the element, where 1 is the full height of the scene.">
+        <div className="property-group has-tooltip">
           <label className="property-label">Scale</label>
           <input
             type="text"
@@ -323,9 +331,10 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
+          <div className="field-tooltip">Relative height of the element (1 = full scene height).</div>
         </div>
 
-        <div className="property-group" title="Corner radius in pixels applied to the element.">
+        <div className="property-group has-tooltip">
           <label className="property-label">Corner Radius</label>
           <input
             type="text"
@@ -339,10 +348,11 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
+          <div className="field-tooltip">Corner radius in pixels applied to the element.</div>
         </div>
       </div>
 
-      <div className="property-group" title="The image for the element.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Image</label>
         <div className="property-value">
           <FileUpload
@@ -364,9 +374,10 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
+        <div className="field-tooltip">The image to display for this element.</div>
       </div>
 
-      <div className="property-group" title="The scene to go to when this element is clicked.">
+      <div className="property-group has-tooltip">
         <label className="property-label">Destination Scene</label>
         <div className="select-wrapper">
           <select
@@ -387,9 +398,10 @@ const Inspector: React.FC<InspectorProps> = ({
             <ChevronDown size={16} />
           </div>
         </div>
+        <div className="field-tooltip">The scene to navigate to when this element is clicked.</div>
       </div>
 
-      <div className="property-group" title="Text that displays when the element is clicked.">
+      <div className="property-group has-tooltip">
         <label className="property-label">On-Click Text</label>
         <textarea
           className="input property-input"
@@ -398,9 +410,10 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('onClickText')}
           rows={4}
         />
+        <div className="field-tooltip">Text that displays when the element is clicked.</div>
       </div>
 
-      <div className="property-group" title="A sound that plays when the element is clicked.">
+      <div className="property-group has-tooltip">
         <label className="property-label">On-Click Sound</label>
         <div className="property-value">
           <FileUpload
@@ -415,9 +428,10 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
+        <div className="field-tooltip">A sound that plays when the element is clicked.</div>
       </div>
 
-      <div className="property-group" title="Change the music when the element is clicked.">
+      <div className="property-group has-tooltip">
         <label className="property-label">On-Click Music Change</label>
         <div className="property-value">
           <FileUpload
@@ -432,9 +446,10 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
+        <div className="field-tooltip">Change the music when the element is clicked.</div>
       </div>
 
-      <div className="property-group-row" title="If enabled, the element will glow when the mouse is over it.">
+      <div className="property-group-row has-tooltip">
         <label className="property-label-row switch-label" htmlFor={`highlight-${element.id}`}>Highlight on Hover</label>
         <label className="switch" htmlFor={`highlight-${element.id}`}>
           <input
@@ -445,9 +460,10 @@ const Inspector: React.FC<InspectorProps> = ({
           />
           <span className="switch-slider"></span>
         </label>
+        <div className="field-tooltip">If enabled, the element will glow when hovered.</div>
       </div>
 
-      <div className="property-group-row" title="The color of the highlight glow.">
+      <div className="property-group-row has-tooltip">
         <label className="property-label-row">Highlight Color</label>
         <div className="color-picker-wrapper">
           <input
@@ -458,6 +474,7 @@ const Inspector: React.FC<InspectorProps> = ({
             onChange={(e) => onUpdateElement({ ...element, highlightColor: e.target.value })}
           />
         </div>
+        <div className="field-tooltip">The color of the highlight glow.</div>
       </div>
     </div>
   );
