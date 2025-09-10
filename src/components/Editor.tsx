@@ -234,7 +234,6 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             onElementMove={handleElementMove}
             onElementSelect={handleSelectElement}
             onCanvasClick={handleCanvasClick}
-            projectName={project.name}
           />
         </div>
 

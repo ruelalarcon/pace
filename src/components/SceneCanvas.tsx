@@ -8,7 +8,6 @@ interface SceneCanvasProps {
   onElementMove: (elementId: string, x: number, y: number) => void;
   onElementSelect: (element: Element) => void;
   onCanvasClick: () => void;
-  projectName: string;
 }
 
 const SceneCanvas: React.FC<SceneCanvasProps> = ({
@@ -17,7 +16,6 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   onElementMove,
   onElementSelect,
   onCanvasClick,
-  projectName
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [dragging, setDragging] = useState<{
