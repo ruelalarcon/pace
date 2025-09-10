@@ -167,8 +167,6 @@
 .inspector {
   background-color: #2a2a2a;
   border-left: 1px solid #555;
-  padding: 16px;
-  overflow-y: auto;
 }
 
 .inspector-title {
