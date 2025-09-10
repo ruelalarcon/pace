@@ -106,19 +106,25 @@
   bottom: 20px;
   left: 20px;
   right: 20px;
-  background-color: rgba(30, 30, 46, 0.82);
-  border: 3px solid var(--surface0);
+  /* background-color: rgba(30, 30, 46, 0.82); */
+  background-image: linear-gradient(rgba(44 44 44 / 0.47), rgba(24 24 24 / 0.48));
+  /* border: 3px solid var(--surface0); */
+  border: 5px solid #93b6df;
   border-radius: var(--radius-md);
   padding: 20px 24px 16px 24px;
-  box-shadow: var(--shadow-md);
+  /* box-shadow: var(--shadow-md); */
+  box-shadow: 0 0 10px 0 rgba(147, 182, 223, 0.5);
   cursor: pointer;
   user-select: none;
   z-index: 100;
-  backdrop-filter: blur(8px);
+  /* backdrop-filter: blur(8px); */
+  backdrop-filter: blur(3px);
+  transition: border-color 0.2s ease;
 }
 
 .preview-textbox:hover {
-  border-color: var(--surface1);
+  /* border-color: var(--surface1); */
+  border-color: #B6D4F7;
 }
 
 .textbox-content {
@@ -127,21 +133,13 @@
 
 .textbox-text {
   margin: 0;
-  font-size: 22px;
+  font-size: 30px;
+  font-family: 'MS Gothic', 'Geist';
+  font-weight: 400;
   line-height: 1.5;
   color: var(--text);
+  text-shadow: rgb(39, 39, 39) 2px 0px 0px, rgb(39, 39, 39) 1.75517px 0.958851px 0px, rgb(39, 39, 39) 1.0806px 1.68294px 0px, rgb(39, 39, 39) 0.141474px 1.99499px 0px, rgb(39, 39, 39) -0.832294px 1.81859px 0px, rgb(39, 39, 39) -1.60229px 1.19694px 0px, rgb(39, 39, 39) -1.97998px 0.28224px 0px, rgb(39, 39, 39) -1.87291px -0.701566px 0px, rgb(39, 39, 39) -1.30729px -1.5136px 0px, rgb(39, 39, 39) -0.421592px -1.95506px 0px, rgb(39, 39, 39) 0.567324px -1.91785px 0px, rgb(39, 39, 39) 1.41734px -1.41108px 0px, rgb(39, 39, 39) 1.92034px -0.558831px 0px;
   min-height: 24px;
-}
-
-.typing-cursor {
-  animation: blink 1s infinite;
-  color: var(--primary);
-  font-weight: bold;
-}
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
 }
 
 .textbox-continue {
@@ -152,10 +150,11 @@
 
 .textbox-continue span {
   font-size: 14px;
-  color: var(--subtext0);
+  color: var(--text);
   font-style: italic;
+  text-shadow: rgb(39, 39, 39) 2px 0px 0px, rgb(39, 39, 39) 1.75517px 0.958851px 0px, rgb(39, 39, 39) 1.0806px 1.68294px 0px, rgb(39, 39, 39) 0.141474px 1.99499px 0px, rgb(39, 39, 39) -0.832294px 1.81859px 0px, rgb(39, 39, 39) -1.60229px 1.19694px 0px, rgb(39, 39, 39) -1.97998px 0.28224px 0px, rgb(39, 39, 39) -1.87291px -0.701566px 0px, rgb(39, 39, 39) -1.30729px -1.5136px 0px, rgb(39, 39, 39) -0.421592px -1.95506px 0px, rgb(39, 39, 39) 0.567324px -1.91785px 0px, rgb(39, 39, 39) 1.41734px -1.41108px 0px, rgb(39, 39, 39) 1.92034px -0.558831px 0px;
   opacity: 0.8;
-  animation: pulse 2s infinite;
+  animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
@@ -225,10 +224,6 @@
 
   .preview-element:active {
     transform: none;
-  }
-
-  .typing-cursor {
-    animation: none;
   }
 
   .textbox-continue span {

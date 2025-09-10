@@ -93,7 +93,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
           clearInterval(typingIntervalRef.current);
         }
       }
-    }, 20); // Faster typing speed
+    }, 10);
   }, []);
 
   const hideTextbox = useCallback(() => {
@@ -313,7 +313,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
               <div className="textbox-content">
                 <p className="textbox-text">
                   {textboxContent.substring(0, textboxIndex)}
-                  {isTyping && <span className="typing-cursor">|</span>}
                 </p>
               </div>
               <div className="textbox-continue">
