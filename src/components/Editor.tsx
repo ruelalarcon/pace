@@ -3,7 +3,7 @@ import { Project, Scene, Element, TreeNode } from '../types';
 import TreeView from './TreeView';
 import SceneCanvas from './SceneCanvas';
 import Inspector from './Inspector';
-import { Plus } from 'lucide-react';
+import { Clapperboard, Box, Trash2 } from 'lucide-react';
 import './Editor.css';
 
 interface EditorProps {
@@ -18,6 +18,9 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
   const [currentScene, setCurrentScene] = useState<Scene | null>(
     project.scenes.length > 0 ? project.scenes[0] : null
   );
+  const [isCreatingScene, setIsCreatingScene] = useState(false);
+  const [newSceneName, setNewSceneName] = useState('');
+  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
   const generateTreeData = useCallback((): TreeNode[] => {
     return project.scenes.map(scene => ({
@@ -53,6 +56,30 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     setCurrentScene(newScene);
     setSelectedItem(newScene);
     setSelectedItemType('scene');
+  };
+
+  const openCreateSceneModal = () => {
+    setNewSceneName('');
+    setIsCreatingScene(true);
+  };
+
+  const confirmCreateScene = () => {
+    if (!newSceneName.trim()) return;
+    handleCreateScene(newSceneName.trim());
+    setIsCreatingScene(false);
+  };
+
+  const handleDeleteClick = () => {
+    if (selectedItem) {
+      setIsDeleteConfirmVisible(true);
+    }
+  };
+
+  const confirmDelete = () => {
+    if (selectedItem && selectedItemType) {
+      handleDeleteItem(selectedItem.id, selectedItemType);
+    }
+    setIsDeleteConfirmVisible(false);
   };
 
   const handleSelectTreeItem = (node: TreeNode) => {
@@ -213,22 +240,11 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
           <TreeView
             treeData={generateTreeData()}
             onSelectItem={handleSelectTreeItem}
-            onCreateScene={handleCreateScene}
             selectedId={selectedItem?.id || null}
           />
         </div>
 
         <div className="editor-main">
-          <div className="scene-toolbar">
-            <button
-              className="btn btn-primary btn-small"
-              onClick={handleCreateElement}
-              disabled={!currentScene}
-            >
-              <Plus size={14} /> Add Element
-            </button>
-          </div>
-
           <SceneCanvas
             scene={currentScene}
             selectedElement={selectedItemType === 'element' ? selectedItem as Element : null}
@@ -236,6 +252,30 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             onElementSelect={handleSelectElement}
             onCanvasClick={handleCanvasClick}
           />
+
+          <div className="floating-toolbar">
+            <button
+              className="btn btn-secondary btn-small"
+              onClick={openCreateSceneModal}
+            >
+              <Clapperboard size={14} /> Add Scene
+            </button>
+            <button
+              className="btn btn-primary btn-small"
+              onClick={handleCreateElement}
+              disabled={!currentScene}
+            >
+              <Box size={14} /> Add Element
+            </button>
+            <button
+              className="btn btn-danger btn-small"
+              onClick={handleDeleteClick}
+              disabled={!selectedItem}
+              title={selectedItem ? `Delete ${selectedItem.name}` : 'Select an item to delete'}
+            >
+              <Trash2 size={14} /> Delete
+            </button>
+          </div>
         </div>
 
         <div className="editor-inspector">
@@ -245,12 +285,62 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             scenes={project.scenes}
             onUpdateScene={handleUpdateScene}
             onUpdateElement={handleUpdateElement}
-            onDeleteItem={handleDeleteItem}
             projectName={project.name}
             currentSceneId={currentScene?.id}
           />
         </div>
       </div>
+
+      {isCreatingScene && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Create New Scene</h2>
+            </div>
+            <div className="modal-body">
+              <div className="form-group">
+                <label className="form-label">Scene Name</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={newSceneName}
+                  onChange={(e) => setNewSceneName(e.target.value)}
+                  placeholder="Enter scene name..."
+                  autoFocus
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') confirmCreateScene();
+                  }}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setIsCreatingScene(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={confirmCreateScene} disabled={!newSceneName.trim()}>Create</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDeleteConfirmVisible && selectedItem && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-header">
+              <h2 className="modal-title">Confirm Deletion</h2>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to delete "{selectedItem.name}"? This action cannot be undone.</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setIsDeleteConfirmVisible(false)}>
+                Cancel
+              </button>
+              <button className="btn btn-danger" onClick={confirmDelete}>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

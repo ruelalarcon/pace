@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Scene, Element } from '../types';
 import FileUpload from './FileUpload';
-import { Clapperboard, Box, Trash2, ChevronDown } from 'lucide-react';
+import { Clapperboard, Box, ChevronDown } from 'lucide-react';
 import './Inspector.css';
 
 interface InspectorProps {
@@ -10,7 +10,6 @@ interface InspectorProps {
   scenes: Scene[];
   onUpdateScene: (scene: Scene) => void;
   onUpdateElement: (element: Element) => void;
-  onDeleteItem: (id: string, type: 'scene' | 'element') => void;
   projectName: string;
   currentSceneId?: string | null;
 }
@@ -21,12 +20,10 @@ const Inspector: React.FC<InspectorProps> = ({
   scenes,
   onUpdateScene,
   onUpdateElement,
-  onDeleteItem,
   projectName,
   currentSceneId
 }) => {
   const [localValues, setLocalValues] = useState<Record<string, any>>({});
-  const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
   const getLocalValue = (key: string, defaultValue: any) => {
     return localValues[key] !== undefined ? localValues[key] : defaultValue;
@@ -436,13 +433,6 @@ const Inspector: React.FC<InspectorProps> = ({
     </div>
   );
 
-  const handleDelete = () => {
-    if (selectedItem && selectedItemType) {
-      onDeleteItem(selectedItem.id, selectedItemType);
-      setIsDeleteConfirmVisible(false);
-    }
-  };
-
   if (!selectedItem || !selectedItemType) {
     return (
       <div className="inspector">
@@ -475,43 +465,7 @@ const Inspector: React.FC<InspectorProps> = ({
           ? renderSceneProperties(selectedItem as Scene)
           : renderElementProperties(selectedItem as Element)
         }
-
-        <div className="inspector-actions">
-          <button
-            className="btn btn-danger"
-            onClick={() => setIsDeleteConfirmVisible(true)}
-          >
-            <Trash2 size={16} /> Delete
-          </button>
-        </div>
       </div>
-
-      {isDeleteConfirmVisible && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Confirm Deletion</h2>
-            </div>
-            <div className="modal-body">
-              <p>Are you sure you want to delete "{selectedItem.name}"? This action cannot be undone.</p>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setIsDeleteConfirmVisible(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-danger"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

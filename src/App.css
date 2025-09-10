@@ -90,6 +90,12 @@
   box-shadow: var(--focus-ring);
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-primary {
   background-color: var(--color-primary);
   color: #ffffff;

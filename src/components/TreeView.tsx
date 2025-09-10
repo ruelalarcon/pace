@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
 import { TreeNode } from '../types';
-import { Clapperboard, Box, ChevronRight, Plus } from 'lucide-react';
+import { Clapperboard, Box, ChevronRight } from 'lucide-react';
 import './TreeView.css';
 
 interface TreeViewProps {
   treeData: TreeNode[];
   onSelectItem: (node: TreeNode) => void;
-  onCreateScene: (sceneName: string) => void;
   selectedId: string | null;
 }
 
 const TreeView: React.FC<TreeViewProps> = ({
   treeData,
   onSelectItem,
-  onCreateScene,
   selectedId
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
-  const [isCreatingScene, setIsCreatingScene] = useState(false);
-  const [newSceneName, setNewSceneName] = useState('');
 
   const toggleExpand = (nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
@@ -30,12 +26,7 @@ const TreeView: React.FC<TreeViewProps> = ({
     setExpandedNodes(newExpanded);
   };
 
-  const handleCreateScene = () => {
-    if (!newSceneName.trim()) return;
-    onCreateScene(newSceneName);
-    setNewSceneName('');
-    setIsCreatingScene(false);
-  };
+  // Scene creation moved to floating toolbar in Editor
 
   const renderTreeNode = (node: TreeNode, depth: number = 0) => {
     const isExpanded = expandedNodes.has(node.id);
@@ -82,12 +73,7 @@ const TreeView: React.FC<TreeViewProps> = ({
     <div className="tree-view">
       <div className="tree-header">
         <h3 className="tree-title">Project Structure</h3>
-        <button
-          className="btn btn-primary btn-small"
-          onClick={() => setIsCreatingScene(true)}
-        >
-          <Plus size={14} /> Scene
-        </button>
+
       </div>
 
       <div className="tree-content">
@@ -102,51 +88,7 @@ const TreeView: React.FC<TreeViewProps> = ({
         )}
       </div>
 
-      {isCreatingScene && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Create New Scene</h2>
-            </div>
-            <div className="modal-body">
-              <div className="form-group">
-                <label className="form-label">Scene Name</label>
-                <input
-                  type="text"
-                  className="input"
-                  value={newSceneName}
-                  onChange={(e) => setNewSceneName(e.target.value)}
-                  placeholder="Enter scene name..."
-                  autoFocus
-                  onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
-                      handleCreateScene();
-                    }
-                  }}
-                />
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => {
-                  setIsCreatingScene(false);
-                  setNewSceneName('');
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={handleCreateScene}
-                disabled={!newSceneName.trim()}
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 };

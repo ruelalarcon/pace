@@ -54,18 +54,26 @@
   flex-direction: column;
   background-color: var(--color-bg);
   overflow: hidden;
-}
-
-.scene-toolbar {
-  padding: 8px 12px;
-  background-color: var(--color-elevated);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  gap: 8px;
+  position: relative;
 }
 
 .editor-inspector {
   width: 350px;
   background-color: var(--color-surface);
   border-left: 1px solid var(--color-border);
+}
+
+.floating-toolbar {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background-color: var(--color-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-md);
+  z-index: 200;
 }
