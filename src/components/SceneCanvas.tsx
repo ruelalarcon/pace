@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Scene, Element } from '../types';
 import './SceneCanvas.css';
 
@@ -18,6 +18,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   onCanvasClick,
 }) => {
   const canvasRef = useRef<HTMLDivElement>(null);
+  const [canvasRect, setCanvasRect] = useState<DOMRect | null>(null);
   const [dragging, setDragging] = useState<{
     elementId: string;
     offsetX: number;
@@ -25,11 +26,26 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   } | null>(null);
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
 
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      setCanvasRect(canvas.getBoundingClientRect());
+    });
+
+    resizeObserver.observe(canvas);
+    setCanvasRect(canvas.getBoundingClientRect()); // Set initial size
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [scene]);
+
   const handleMouseDown = useCallback((e: React.MouseEvent, element: Element) => {
     e.stopPropagation();
     onElementSelect(element);
 
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
     if (!canvasRect) return;
 
     const sceneAspectRatio = canvasRect.width / canvasRect.height;
@@ -47,12 +63,11 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       offsetX,
       offsetY
     });
-  }, [onElementSelect]);
+  }, [onElementSelect, canvasRect]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!dragging || !canvasRef.current) return;
+    if (!dragging || !canvasRect) return;
 
-    const canvasRect = canvasRef.current.getBoundingClientRect();
     const selectedEl = scene?.elements.find(el => el.id === dragging.elementId);
     if (!selectedEl) return;
 
@@ -67,7 +82,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const relY = (absY + (elementHeight * canvasRect.height / 2)) / canvasRect.height;
 
     onElementMove(dragging.elementId, relX, relY);
-  }, [dragging, onElementMove, scene]);
+  }, [dragging, onElementMove, scene, canvasRect]);
 
   const handleMouseUp = useCallback(() => {
     setDragging(null);
@@ -83,7 +98,6 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const isSelected = selectedElement?.id === element.id;
     const isHovered = hoveredElementId === element.id;
 
-    const canvasRect = canvasRef.current?.getBoundingClientRect();
     let width = '10%';
     let height = '10%';
 
