@@ -123,6 +123,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
           top: `calc(${element.y * 100}% - (${height}) / 2)`,
           width: width,
           height: height,
+          borderRadius: element.cornerRadius ? `${element.cornerRadius}px` : undefined,
           cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab',
           ...highlightStyle
         }}

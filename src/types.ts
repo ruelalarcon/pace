@@ -28,6 +28,7 @@ export interface Element {
   onClickMusicChange?: string;
   highlightOnHover?: boolean;
   highlightColor?: string;
+  cornerRadius?: number; // Border radius in pixels
 }
 
 export interface TreeNode {

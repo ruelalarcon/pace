@@ -115,7 +115,8 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       onClickSound: '',
       onClickMusicChange: '',
       highlightOnHover: true,
-      highlightColor: '#ffffff'
+      highlightColor: '#ffffff',
+      cornerRadius: 0
     };
 
     const updatedScene = {

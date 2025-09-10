@@ -37,15 +37,29 @@ const Inspector: React.FC<InspectorProps> = ({
     const value = localValues[key];
     if (value === undefined) return;
 
-    if (selectedItemType === 'scene' && selectedItem) {
-      const scene = selectedItem as Scene;
-      onUpdateScene({ ...scene, [key]: value });
-    } else if (selectedItemType === 'element' && selectedItem) {
-      const element = selectedItem as Element;
-      onUpdateElement({ ...element, [key]: value });
+    let nextValue: any = value;
+
+    // Coerce numeric fields on commit only
+    if (selectedItemType === 'element') {
+      const element = selectedItem as Element | null;
+      if (['x', 'y', 'scale'].includes(key)) {
+        const parsed = parseFloat(String(value).trim());
+        nextValue = isNaN(parsed) ? (element && (element as any)[key]) ?? 0 : parsed;
+      } else if (key === 'cornerRadius') {
+        const parsed = parseInt(String(value).trim(), 10);
+        const safe = isNaN(parsed) ? (element && (element as any)[key]) ?? 0 : Math.max(0, parsed);
+        nextValue = safe;
+      }
     }
 
-    // Clear local value after committing
+    if (selectedItemType === 'scene' && selectedItem) {
+      const scene = selectedItem as Scene;
+      onUpdateScene({ ...scene, [key]: nextValue });
+    } else if (selectedItemType === 'element' && selectedItem) {
+      const element = selectedItem as Element;
+      onUpdateElement({ ...element, [key]: nextValue });
+    }
+
     const newLocalValues = { ...localValues };
     delete newLocalValues[key];
     setLocalValues(newLocalValues);
@@ -264,11 +278,10 @@ const Inspector: React.FC<InspectorProps> = ({
         <div className="property-group" title="The horizontal position of the element's center, relative to the scene width (0 to 1).">
           <label className="property-label">X Position</label>
           <input
-            type="number"
-            step="0.01"
+            type="text"
             className="input property-input"
-            value={getLocalValue('x', element.x)}
-            onChange={(e) => setLocalValue('x', parseFloat(e.target.value) || 0)}
+            value={String(getLocalValue('x', element.x))}
+            onChange={(e) => setLocalValue('x', e.target.value)}
             onBlur={() => commitLocalValue('x')}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -281,11 +294,10 @@ const Inspector: React.FC<InspectorProps> = ({
         <div className="property-group" title="The vertical position of the element's center, relative to the scene height (0 to 1).">
           <label className="property-label">Y Position</label>
           <input
-            type="number"
-            step="0.01"
+            type="text"
             className="input property-input"
-            value={getLocalValue('y', element.y)}
-            onChange={(e) => setLocalValue('y', parseFloat(e.target.value) || 0)}
+            value={String(getLocalValue('y', element.y))}
+            onChange={(e) => setLocalValue('y', e.target.value)}
             onBlur={() => commitLocalValue('y')}
             onKeyPress={(e) => {
               if (e.key === 'Enter') {
@@ -296,21 +308,38 @@ const Inspector: React.FC<InspectorProps> = ({
         </div>
       </div>
 
-      <div className="property-group" title="The scale of the element, where 1 is the full height of the scene.">
-        <label className="property-label">Scale</label>
-        <input
-          type="number"
-          step="0.01"
-          className="input property-input"
-          value={getLocalValue('scale', element.scale)}
-          onChange={(e) => setLocalValue('scale', parseFloat(e.target.value) || 0)}
-          onBlur={() => commitLocalValue('scale')}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              commitLocalValue('scale');
-            }
-          }}
-        />
+      <div className="property-group-row">
+        <div className="property-group" title="The scale of the element, where 1 is the full height of the scene.">
+          <label className="property-label">Scale</label>
+          <input
+            type="text"
+            className="input property-input"
+            value={String(getLocalValue('scale', element.scale))}
+            onChange={(e) => setLocalValue('scale', e.target.value)}
+            onBlur={() => commitLocalValue('scale')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('scale');
+              }
+            }}
+          />
+        </div>
+
+        <div className="property-group" title="Corner radius in pixels applied to the element.">
+          <label className="property-label">Corner Radius</label>
+          <input
+            type="text"
+            className="input property-input"
+            value={String(getLocalValue('cornerRadius', element.cornerRadius ?? 0))}
+            onChange={(e) => setLocalValue('cornerRadius', e.target.value)}
+            onBlur={() => commitLocalValue('cornerRadius')}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                commitLocalValue('cornerRadius');
+              }
+            }}
+          />
+        </div>
       </div>
 
       <div className="property-group" title="The image for the element.">
