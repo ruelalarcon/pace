@@ -1,6 +1,6 @@
 .dashboard {
   height: 100vh;
-  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-surface) 100%);
+  background: linear-gradient(135deg, var(--crust) 0%, var(--base) 100%);
   overflow-y: auto;
 }
 
@@ -21,7 +21,7 @@
   font-size: 48px;
   font-weight: 700;
   margin: 0 0 8px 0;
-  background: linear-gradient(135deg, var(--color-primary), #00c8ff);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -29,7 +29,7 @@
 
 .dashboard-subtitle {
   font-size: 18px;
-  color: var(--color-text-muted);
+  color: var(--subtext0);
   margin: 0;
   font-weight: 300;
 }
@@ -57,13 +57,13 @@
   grid-column: 1 / -1;
   text-align: center;
   padding: 60px 20px;
-  color: #888;
+  color: var(--subtext1);
 }
 
 .no-projects h3 {
   font-size: 24px;
   margin: 0 0 8px 0;
-  color: #ccc;
+  color: var(--subtext0);
 }
 
 .no-projects p {
@@ -72,8 +72,8 @@
 }
 
 .project-card {
-  background-color: var(--color-surface2);
-  border: 1px solid var(--color-border);
+  background-color: var(--mantle);
+  border: 1px solid var(--surface0);
   border-radius: 8px;
   padding: 20px;
   cursor: pointer;
@@ -83,10 +83,10 @@
 }
 
 .project-card:hover {
-  background-color: #3a3a3a;
-  border-color: var(--color-primary);
+  background-color: var(--surface0);
+  border-color: var(--primary);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 122, 204, 0.2);
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 20%, transparent);
 }
 
 .delete-project-btn {
@@ -97,8 +97,8 @@
   height: 28px;
   border-radius: 50%;
   border: none;
-  background-color: var(--color-surface2);
-  color: var(--color-text-muted);
+  background-color: var(--surface1);
+  color: var(--subtext0);
   font-size: 20px;
   line-height: 26px;
   text-align: center;
@@ -113,8 +113,8 @@
 }
 
 .delete-project-btn:hover {
-  background-color: var(--color-danger);
-  color: white;
+  background-color: var(--danger);
+  color: var(--crust);
 }
 
 .project-card-header {
@@ -125,11 +125,11 @@
   font-size: 18px;
   font-weight: 600;
   margin: 0;
-  color: var(--color-text-primary);
+  color: var(--text);
 }
 
 .project-card-body {
-  color: var(--color-text-muted);
+  color: var(--subtext0);
 }
 
 .project-info {
@@ -140,5 +140,5 @@
 .project-date {
   font-size: 12px;
   margin: 0;
-  color: var(--color-text-subtle);
+  color: var(--subtext1);
 }

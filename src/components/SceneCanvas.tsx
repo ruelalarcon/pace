@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { Scene, Element } from '../types';
+import { Image } from 'lucide-react';
 import './SceneCanvas.css';
 
 interface SceneCanvasProps {
@@ -138,7 +139,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
           />
         ) : (
           <div className="element-placeholder">
-            <span className="element-name">{element.name}</span>
+            <Image size={24} />
           </div>
         )}
 
