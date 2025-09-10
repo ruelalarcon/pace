@@ -2,7 +2,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg);
 }
 
 .editor-header {
@@ -10,8 +10,8 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 20px;
-  background-color: #2a2a2a;
-  border-bottom: 1px solid #555;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .editor-title {
@@ -24,12 +24,13 @@
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .current-scene {
   font-size: 14px;
-  color: #007acc;
+  padding-top: 1px;
+  color: var(--color-primary);
   font-weight: 500;
 }
 
@@ -41,8 +42,8 @@
 
 .editor-sidebar {
   width: 280px;
-  background-color: #2a2a2a;
-  border-right: 1px solid #555;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
 }
@@ -51,20 +52,20 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #1a1a1a;
+  background-color: var(--color-bg);
   overflow: hidden;
 }
 
 .scene-toolbar {
   padding: 8px 12px;
-  background-color: #333;
-  border-bottom: 1px solid #555;
+  background-color: var(--color-elevated);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   gap: 8px;
 }
 
 .editor-inspector {
   width: 350px;
-  background-color: #2a2a2a;
-  border-left: 1px solid #555;
+  background-color: var(--color-surface);
+  border-left: 1px solid var(--color-border);
 }

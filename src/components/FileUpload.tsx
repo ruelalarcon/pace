@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { Upload } from 'lucide-react';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -43,8 +44,10 @@ const FileUpload: React.FC<FileUploadProps> = ({
         type="button"
         onClick={handleClick}
         className="file-upload-button"
+        aria-label={label}
       >
-        {label}
+        <Upload size={16} aria-hidden="true" />
+        <span>{label}</span>
       </button>
     </div>
   );

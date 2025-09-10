@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Project } from '../types';
+import { Plus, X } from 'lucide-react';
 import './Dashboard.css';
 
 interface DashboardProps {
@@ -98,7 +99,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
             className="btn btn-primary"
             onClick={() => setIsCreating(true)}
           >
-            + New Project
+            <Plus size={16} /> New Project
           </button>
         </div>
 
@@ -121,8 +122,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                     e.stopPropagation();
                     setProjectToDelete(project);
                   }}
+                  aria-label="Delete project"
+                  title="Delete project"
                 >
-                  &times;
+                  <X size={18} />
                 </button>
                 <div className="project-card-header">
                   <h3 className="project-name">{project.name}</h3>

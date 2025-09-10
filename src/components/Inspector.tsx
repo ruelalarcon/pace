@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Scene, Element } from '../types';
 import FileUpload from './FileUpload';
+import { Clapperboard, Box, Trash2, ChevronDown } from 'lucide-react';
 import './Inspector.css';
 
 interface InspectorProps {
@@ -341,20 +342,25 @@ const Inspector: React.FC<InspectorProps> = ({
 
       <div className="property-group" title="The scene to go to when this element is clicked.">
         <label className="property-label">Destination Scene</label>
-        <select
-          className="input property-input"
-          value={element.destinationScene || ''}
-          onChange={(e) => onUpdateElement({ ...element, destinationScene: e.target.value })}
-        >
-          <option value="">None</option>
-          {scenes
-            .filter(scene => scene.id !== currentSceneId)
-            .map(scene => (
-            <option key={scene.id} value={scene.id}>
-              {scene.name}
-            </option>
-          ))}
-        </select>
+        <div className="select-wrapper">
+          <select
+            className="input select"
+            value={element.destinationScene || ''}
+            onChange={(e) => onUpdateElement({ ...element, destinationScene: e.target.value })}
+          >
+            <option value="">None</option>
+            {scenes
+              .filter(scene => scene.id !== currentSceneId)
+              .map(scene => (
+              <option key={scene.id} value={scene.id}>
+                {scene.name}
+              </option>
+            ))}
+          </select>
+          <div className="select-arrow">
+            <ChevronDown size={16} />
+          </div>
+        </div>
       </div>
 
       <div className="property-group" title="Text that displays when the element is clicked.">
@@ -403,23 +409,29 @@ const Inspector: React.FC<InspectorProps> = ({
       </div>
 
       <div className="property-group-row" title="If enabled, the element will glow when the mouse is over it.">
-        <label className="property-label-row">Highlight on Hover</label>
-        <input
-          type="checkbox"
-          checked={element.highlightOnHover}
-          onChange={(e) => onUpdateElement({ ...element, highlightOnHover: e.target.checked })}
-        />
+        <label className="property-label-row switch-label" htmlFor={`highlight-${element.id}`}>Highlight on Hover</label>
+        <label className="switch" htmlFor={`highlight-${element.id}`}>
+          <input
+            type="checkbox"
+            id={`highlight-${element.id}`}
+            checked={element.highlightOnHover}
+            onChange={(e) => onUpdateElement({ ...element, highlightOnHover: e.target.checked })}
+          />
+          <span className="switch-slider"></span>
+        </label>
       </div>
 
       <div className="property-group-row" title="The color of the highlight glow.">
         <label className="property-label-row">Highlight Color</label>
-        <input
-          type="color"
-          className="input-color"
-          value={element.highlightColor || '#ffffff'}
-          disabled={!element.highlightOnHover}
-          onChange={(e) => onUpdateElement({ ...element, highlightColor: e.target.value })}
-        />
+        <div className="color-picker-wrapper">
+          <input
+            type="color"
+            className="input-color"
+            value={element.highlightColor || '#ffffff'}
+            disabled={!element.highlightOnHover}
+            onChange={(e) => onUpdateElement({ ...element, highlightColor: e.target.value })}
+          />
+        </div>
       </div>
     </div>
   );
@@ -451,7 +463,11 @@ const Inspector: React.FC<InspectorProps> = ({
       <div className="inspector-header">
         <h2 className="inspector-title">Inspector</h2>
         <div className="inspector-subtitle">
-          {selectedItemType === 'scene' ? '🎬' : '📦'} {selectedItem.name}
+          {selectedItemType === 'scene' ? (
+            <Clapperboard size={14} />
+          ) : (
+            <Box size={14} />
+          )} {selectedItem.name}
         </div>
       </div>
       <div className="inspector-content">
@@ -465,7 +481,7 @@ const Inspector: React.FC<InspectorProps> = ({
             className="btn btn-danger"
             onClick={() => setIsDeleteConfirmVisible(true)}
           >
-            Delete {selectedItemType}
+            <Trash2 size={16} /> Delete
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TreeNode } from '../types';
+import { Clapperboard, Box, ChevronRight, Plus } from 'lucide-react';
 import './TreeView.css';
 
 interface TreeViewProps {
@@ -56,12 +57,13 @@ const TreeView: React.FC<TreeViewProps> = ({
                   e.stopPropagation();
                   toggleExpand(node.id);
                 }}
+                aria-label={isExpanded ? 'Collapse' : 'Expand'}
               >
-                ▶
+                <ChevronRight size={14} />
               </button>
             )}
             <span className={`tree-node-icon ${node.type}`}>
-              {node.type === 'scene' ? '🎬' : '📦'}
+              {node.type === 'scene' ? <Clapperboard size={14} /> : <Box size={14} />}
             </span>
             <span className="tree-node-name">{node.name}</span>
           </div>
@@ -84,7 +86,7 @@ const TreeView: React.FC<TreeViewProps> = ({
           className="btn btn-primary btn-small"
           onClick={() => setIsCreatingScene(true)}
         >
-          + Scene
+          <Plus size={14} /> Scene
         </button>
       </div>
 

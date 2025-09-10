@@ -3,6 +3,7 @@ import { Project, Scene, Element, TreeNode } from '../types';
 import TreeView from './TreeView';
 import SceneCanvas from './SceneCanvas';
 import Inspector from './Inspector';
+import { Plus } from 'lucide-react';
 import './Editor.css';
 
 interface EditorProps {
@@ -224,7 +225,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
               onClick={handleCreateElement}
               disabled={!currentScene}
             >
-              + Add Element
+              <Plus size={14} /> Add Element
             </button>
           </div>
 

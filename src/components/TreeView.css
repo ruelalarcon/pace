@@ -4,20 +4,26 @@
   flex-direction: column;
 }
 
+.tree-container {
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+  height: 100%;
+  overflow-y: auto;
+}
+
 .tree-header {
   padding: 12px;
-  border-bottom: 1px solid #555;
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #333;
 }
 
 .tree-title {
   font-size: 14px;
   font-weight: 600;
   margin: 0;
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .tree-content {
@@ -28,7 +34,7 @@
 .tree-empty {
   padding: 20px;
   text-align: center;
-  color: #888;
+  color: var(--color-text-subtle);
 }
 
 .tree-empty p {
@@ -49,7 +55,7 @@
   align-items: center;
   padding: 6px 12px;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
   min-height: 32px;
 }
 
@@ -58,7 +64,7 @@
 }
 
 .tree-node-content.selected {
-  background-color: #007acc;
+  background-color: var(--color-primary);
   color: #fff;
 }
 
@@ -72,7 +78,7 @@
 .tree-expand-button {
   background: none;
   border: none;
-  color: #ccc;
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 2px;
   font-size: 10px;
@@ -90,7 +96,7 @@
 }
 
 .tree-expand-button:hover {
-  color: #fff;
+  color: var(--color-text-primary);
 }
 
 .tree-node-icon {
