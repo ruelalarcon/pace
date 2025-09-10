@@ -256,7 +256,7 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('sceneText')}
           rows={4}
         />
-        <div className="field-tooltip">Text which appears in the main textbox when this scene is entered.</div>
+        <div className="field-tooltip">Text which appears in the main textbox when this scene is entered. Use newlines to separate multiple texts within the same message.</div>
       </div>
     </div>
   );
@@ -410,7 +410,7 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('onClickText')}
           rows={4}
         />
-        <div className="field-tooltip">Text which appears in the main textbox when this element is clicked.</div>
+        <div className="field-tooltip">Text which appears in the main textbox when this element is clicked. Use newlines to separate multiple texts within the same message.</div>
       </div>
 
       <div className="property-group has-tooltip">

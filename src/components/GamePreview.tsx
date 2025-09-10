@@ -16,12 +16,15 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
   const [textboxContent, setTextboxContent] = useState('');
   const [textboxIndex, setTextboxIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false);
+  const [textLines, setTextLines] = useState<string[]>([]);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
   const [canvasRect, setCanvasRect] = useState<DOMRect | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null);
+  const sceneTextTimerRef = useRef<number | null>(null);
 
   const sceneTextDelay = 300;
 
@@ -72,22 +75,25 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
     }
   }, [currentScene]);
 
-  const showTextbox = useCallback((text: string) => {
+  const navigateToScene = useCallback((sceneId: string) => {
+    const targetScene = project.scenes.find(scene => scene.id === sceneId);
+    if (targetScene) {
+      setCurrentScene(targetScene);
+    }
+  }, [project.scenes]);
+
+  const startTyping = useCallback((line: string) => {
     if (typingIntervalRef.current) {
       clearInterval(typingIntervalRef.current);
     }
-
-    setTextboxContent(text);
     setTextboxIndex(0);
-    setTextboxVisible(true);
     setIsTyping(true);
 
     let index = 0;
     typingIntervalRef.current = setInterval(() => {
       index++;
       setTextboxIndex(index);
-
-      if (index >= text.length) {
+      if (index >= line.length) {
         setIsTyping(false);
         if (typingIntervalRef.current) {
           clearInterval(typingIntervalRef.current);
@@ -95,6 +101,32 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
       }
     }, 10);
   }, []);
+
+  const showTextbox = useCallback((text: string) => {
+    if (typingIntervalRef.current) {
+      clearInterval(typingIntervalRef.current);
+    }
+    // If a scene text is pending, cancel it so it doesn't override this text
+    if (sceneTextTimerRef.current !== null) {
+      clearTimeout(sceneTextTimerRef.current);
+      sceneTextTimerRef.current = null;
+    }
+
+    const lines = text
+      .split('\n')
+      .map(l => l)
+      .filter(l => l.trim() !== '');
+
+    if (lines.length === 0) {
+      return;
+    }
+
+    setTextLines(lines);
+    setCurrentLineIndex(0);
+    setTextboxContent(lines[0]);
+    startTyping(lines[0]);
+    setTextboxVisible(true);
+  }, [startTyping]);
 
   const hideTextbox = useCallback(() => {
     setTextboxVisible(false);
@@ -104,17 +136,32 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
     if (typingIntervalRef.current) {
       clearInterval(typingIntervalRef.current);
     }
+    setTextLines([]);
+    setCurrentLineIndex(0);
   }, []);
 
   // Show scene text when scene changes
   useEffect(() => {
+    // Clear any existing scheduled scene text
+    if (sceneTextTimerRef.current !== null) {
+      clearTimeout(sceneTextTimerRef.current);
+      sceneTextTimerRef.current = null;
+    }
+
     if (currentScene?.sceneText) {
       setPendingNavigation(null); // Abort any pending navigation from previous scene
-      const timer = setTimeout(() => {
+      sceneTextTimerRef.current = window.setTimeout(() => {
         showTextbox(currentScene.sceneText!);
+        sceneTextTimerRef.current = null;
       }, sceneTextDelay);
-      return () => clearTimeout(timer);
     }
+
+    return () => {
+      if (sceneTextTimerRef.current !== null) {
+        clearTimeout(sceneTextTimerRef.current);
+        sceneTextTimerRef.current = null;
+      }
+    };
   }, [currentScene, showTextbox]);
 
   // Cleanup on unmount
@@ -129,12 +176,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
     };
   }, []);
 
-  const navigateToScene = useCallback((sceneId: string) => {
-    const targetScene = project.scenes.find(scene => scene.id === sceneId);
-    if (targetScene) {
-      setCurrentScene(targetScene);
-    }
-  }, [project.scenes]);
+
 
   const handleElementClick = useCallback((element: Element) => {
     // Play click sound if specified
@@ -162,22 +204,19 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
 
     setPendingNavigation(null); // Clear any previous pending navigation from another element
 
-    // Show text if specified
-    if (element.onClickText) {
-      showTextbox(element.onClickText);
-    }
+    const hasText = typeof element.onClickText === 'string' && element.onClickText.trim().length > 0;
 
-    // Navigate to destination scene if specified
     if (element.destinationScene) {
-      // If there's text, we'll navigate when it's done.
-      if (element.onClickText) {
+      if (hasText) {
         setPendingNavigation(element.destinationScene);
+        showTextbox(element.onClickText!);
       } else {
-        // Otherwise, navigate immediately.
         navigateToScene(element.destinationScene);
       }
+    } else if (hasText) {
+      showTextbox(element.onClickText!);
     }
-  }, [showTextbox, navigateToScene]);
+  }, [navigateToScene, showTextbox]);
 
   const getAspectRatio = () => {
     if (currentScene && currentScene.aspectRatio) {
@@ -244,18 +283,26 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
 
   const handleTextboxClick = () => {
     if (isTyping) {
-      // Speed up typing or show full text immediately
+      // Finish current line immediately
       if (typingIntervalRef.current) {
         clearInterval(typingIntervalRef.current);
       }
-      setTextboxIndex(textboxContent.length);
+      const fullLine = textLines[currentLineIndex] ?? textboxContent;
+      setTextboxIndex(fullLine.length);
       setIsTyping(false);
     } else {
-      // Hide textbox
-      hideTextbox();
-      if (pendingNavigation) {
-        navigateToScene(pendingNavigation);
-        setPendingNavigation(null);
+      // Advance to next non-empty line or finish
+      const nextIndex = currentLineIndex + 1;
+      if (nextIndex < textLines.length) {
+        setCurrentLineIndex(nextIndex);
+        setTextboxContent(textLines[nextIndex]);
+        startTyping(textLines[nextIndex]);
+      } else {
+        hideTextbox();
+        if (pendingNavigation) {
+          navigateToScene(pendingNavigation);
+          setPendingNavigation(null);
+        }
       }
     }
   };
@@ -312,7 +359,8 @@ const GamePreview: React.FC<GamePreviewProps> = ({ project, onExitPreview }) => 
             <div className="preview-textbox" onClick={handleTextboxClick}>
               <div className="textbox-content">
                 <p className="textbox-text">
-                  {textboxContent.substring(0, textboxIndex)}
+                  {(textLines[currentLineIndex]?.substring(0, textboxIndex) || '\u00A0')}
+                  {isTyping && <span className="typing-cursor" />}
                 </p>
               </div>
               <div className="textbox-continue">
