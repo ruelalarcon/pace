@@ -225,6 +225,11 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     }
   };
 
+  const handleDeselect = () => {
+    setSelectedItem(null);
+    setSelectedItemType(null);
+  };
+
   return (
     <div className="editor">
       <div className="editor-header">
@@ -251,7 +256,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
           />
         </div>
 
-        <div className="editor-main">
+        <div className="editor-main" onClick={handleDeselect}>
           <SceneCanvas
             scene={currentScene}
             selectedElement={selectedItemType === 'element' ? selectedItem as Element : null}
@@ -260,7 +265,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
             onCanvasClick={handleCanvasClick}
           />
 
-          <div className="floating-toolbar">
+          <div className="floating-toolbar" onClick={(e) => e.stopPropagation()}>
             <button
               className="btn btn-secondary btn-small"
               onClick={openCreateSceneModal}

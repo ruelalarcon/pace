@@ -90,6 +90,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   }, []);
 
   const handleCanvasClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (e.target === canvasRef.current) {
       onCanvasClick();
     }
@@ -130,6 +131,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
         onMouseDown={(e) => handleMouseDown(e, element)}
         onMouseEnter={() => setHoveredElementId(element.id)}
         onMouseLeave={() => setHoveredElementId(null)}
+        onClick={(e) => e.stopPropagation()}
       >
         {element.image ? (
           <img
