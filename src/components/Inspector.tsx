@@ -187,7 +187,7 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
-        <div className="field-tooltip">The name of the scene.</div>
+        <div className="field-tooltip">The name of this scene.</div>
       </div>
       <div className="property-group has-tooltip">
         <label className="property-label">Aspect Ratio</label>
@@ -204,7 +204,7 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
-        <div className="field-tooltip">The aspect ratio of the scene (e.g., 16:9, 4:3).</div>
+        <div className="field-tooltip">The aspect ratio of this scene (e.g., 16:9, 4:3).</div>
       </div>
       <div className="property-group has-tooltip">
         <label className="property-label">Background Image</label>
@@ -256,7 +256,7 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('sceneText')}
           rows={4}
         />
-        <div className="field-tooltip">Text that displays in a textbox when the scene is entered.</div>
+        <div className="field-tooltip">Text which appears in the main textbox when this scene is entered.</div>
       </div>
     </div>
   );
@@ -277,7 +277,7 @@ const Inspector: React.FC<InspectorProps> = ({
             }
           }}
         />
-        <div className="field-tooltip">The name of the element.</div>
+        <div className="field-tooltip">The name of this element.</div>
       </div>
 
       <div className="property-group-row">
@@ -331,7 +331,7 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
-          <div className="field-tooltip">Relative height of the element (1 = full scene height).</div>
+          <div className="field-tooltip">Relative height of this element (1 = full scene height).</div>
         </div>
 
         <div className="property-group has-tooltip">
@@ -348,7 +348,7 @@ const Inspector: React.FC<InspectorProps> = ({
               }
             }}
           />
-          <div className="field-tooltip">Corner radius in pixels applied to the element.</div>
+          <div className="field-tooltip">Corner radius in pixels</div>
         </div>
       </div>
 
@@ -410,7 +410,7 @@ const Inspector: React.FC<InspectorProps> = ({
           onBlur={() => commitLocalValue('onClickText')}
           rows={4}
         />
-        <div className="field-tooltip">Text that displays when the element is clicked.</div>
+        <div className="field-tooltip">Text which appears in the main textbox when this element is clicked.</div>
       </div>
 
       <div className="property-group has-tooltip">
@@ -428,7 +428,7 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
-        <div className="field-tooltip">A sound that plays when the element is clicked.</div>
+        <div className="field-tooltip">Plays this sound when this element is clicked.</div>
       </div>
 
       <div className="property-group has-tooltip">
@@ -446,7 +446,7 @@ const Inspector: React.FC<InspectorProps> = ({
             </div>
           )}
         </div>
-        <div className="field-tooltip">Change the music when the element is clicked.</div>
+        <div className="field-tooltip">Changes the current scene's music when this element is clicked.</div>
       </div>
 
       <div className="property-group-row has-tooltip">
