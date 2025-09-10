@@ -137,13 +137,13 @@ app.put('/api/projects/:projectName', async (req, res) => {
     const usedResources = new Set();
     if (updatedProject.scenes) {
       for (const scene of updatedProject.scenes) {
-        if (scene.backgroundImage) usedResources.add(path.basename(scene.backgroundImage));
-        if (scene.music) usedResources.add(path.basename(scene.music));
+        if (scene.backgroundImage) usedResources.add(decodeURIComponent(path.basename(scene.backgroundImage)));
+        if (scene.music) usedResources.add(decodeURIComponent(path.basename(scene.music)));
         if (scene.elements) {
           for (const element of scene.elements) {
-            if (element.image) usedResources.add(path.basename(element.image));
-            if (element.onClickSound) usedResources.add(path.basename(element.onClickSound));
-            if (element.onClickMusicChange) usedResources.add(path.basename(element.onClickMusicChange));
+            if (element.image) usedResources.add(decodeURIComponent(path.basename(element.image)));
+            if (element.onClickSound) usedResources.add(decodeURIComponent(path.basename(element.onClickSound)));
+            if (element.onClickMusicChange) usedResources.add(decodeURIComponent(path.basename(element.onClickMusicChange)));
           }
         }
       }
@@ -156,7 +156,7 @@ app.put('/api/projects/:projectName', async (req, res) => {
     for (const fileName of directoryFiles) {
       if (fileName === 'project.json') continue;
 
-      if (!usedResources.has(fileName)) {
+      if (!usedResources.has(decodeURIComponent(fileName))) {
         try {
           await fs.unlink(path.join(projectPathDir, fileName));
           console.log(`Cleaned up unused file: ${fileName}`);
