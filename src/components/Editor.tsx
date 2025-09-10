@@ -3,16 +3,17 @@ import { Project, Scene, Element, TreeNode } from '../types';
 import TreeView from './TreeView';
 import SceneCanvas from './SceneCanvas';
 import Inspector from './Inspector';
-import { Clapperboard, Box, Trash2 } from 'lucide-react';
+import { Clapperboard, Box, Trash2, Play } from 'lucide-react';
 import './Editor.css';
 
 interface EditorProps {
   project: Project;
   onUpdateProject: (project: Project) => void;
   onCloseProject: () => void;
+  onEnterPreview: () => void;
 }
 
-const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProject }) => {
+const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProject, onEnterPreview }) => {
   const [selectedItem, setSelectedItem] = useState<Scene | Element | null>(null);
   const [selectedItemType, setSelectedItemType] = useState<'scene' | 'element' | null>(null);
   const [currentScene, setCurrentScene] = useState<Scene | null>(
@@ -231,9 +232,14 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
           <h1>{project.name}</h1>
           {currentScene && <span className="current-scene">/ {currentScene.name}</span>}
         </div>
-        <button className="btn btn-secondary" onClick={onCloseProject}>
-          ← Back to Dashboard
-        </button>
+        <div className="editor-header-actions">
+          <button className="btn btn-primary" onClick={onEnterPreview}>
+            <Play size={16} /> Preview
+          </button>
+          <button className="btn btn-secondary" onClick={onCloseProject}>
+            ← Back to Dashboard
+          </button>
+        </div>
       </div>
 
       <div className="editor-content">

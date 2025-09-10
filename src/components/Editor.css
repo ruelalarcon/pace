@@ -34,6 +34,12 @@
   font-weight: 500;
 }
 
+.editor-header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .editor-content {
   flex: 1;
   display: flex;

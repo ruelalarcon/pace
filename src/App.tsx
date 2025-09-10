@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import Editor from './components/Editor';
+import GamePreview from './components/GamePreview';
 import { Project } from './types';
 import './App.css';
 
 function App() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
@@ -22,6 +24,15 @@ function App() {
 
   const handleCloseProject = () => {
     setCurrentProject(null);
+    setIsPreviewMode(false);
+  };
+
+  const handleEnterPreview = () => {
+    setIsPreviewMode(true);
+  };
+
+  const handleExitPreview = () => {
+    setIsPreviewMode(false);
   };
 
   const handleUpdateProject = async (updatedProject: Project) => {
@@ -56,11 +67,19 @@ function App() {
   return (
     <div className="App">
       {currentProject ? (
-        <Editor
-          project={currentProject}
-          onUpdateProject={handleUpdateProject}
-          onCloseProject={handleCloseProject}
-        />
+        isPreviewMode ? (
+          <GamePreview
+            project={currentProject}
+            onExitPreview={handleExitPreview}
+          />
+        ) : (
+          <Editor
+            project={currentProject}
+            onUpdateProject={handleUpdateProject}
+            onCloseProject={handleCloseProject}
+            onEnterPreview={handleEnterPreview}
+          />
+        )
       ) : (
         <Dashboard onOpenProject={handleOpenProject} />
       )}
