@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Scene, Element } from '../types';
 import FileUpload from './FileUpload';
-import { Clapperboard, Box, ChevronDown } from 'lucide-react';
+import { Clapperboard, Box, ChevronDown, Info } from 'lucide-react';
 import './Inspector.css';
 
 interface InspectorProps {
@@ -438,6 +438,9 @@ const Inspector: React.FC<InspectorProps> = ({
       <div className="inspector">
         <div className="inspector-header">
           <h2 className="inspector-title">Inspector</h2>
+          <div className="inspector-subtitle">
+            <Info size={14} /> No object selected
+          </div>
         </div>
         <div className="inspector-content">
           <div className="inspector-empty">

@@ -7,7 +7,7 @@
 .inspector-header {
   padding: 12px 16px;
   border-bottom: 1px solid var(--color-border);
-  background-color: var(--color-elevated);
+  background-color: var(--color-surface2);
 }
 
 .inspector-title {
@@ -139,7 +139,7 @@ textarea.property-input {
 }
 
 .btn-remove-file {
-  background: var(--color-elevated);
+  background: var(--color-surface2);
   color: var(--color-text-muted);
   border: none;
   width: 24px;
