@@ -17,6 +17,20 @@
   padding: 60px 20px 40px;
 }
 
+.title-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.dashboard-logo {
+  height: 110px;
+  margin-right: 10px;
+  filter: invert(79%) sepia(22%) saturate(1330%) hue-rotate(206deg) brightness(102%) contrast(88%);
+}
+
 .dashboard-title {
   font-size: 48px;
   font-weight: 700;
@@ -69,6 +83,120 @@
 .no-projects p {
   font-size: 16px;
   margin: 0;
+}
+
+.dashboard-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-box {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toolbar-actions .btn {
+  white-space: nowrap;
+}
+
+.search-box .lucide-search {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--subtext1);
+}
+
+.search-input {
+  background: var(--mantle);
+  border: 1px solid var(--surface0);
+  border-radius: var(--radius-sm);
+  outline: none;
+  color: var(--text);
+  width: 260px;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 10px 0 36px !important;
+}
+
+.search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+.toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-select {
+  width: 180px;
+}
+
+.stats-row {
+  display: flex;
+  gap: 10px;
+  margin: 10px 0 6px;
+}
+
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background-color: var(--mantle);
+  border: 1px solid var(--surface0);
+  color: var(--subtext0);
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.project-thumb {
+  position: relative;
+  height: 140px;
+  margin: -20px -20px 12px -20px;
+  background-color: var(--surface0);
+  border-bottom: 1px solid var(--surface0);
+  background-size: cover;
+  background-position: center;
+}
+
+.thumb-empty {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--subtext1);
+}
+
+.thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0));
+}
+
+.project-meta {
+  display: flex;
+  gap: 12px;
+  color: var(--subtext0);
+}
+
+.meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.project-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .project-card {
