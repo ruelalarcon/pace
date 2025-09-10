@@ -469,9 +469,10 @@ const Inspector: React.FC<InspectorProps> = ({
           <input
             type="color"
             className="input-color"
-            value={element.highlightColor || '#ffffff'}
+            value={getLocalValue('highlightColor', element.highlightColor || '#ffffff')}
             disabled={!element.highlightOnHover}
-            onChange={(e) => onUpdateElement({ ...element, highlightColor: e.target.value })}
+            onChange={(e) => setLocalValue('highlightColor', e.target.value)}
+            onBlur={() => commitLocalValue('highlightColor')}
           />
         </div>
         <div className="field-tooltip">The color of the highlight glow.</div>
