@@ -180,6 +180,11 @@
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 25%, transparent);
 }
 
+.input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 textarea.input {
   resize: vertical;
 }

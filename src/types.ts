@@ -11,6 +11,7 @@ export interface Scene {
   aspectRatio: string; // e.g., "16:9"
   music?: string;
   sceneText?: string;
+  newSceneAfterText?: string; // Scene ID to navigate to after scene text completes
   elements: Element[];
 }
 

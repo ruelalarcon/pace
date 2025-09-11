@@ -281,6 +281,38 @@ const Inspector: React.FC<InspectorProps> = ({
           newlines to separate multiple texts within the same message.
         </div>
       </div>
+      <div className="property-group has-tooltip">
+        <label className="property-label">New Scene After Text</label>
+        <div className="select-wrapper">
+          <select
+            className="input select"
+            value={scene.newSceneAfterText || ""}
+            disabled={!scene.sceneText || scene.sceneText.trim() === ""}
+            onChange={(e) =>
+              onUpdateScene({ ...scene, newSceneAfterText: e.target.value })
+            }
+          >
+            <option value="">None</option>
+            {scenes
+              .filter((s) => s.id !== scene.id)
+              .map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.name}
+                </option>
+              ))}
+          </select>
+          <div className="select-arrow">
+            <ChevronDown size={16} />
+          </div>
+        </div>
+        <div className="field-tooltip">
+          The scene to navigate to after the scene text completes. NOTE:
+          Clicking an element with text will cancel the scene text, preventing
+          the user from navigating to the next scene. Make sure to include an
+          element allowing the user to navigate to the next scene if your scene
+          has elements with text!
+        </div>
+      </div>
     </div>
   );
 

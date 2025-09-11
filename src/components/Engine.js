@@ -230,11 +230,20 @@ class Engine {
       this.playMusic(element.onClickMusicChange);
     }
 
-    this.pendingNavigation = null;
-
     const hasText =
       typeof element.onClickText === "string" &&
       element.onClickText.trim().length > 0;
+
+    // Cancel any pending scene text when element is clicked
+    if (this.sceneTextTimer) {
+      clearTimeout(this.sceneTextTimer);
+      this.sceneTextTimer = null;
+    }
+
+    // Clear any existing textbox (including scene text) before showing new text
+    if (hasText || element.destinationScene) {
+      this.clearTextbox();
+    }
 
     if (element.destinationScene) {
       if (hasText) {
@@ -244,6 +253,8 @@ class Engine {
         this.navigateToScene(element.destinationScene);
       }
     } else if (hasText) {
+      // Clear any scene text navigation when showing element text only
+      this.pendingNavigation = null;
       this.showTextbox(element.onClickText);
     }
   }
@@ -266,6 +277,7 @@ class Engine {
       (scene) => scene.id === sceneId,
     );
     if (targetScene) {
+      this.pendingNavigation = null;
       this.setCurrentScene(targetScene);
     }
   }
@@ -341,9 +353,14 @@ class Engine {
     }
 
     if (this.currentScene && this.currentScene.sceneText) {
-      this.pendingNavigation = null;
+      // Capture the scene text and navigation at scheduling time
+      const sceneText = this.currentScene.sceneText;
+      const navigationTarget = this.currentScene.newSceneAfterText || null;
+
       this.sceneTextTimer = setTimeout(() => {
-        this.showTextbox(this.currentScene.sceneText);
+        // Set pending navigation right before showing textbox
+        this.pendingNavigation = navigationTarget;
+        this.showTextbox(sceneText);
         this.sceneTextTimer = null;
       }, this.sceneTextDelay);
     }
