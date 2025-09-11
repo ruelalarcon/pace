@@ -147,7 +147,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
           />
           <h1 className="dashboard-title">PACE Editor</h1>
         </div>
-        <p className="dashboard-subtitle">The Point-and-Click Engine Editor</p>
+        <p className="dashboard-subtitle">
+          The <span className="dashboard-subtitle-highlight">P</span>oint-
+          <span className="dashboard-subtitle-highlight">a</span>nd-
+          <span className="dashboard-subtitle-highlight">C</span>lick{" "}
+          <span className="dashboard-subtitle-highlight">E</span>ngine Editor
+        </p>
       </div>
 
       <div className="dashboard-content">

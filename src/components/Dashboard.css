@@ -49,6 +49,11 @@
   font-weight: 300;
 }
 
+.dashboard-subtitle-highlight {
+  color: var(--primary);
+  text-shadow: 0 0 12px var(--primary);
+}
+
 .dashboard-content {
   max-width: 1200px;
   margin: 0 auto;
