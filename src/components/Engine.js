@@ -21,10 +21,14 @@ class Engine {
     this.hoveredElementId = null;
     this.canvas = null;
     this.canvasRect = null;
-    this.audioRef = null;
     this.typingInterval = null;
     this.pendingNavigation = null;
     this.sceneTextTimer = null;
+
+    // Audio handling
+    this.musicRef = null;
+    this.soundEffectRef = null;
+    this.currentMusicPath = null;
 
     // Configuration
     this.sceneTextDelay = 300;
@@ -197,25 +201,12 @@ class Engine {
   }
 
   handleElementClick(element) {
-    // Play click sound
     if (element.onClickSound) {
-      const audio = new Audio(this.getResourceUrl(element.onClickSound));
-      audio.volume = 0.7;
-      audio.play().catch(console.error);
+      this.playSound(element.onClickSound);
     }
 
-    // Change music
     if (element.onClickMusicChange) {
-      const newMusicUrl = this.getResourceUrl(element.onClickMusicChange);
-      if (!this.audioRef || this.audioRef.src !== newMusicUrl) {
-        if (this.audioRef) {
-          this.audioRef.pause();
-        }
-        this.audioRef = new Audio(newMusicUrl);
-        this.audioRef.loop = true;
-        this.audioRef.volume = 0.5;
-        this.audioRef.play().catch(console.error);
-      }
+      this.playMusic(element.onClickMusicChange);
     }
 
     this.pendingNavigation = null;
@@ -261,31 +252,56 @@ class Engine {
   handleBackgroundMusic() {
     if (!this.currentScene) return;
 
-    const newMusicUrl = this.currentScene.music
-      ? this.getResourceUrl(this.currentScene.music)
-      : null;
-
-    if (newMusicUrl) {
-      if (
-        this.audioRef &&
-        this.audioRef.src === newMusicUrl &&
-        !this.audioRef.paused
-      ) {
-        return;
-      }
-
-      if (this.audioRef) {
-        this.audioRef.pause();
-      }
-
-      this.audioRef = new Audio(newMusicUrl);
-      this.audioRef.loop = true;
-      this.audioRef.volume = 0.5;
-      this.audioRef.play().catch(console.error);
-    } else if (this.audioRef) {
-      this.audioRef.pause();
-      this.audioRef = null;
+    if (this.currentScene.music) {
+      this.playMusic(this.currentScene.music);
+    } else {
+      this.stopMusic();
     }
+  }
+
+  playSound(soundPath) {
+    if (!soundPath) return;
+
+    if (this.soundEffectRef) {
+      this.soundEffectRef.pause();
+      this.soundEffectRef.currentTime = 0;
+    }
+    this.soundEffectRef = new Audio(this.getResourceUrl(soundPath));
+    this.soundEffectRef.volume = 0.7;
+    this.soundEffectRef.play().catch(console.error);
+  }
+
+  playMusic(musicPath) {
+    if (!musicPath) return;
+
+    const newMusicUrl = this.getResourceUrl(musicPath);
+
+    // Don't restart if same music is already playing
+    if (this.currentMusicPath === musicPath && this.musicRef && !this.musicRef.paused) {
+      return;
+    }
+
+    // Stop current music
+    if (this.musicRef) {
+      this.musicRef.pause();
+      this.musicRef.currentTime = 0;
+    }
+
+    // Start new music
+    this.musicRef = new Audio(newMusicUrl);
+    this.musicRef.loop = true;
+    this.musicRef.volume = 0.5;
+    this.currentMusicPath = musicPath;
+    this.musicRef.play().catch(console.error);
+  }
+
+  stopMusic() {
+    if (this.musicRef) {
+      this.musicRef.pause();
+      this.musicRef.currentTime = 0;
+      this.musicRef = null;
+    }
+    this.currentMusicPath = null;
   }
 
   scheduleSceneText() {
@@ -454,11 +470,19 @@ class Engine {
     return 16 / 9;
   }
 
+  // Stop all audio without destroying the engine instance
+  stopAudio() {
+    this.stopMusic();
+    if (this.soundEffectRef) {
+      this.soundEffectRef.pause();
+      this.soundEffectRef.currentTime = 0;
+      this.soundEffectRef = null;
+    }
+  }
+
   // Cleanup method for React components
   destroy() {
-    if (this.audioRef) {
-      this.audioRef.pause();
-    }
+    this.stopAudio();
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
     }

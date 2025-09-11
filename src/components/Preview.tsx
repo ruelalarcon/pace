@@ -15,12 +15,18 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
   const canvasId = "pace-canvas-preview";
 
   useEffect(() => {
+    // Clean up any existing Engine instances first
+    if (gameEngineRef.current && gameEngineRef.current.destroy) {
+      gameEngineRef.current.destroy();
+      gameEngineRef.current = null;
+    }
+
     import("./Engine.js")
       .then((module) => {
         const Engine = module.default || module;
 
         const canvas = document.getElementById(canvasId);
-        if (canvas) {
+        if (canvas && !gameEngineRef.current) {
           gameEngineRef.current = new Engine(
             project,
             {},
@@ -50,9 +56,10 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
     return () => {
       if (gameEngineRef.current && gameEngineRef.current.destroy) {
         gameEngineRef.current.destroy();
+        gameEngineRef.current = null;
       }
     };
-  }, [project]);
+  }, [project, canvasId]);
 
   if (!project.scenes || project.scenes.length === 0) {
     return (
