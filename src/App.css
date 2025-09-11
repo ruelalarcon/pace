@@ -1,7 +1,7 @@
 /* Global Styles */
 @font-face {
-  font-family: 'Geist';
-  src: url('./assets/fonts/Geist[wght].woff2') format('woff2');
+  font-family: "Geist";
+  src: url("./assets/fonts/Geist[wght].woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -45,7 +45,13 @@
   height: 100vh;
   background-color: var(--base);
   color: var(--text);
-  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family:
+    "Geist",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    sans-serif;
 }
 
 /* Loading Styles */
@@ -69,8 +75,12 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Button Styles */
@@ -85,7 +95,13 @@
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.05s ease, box-shadow 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.05s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease;
   outline: none;
 }
 
@@ -106,7 +122,7 @@
 .btn-primary {
   background-color: var(--primary);
   color: var(--base);
-  border-color: rgba(0,0,0,0);
+  border-color: rgba(0, 0, 0, 0);
 }
 
 .btn-primary:hover {
@@ -126,7 +142,7 @@
 .btn-danger {
   background-color: var(--danger);
   color: var(--base);
-  border-color: rgba(0,0,0,0);
+  border-color: rgba(0, 0, 0, 0);
 }
 
 .btn-danger:hover {
@@ -149,7 +165,10 @@
   font-family: inherit;
   font-size: 14px;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .input:hover {
@@ -229,7 +248,7 @@ textarea.input {
   bottom: 0;
   background-color: var(--surface0);
   border: 1px solid var(--surface1);
-  transition: .3s;
+  transition: 0.3s;
   border-radius: 20px;
 }
 
@@ -241,7 +260,7 @@ textarea.input {
   left: 2px;
   bottom: 2px;
   background-color: var(--subtext1);
-  transition: .3s;
+  transition: 0.3s;
   border-radius: 50%;
 }
 
@@ -286,7 +305,6 @@ textarea.input {
   opacity: 0.5;
   cursor: not-allowed;
 }
-
 
 /* Modal Styles */
 .modal-overlay {
@@ -391,7 +409,12 @@ textarea.input {
   font-family: inherit;
   font-size: 12px;
   font-weight: 600;
-  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.05s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease,
+    transform 0.05s ease;
 }
 
 .file-upload-button:hover {
@@ -431,14 +454,23 @@ textarea.input {
   background-color: var(--surface1);
 }
 
-
 /* Animations */
 @keyframes overlayFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modalPop {
-  from { opacity: 0; transform: scale(0.96) translateY(6px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

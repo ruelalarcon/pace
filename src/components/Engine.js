@@ -4,346 +4,362 @@
  */
 
 class Engine {
-    constructor(project, resources, options = {}) {
-        this.project = project;
-        this.resources = resources || {};
-        this.canvasId = options.canvasId || 'pace-canvas';
-        this.serverUrl = options.serverUrl || 'http://localhost:3001';
+  constructor(project, resources, options = {}) {
+    this.project = project;
+    this.resources = resources || {};
+    this.canvasId = options.canvasId || "pace-canvas";
+    this.serverUrl = options.serverUrl || "http://localhost:3001";
 
-        // Game state
-        this.currentScene = null;
-        this.textboxVisible = false;
-        this.textboxContent = '';
-        this.textboxIndex = 0;
-        this.isTyping = false;
-        this.textLines = [];
-        this.currentLineIndex = 0;
-        this.hoveredElementId = null;
-        this.canvas = null;
-        this.canvasRect = null;
-        this.audioRef = null;
-        this.typingInterval = null;
-        this.pendingNavigation = null;
-        this.sceneTextTimer = null;
+    // Game state
+    this.currentScene = null;
+    this.textboxVisible = false;
+    this.textboxContent = "";
+    this.textboxIndex = 0;
+    this.isTyping = false;
+    this.textLines = [];
+    this.currentLineIndex = 0;
+    this.hoveredElementId = null;
+    this.canvas = null;
+    this.canvasRect = null;
+    this.audioRef = null;
+    this.typingInterval = null;
+    this.pendingNavigation = null;
+    this.sceneTextTimer = null;
 
-        // Configuration
-        this.sceneTextDelay = 300;
-        this.textLetterDelay = 10;
+    // Configuration
+    this.sceneTextDelay = 300;
+    this.textLetterDelay = 10;
 
-        this.init();
+    this.init();
+  }
+
+  init() {
+    this.canvas = document.getElementById(this.canvasId);
+    if (!this.canvas) {
+      console.error(`Canvas element with id "${this.canvasId}" not found`);
+      return;
     }
 
-    init() {
-        this.canvas = document.getElementById(this.canvasId);
-        if (!this.canvas) {
-            console.error(`Canvas element with id "${this.canvasId}" not found`);
-            return;
-        }
+    // Set up initial scene
+    if (this.project.scenes && this.project.scenes.length > 0) {
+      this.setCurrentScene(this.project.scenes[0]);
+    }
 
-        // Set up initial scene
-        if (this.project.scenes && this.project.scenes.length > 0) {
-            this.setCurrentScene(this.project.scenes[0]);
-        }
+    // Set up resize observer
+    this.canvasResizeObserver = new ResizeObserver(() => {
+      this.updateCanvasRect();
+      this.adjustCanvasSizeToAspect();
+    });
+    this.canvasResizeObserver.observe(this.canvas);
 
-        // Set up resize observer
-        this.canvasResizeObserver = new ResizeObserver(() => {
-            this.updateCanvasRect();
-            this.adjustCanvasSizeToAspect();
-        });
-        this.canvasResizeObserver.observe(this.canvas);
-
-        if (this.canvas.parentElement) {
-            this.parentResizeObserver = new ResizeObserver(() => {
-                this.updateCanvasRect();
-                this.adjustCanvasSizeToAspect();
-            });
-            this.parentResizeObserver.observe(this.canvas.parentElement);
-        }
+    if (this.canvas.parentElement) {
+      this.parentResizeObserver = new ResizeObserver(() => {
         this.updateCanvasRect();
         this.adjustCanvasSizeToAspect();
+      });
+      this.parentResizeObserver.observe(this.canvas.parentElement);
+    }
+    this.updateCanvasRect();
+    this.adjustCanvasSizeToAspect();
+  }
+
+  updateCanvasRect() {
+    this.canvasRect = this.canvas.getBoundingClientRect();
+  }
+
+  setCurrentScene(scene) {
+    this.currentScene = scene;
+    this.clearTextbox();
+    this.setupScene();
+    this.handleBackgroundMusic();
+    this.scheduleSceneText();
+    this.adjustCanvasSizeToAspect();
+  }
+
+  setupScene() {
+    if (!this.currentScene) return;
+
+    // Set aspect ratio
+    const aspectRatio = this.getAspectRatio();
+    this.canvas.style.aspectRatio = aspectRatio;
+
+    // Set background image
+    if (this.currentScene.backgroundImage) {
+      const bgUrl = this.getResourceUrl(this.currentScene.backgroundImage);
+      this.canvas.style.backgroundImage = `url(${bgUrl})`;
+    } else {
+      this.canvas.style.backgroundImage = "";
     }
 
-    updateCanvasRect() {
-        this.canvasRect = this.canvas.getBoundingClientRect();
+    // Clear and render elements
+    this.canvas.innerHTML = "";
+    if (!this.currentScene.backgroundImage) {
+      const placeholder = document.createElement("div");
+      placeholder.className = "pace-canvas-placeholder";
+      placeholder.innerHTML = "<p>No background image</p>";
+      this.canvas.appendChild(placeholder);
     }
 
-    setCurrentScene(scene) {
-        this.currentScene = scene;
-        this.clearTextbox();
-        this.setupScene();
-        this.handleBackgroundMusic();
-        this.scheduleSceneText();
-        this.adjustCanvasSizeToAspect();
+    this.currentScene.elements.forEach((element) => {
+      this.renderElement(element);
+    });
+  }
+
+  adjustCanvasSizeToAspect() {
+    if (!this.canvas || !this.canvas.parentElement) return;
+
+    const parentRect = this.canvas.parentElement.getBoundingClientRect();
+    const availableWidth = parentRect.width;
+    const availableHeight = parentRect.height;
+    if (availableWidth === 0 || availableHeight === 0) return;
+
+    const desiredAspect = this.getAspectRatio();
+    const containerAspect = availableWidth / availableHeight;
+
+    if (containerAspect > desiredAspect) {
+      // Container is wider than desired; constrain by height
+      this.canvas.style.height = "100%";
+      this.canvas.style.width = "auto";
+    } else {
+      // Container is narrower/taller; constrain by width
+      this.canvas.style.width = "100%";
+      this.canvas.style.height = "auto";
+    }
+  }
+
+  getResourceUrl(resourcePath) {
+    // If we have a base64 resource map (for exports), use it
+    if (this.resources[resourcePath]) {
+      return this.resources[resourcePath];
     }
 
-    setupScene() {
-        if (!this.currentScene) return;
+    // Otherwise, use server URL (for preview)
+    return `${this.serverUrl}${resourcePath}`;
+  }
 
-        // Set aspect ratio
-        const aspectRatio = this.getAspectRatio();
-        this.canvas.style.aspectRatio = aspectRatio;
+  renderElement(element) {
+    const elementDiv = document.createElement("div");
+    elementDiv.className = "pace-element";
+    elementDiv.id = `element-${element.id}`;
 
-        // Set background image
-        if (this.currentScene.backgroundImage) {
-            const bgUrl = this.getResourceUrl(this.currentScene.backgroundImage);
-            this.canvas.style.backgroundImage = `url(${bgUrl})`;
-        } else {
-            this.canvas.style.backgroundImage = '';
-        }
-
-        // Clear and render elements
-        this.canvas.innerHTML = '';
-        if (!this.currentScene.backgroundImage) {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'pace-canvas-placeholder';
-            placeholder.innerHTML = '<p>No background image</p>';
-            this.canvas.appendChild(placeholder);
-        }
-
-        this.currentScene.elements.forEach(element => {
-            this.renderElement(element);
-        });
+    if (!this.canvasRect) {
+      this.updateCanvasRect();
     }
 
-    adjustCanvasSizeToAspect() {
-        if (!this.canvas || !this.canvas.parentElement) return;
+    const sceneAspectRatio = this.canvasRect.width / this.canvasRect.height;
+    const elementHeight = element.scale;
+    const elementWidth =
+      (element.scale * element.aspectRatio) / sceneAspectRatio;
 
-        const parentRect = this.canvas.parentElement.getBoundingClientRect();
-        const availableWidth = parentRect.width;
-        const availableHeight = parentRect.height;
-        if (availableWidth === 0 || availableHeight === 0) return;
+    const width = `${elementWidth * 100}%`;
+    const height = `${elementHeight * 100}%`;
 
-        const desiredAspect = this.getAspectRatio();
-        const containerAspect = availableWidth / availableHeight;
+    elementDiv.style.left = `calc(${element.x * 100}% - (${width}) / 2)`;
+    elementDiv.style.top = `calc(${element.y * 100}% - (${height}) / 2)`;
+    elementDiv.style.width = width;
+    elementDiv.style.height = height;
+    elementDiv.style.cursor = "pointer";
 
-        if (containerAspect > desiredAspect) {
-            // Container is wider than desired; constrain by height
-            this.canvas.style.height = '100%';
-            this.canvas.style.width = 'auto';
-        } else {
-            // Container is narrower/taller; constrain by width
-            this.canvas.style.width = '100%';
-            this.canvas.style.height = 'auto';
-        }
+    if (element.cornerRadius) {
+      elementDiv.style.borderRadius = `${element.cornerRadius}px`;
     }
 
-    getResourceUrl(resourcePath) {
-        // If we have a base64 resource map (for exports), use it
-        if (this.resources[resourcePath]) {
-            return this.resources[resourcePath];
-        }
-
-        // Otherwise, use server URL (for preview)
-        return `${this.serverUrl}${resourcePath}`;
+    // Add image or placeholder
+    if (element.image) {
+      const img = document.createElement("img");
+      img.src = this.getResourceUrl(element.image);
+      img.alt = element.name;
+      img.className = "pace-element-image";
+      img.draggable = false;
+      elementDiv.appendChild(img);
+    } else {
+      const placeholder = document.createElement("div");
+      placeholder.className = "pace-element-placeholder";
+      elementDiv.appendChild(placeholder);
     }
 
-    renderElement(element) {
-        const elementDiv = document.createElement('div');
-        elementDiv.className = 'pace-element';
-        elementDiv.id = `element-${element.id}`;
+    // Add event listeners
+    elementDiv.addEventListener("click", () =>
+      this.handleElementClick(element),
+    );
+    elementDiv.addEventListener("mouseenter", () =>
+      this.handleElementHover(element, true),
+    );
+    elementDiv.addEventListener("mouseleave", () =>
+      this.handleElementHover(element, false),
+    );
 
-        if (!this.canvasRect) {
-            this.updateCanvasRect();
-        }
+    this.canvas.appendChild(elementDiv);
+  }
 
-        const sceneAspectRatio = this.canvasRect.width / this.canvasRect.height;
-        const elementHeight = element.scale;
-        const elementWidth = (element.scale * element.aspectRatio) / sceneAspectRatio;
-
-        const width = `${elementWidth * 100}%`;
-        const height = `${elementHeight * 100}%`;
-
-        elementDiv.style.left = `calc(${element.x * 100}% - (${width}) / 2)`;
-        elementDiv.style.top = `calc(${element.y * 100}% - (${height}) / 2)`;
-        elementDiv.style.width = width;
-        elementDiv.style.height = height;
-        elementDiv.style.cursor = 'pointer';
-
-        if (element.cornerRadius) {
-            elementDiv.style.borderRadius = `${element.cornerRadius}px`;
-        }
-
-        // Add image or placeholder
-        if (element.image) {
-            const img = document.createElement('img');
-            img.src = this.getResourceUrl(element.image);
-            img.alt = element.name;
-            img.className = 'pace-element-image';
-            img.draggable = false;
-            elementDiv.appendChild(img);
-        } else {
-            const placeholder = document.createElement('div');
-            placeholder.className = 'pace-element-placeholder';
-            elementDiv.appendChild(placeholder);
-        }
-
-        // Add event listeners
-        elementDiv.addEventListener('click', () => this.handleElementClick(element));
-        elementDiv.addEventListener('mouseenter', () => this.handleElementHover(element, true));
-        elementDiv.addEventListener('mouseleave', () => this.handleElementHover(element, false));
-
-        this.canvas.appendChild(elementDiv);
+  handleElementClick(element) {
+    // Play click sound
+    if (element.onClickSound) {
+      const audio = new Audio(this.getResourceUrl(element.onClickSound));
+      audio.volume = 0.7;
+      audio.play().catch(console.error);
     }
 
-    handleElementClick(element) {
-        // Play click sound
-        if (element.onClickSound) {
-            const audio = new Audio(this.getResourceUrl(element.onClickSound));
-            audio.volume = 0.7;
-            audio.play().catch(console.error);
+    // Change music
+    if (element.onClickMusicChange) {
+      const newMusicUrl = this.getResourceUrl(element.onClickMusicChange);
+      if (!this.audioRef || this.audioRef.src !== newMusicUrl) {
+        if (this.audioRef) {
+          this.audioRef.pause();
         }
-
-        // Change music
-        if (element.onClickMusicChange) {
-            const newMusicUrl = this.getResourceUrl(element.onClickMusicChange);
-            if (!this.audioRef || this.audioRef.src !== newMusicUrl) {
-                if (this.audioRef) {
-                    this.audioRef.pause();
-                }
-                this.audioRef = new Audio(newMusicUrl);
-                this.audioRef.loop = true;
-                this.audioRef.volume = 0.5;
-                this.audioRef.play().catch(console.error);
-            }
-        }
-
-        this.pendingNavigation = null;
-
-        const hasText = typeof element.onClickText === 'string' && element.onClickText.trim().length > 0;
-
-        if (element.destinationScene) {
-            if (hasText) {
-                this.pendingNavigation = element.destinationScene;
-                this.showTextbox(element.onClickText);
-            } else {
-                this.navigateToScene(element.destinationScene);
-            }
-        } else if (hasText) {
-            this.showTextbox(element.onClickText);
-        }
+        this.audioRef = new Audio(newMusicUrl);
+        this.audioRef.loop = true;
+        this.audioRef.volume = 0.5;
+        this.audioRef.play().catch(console.error);
+      }
     }
 
-    handleElementHover(element, isHovered) {
-        const elementDiv = document.getElementById(`element-${element.id}`);
-        if (!elementDiv) return;
+    this.pendingNavigation = null;
 
-        if (isHovered && element.highlightOnHover) {
-            elementDiv.style.filter = `drop-shadow(0 0 8px ${element.highlightColor || '#ffffff'})`;
-            elementDiv.style.zIndex = '30';
-        } else {
-            elementDiv.style.filter = '';
-            elementDiv.style.zIndex = '10';
-        }
+    const hasText =
+      typeof element.onClickText === "string" &&
+      element.onClickText.trim().length > 0;
+
+    if (element.destinationScene) {
+      if (hasText) {
+        this.pendingNavigation = element.destinationScene;
+        this.showTextbox(element.onClickText);
+      } else {
+        this.navigateToScene(element.destinationScene);
+      }
+    } else if (hasText) {
+      this.showTextbox(element.onClickText);
+    }
+  }
+
+  handleElementHover(element, isHovered) {
+    const elementDiv = document.getElementById(`element-${element.id}`);
+    if (!elementDiv) return;
+
+    if (isHovered && element.highlightOnHover) {
+      elementDiv.style.filter = `drop-shadow(0 0 8px ${element.highlightColor || "#ffffff"})`;
+      elementDiv.style.zIndex = "30";
+    } else {
+      elementDiv.style.filter = "";
+      elementDiv.style.zIndex = "10";
+    }
+  }
+
+  navigateToScene(sceneId) {
+    const targetScene = this.project.scenes.find(
+      (scene) => scene.id === sceneId,
+    );
+    if (targetScene) {
+      this.setCurrentScene(targetScene);
+    }
+  }
+
+  handleBackgroundMusic() {
+    if (!this.currentScene) return;
+
+    const newMusicUrl = this.currentScene.music
+      ? this.getResourceUrl(this.currentScene.music)
+      : null;
+
+    if (newMusicUrl) {
+      if (
+        this.audioRef &&
+        this.audioRef.src === newMusicUrl &&
+        !this.audioRef.paused
+      ) {
+        return;
+      }
+
+      if (this.audioRef) {
+        this.audioRef.pause();
+      }
+
+      this.audioRef = new Audio(newMusicUrl);
+      this.audioRef.loop = true;
+      this.audioRef.volume = 0.5;
+      this.audioRef.play().catch(console.error);
+    } else if (this.audioRef) {
+      this.audioRef.pause();
+      this.audioRef = null;
+    }
+  }
+
+  scheduleSceneText() {
+    if (this.sceneTextTimer) {
+      clearTimeout(this.sceneTextTimer);
+      this.sceneTextTimer = null;
     }
 
-    navigateToScene(sceneId) {
-        const targetScene = this.project.scenes.find(scene => scene.id === sceneId);
-        if (targetScene) {
-            this.setCurrentScene(targetScene);
-        }
+    if (this.currentScene && this.currentScene.sceneText) {
+      this.pendingNavigation = null;
+      this.sceneTextTimer = setTimeout(() => {
+        this.showTextbox(this.currentScene.sceneText);
+        this.sceneTextTimer = null;
+      }, this.sceneTextDelay);
+    }
+  }
+
+  showTextbox(text) {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
     }
 
-    handleBackgroundMusic() {
-        if (!this.currentScene) return;
-
-        const newMusicUrl = this.currentScene.music
-            ? this.getResourceUrl(this.currentScene.music) : null;
-
-        if (newMusicUrl) {
-            if (this.audioRef && this.audioRef.src === newMusicUrl && !this.audioRef.paused) {
-                return;
-            }
-
-            if (this.audioRef) {
-                this.audioRef.pause();
-            }
-
-            this.audioRef = new Audio(newMusicUrl);
-            this.audioRef.loop = true;
-            this.audioRef.volume = 0.5;
-            this.audioRef.play().catch(console.error);
-        } else if (this.audioRef) {
-            this.audioRef.pause();
-            this.audioRef = null;
-        }
+    if (this.sceneTextTimer) {
+      clearTimeout(this.sceneTextTimer);
+      this.sceneTextTimer = null;
     }
 
-    scheduleSceneText() {
-        if (this.sceneTextTimer) {
-            clearTimeout(this.sceneTextTimer);
-            this.sceneTextTimer = null;
-        }
+    const lines = text.split("\n").filter((l) => l.trim() !== "");
+    if (lines.length === 0) return;
 
-        if (this.currentScene && this.currentScene.sceneText) {
-            this.pendingNavigation = null;
-            this.sceneTextTimer = setTimeout(() => {
-                this.showTextbox(this.currentScene.sceneText);
-                this.sceneTextTimer = null;
-            }, this.sceneTextDelay);
-        }
+    this.textLines = lines;
+    this.currentLineIndex = 0;
+    this.textboxContent = lines[0];
+    this.startTyping(lines[0]);
+    this.textboxVisible = true;
+    this.renderTextbox();
+  }
+
+  startTyping(line) {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
     }
 
-    showTextbox(text) {
-        if (this.typingInterval) {
-            clearInterval(this.typingInterval);
-        }
+    this.textboxIndex = 0;
+    this.isTyping = true;
 
-        if (this.sceneTextTimer) {
-            clearTimeout(this.sceneTextTimer);
-            this.sceneTextTimer = null;
-        }
+    let index = 0;
+    this.typingInterval = setInterval(() => {
+      index++;
+      this.textboxIndex = index;
+      this.updateTextboxText();
 
-        const lines = text.split('\n').filter(l => l.trim() !== '');
-        if (lines.length === 0) return;
-
-        this.textLines = lines;
-        this.currentLineIndex = 0;
-        this.textboxContent = lines[0];
-        this.startTyping(lines[0]);
-        this.textboxVisible = true;
-        this.renderTextbox();
-    }
-
-    startTyping(line) {
-        if (this.typingInterval) {
-            clearInterval(this.typingInterval);
-        }
-
-        this.textboxIndex = 0;
-        this.isTyping = true;
-
-        let index = 0;
-        this.typingInterval = setInterval(() => {
-            index++;
-            this.textboxIndex = index;
-            this.updateTextboxText();
-
-            if (index >= line.length) {
-                this.isTyping = false;
-                clearInterval(this.typingInterval);
-                this.updateTextboxContinue();
-            }
-        }, this.textLetterDelay);
-
+      if (index >= line.length) {
+        this.isTyping = false;
+        clearInterval(this.typingInterval);
         this.updateTextboxContinue();
+      }
+    }, this.textLetterDelay);
+
+    this.updateTextboxContinue();
+  }
+
+  renderTextbox() {
+    // Always recreate the textbox to ensure fresh listeners and markup
+    const existing = document.querySelector(".pace-textbox");
+    if (existing && existing.parentElement) {
+      existing.parentElement.removeChild(existing);
     }
 
-    renderTextbox() {
-        // Always recreate the textbox to ensure fresh listeners and markup
-        const existing = document.querySelector('.pace-textbox');
-        if (existing && existing.parentElement) {
-            existing.parentElement.removeChild(existing);
-        }
+    const textbox = document.createElement("div");
+    textbox.className = "pace-textbox";
+    textbox.addEventListener("click", (e) => {
+      e.stopPropagation();
+      this.handleTextboxClick();
+    });
+    this.canvas.appendChild(textbox);
 
-        const textbox = document.createElement('div');
-        textbox.className = 'pace-textbox';
-        textbox.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.handleTextboxClick();
-        });
-        this.canvas.appendChild(textbox);
-
-        textbox.innerHTML = `
+    textbox.innerHTML = `
             <div class="pace-textbox-content">
                 <p class="pace-textbox-text" id="textbox-text"></p>
             </div>
@@ -352,107 +368,111 @@ class Engine {
             </div>
         `;
 
-        this.updateTextboxText();
-        this.updateTextboxContinue();
+    this.updateTextboxText();
+    this.updateTextboxContinue();
+  }
+
+  updateTextboxText() {
+    const textElement = document.getElementById("textbox-text");
+    if (textElement) {
+      const currentLine = this.textLines[this.currentLineIndex] || "";
+      const displayText =
+        currentLine.substring(0, this.textboxIndex) || "\u00A0";
+      textElement.textContent = displayText;
+    }
+  }
+
+  updateTextboxContinue() {
+    const continueElement = document.getElementById("textbox-continue");
+    if (continueElement) {
+      continueElement.textContent = this.isTyping
+        ? "Click to Fast Forward"
+        : "Click to Continue";
+    }
+  }
+
+  handleTextboxClick() {
+    if (this.isTyping) {
+      if (this.typingInterval) {
+        clearInterval(this.typingInterval);
+      }
+      const fullLine =
+        this.textLines[this.currentLineIndex] || this.textboxContent;
+      this.textboxIndex = fullLine.length;
+      this.isTyping = false;
+      this.updateTextboxText();
+      this.updateTextboxContinue();
+    } else {
+      const nextIndex = this.currentLineIndex + 1;
+      if (nextIndex < this.textLines.length) {
+        this.currentLineIndex = nextIndex;
+        this.textboxContent = this.textLines[nextIndex];
+        this.startTyping(this.textLines[nextIndex]);
+      } else {
+        this.clearTextbox();
+        if (this.pendingNavigation) {
+          this.navigateToScene(this.pendingNavigation);
+          this.pendingNavigation = null;
+        }
+      }
+    }
+  }
+
+  clearTextbox() {
+    const textbox = document.querySelector(".pace-textbox");
+    if (textbox) {
+      textbox.remove();
     }
 
-    updateTextboxText() {
-        const textElement = document.getElementById('textbox-text');
-        if (textElement) {
-            const currentLine = this.textLines[this.currentLineIndex] || '';
-            const displayText = currentLine.substring(0, this.textboxIndex) || '\u00A0';
-            textElement.textContent = displayText;
-        }
+    this.textboxVisible = false;
+    this.textboxContent = "";
+    this.textboxIndex = 0;
+    this.isTyping = false;
+    this.textLines = [];
+    this.currentLineIndex = 0;
+
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
     }
+  }
 
-    updateTextboxContinue() {
-        const continueElement = document.getElementById('textbox-continue');
-        if (continueElement) {
-            continueElement.textContent = this.isTyping ? 'Click to Fast Forward' : 'Click to Continue';
+  getAspectRatio() {
+    if (this.currentScene && this.currentScene.aspectRatio) {
+      const parts = this.currentScene.aspectRatio.split(":");
+      if (parts.length === 2) {
+        const width = parseFloat(parts[0]);
+        const height = parseFloat(parts[1]);
+        if (!isNaN(width) && !isNaN(height) && height > 0) {
+          return width / height;
         }
+      }
     }
+    return 16 / 9;
+  }
 
-    handleTextboxClick() {
-        if (this.isTyping) {
-            if (this.typingInterval) {
-                clearInterval(this.typingInterval);
-            }
-            const fullLine = this.textLines[this.currentLineIndex] || this.textboxContent;
-            this.textboxIndex = fullLine.length;
-            this.isTyping = false;
-            this.updateTextboxText();
-            this.updateTextboxContinue();
-        } else {
-            const nextIndex = this.currentLineIndex + 1;
-            if (nextIndex < this.textLines.length) {
-                this.currentLineIndex = nextIndex;
-                this.textboxContent = this.textLines[nextIndex];
-                this.startTyping(this.textLines[nextIndex]);
-            } else {
-                this.clearTextbox();
-                if (this.pendingNavigation) {
-                    this.navigateToScene(this.pendingNavigation);
-                    this.pendingNavigation = null;
-                }
-            }
-        }
+  // Cleanup method for React components
+  destroy() {
+    if (this.audioRef) {
+      this.audioRef.pause();
     }
-
-    clearTextbox() {
-        const textbox = document.querySelector('.pace-textbox');
-        if (textbox) {
-            textbox.remove();
-        }
-
-        this.textboxVisible = false;
-        this.textboxContent = '';
-        this.textboxIndex = 0;
-        this.isTyping = false;
-        this.textLines = [];
-        this.currentLineIndex = 0;
-
-        if (this.typingInterval) {
-            clearInterval(this.typingInterval);
-        }
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
     }
-
-    getAspectRatio() {
-        if (this.currentScene && this.currentScene.aspectRatio) {
-            const parts = this.currentScene.aspectRatio.split(':');
-            if (parts.length === 2) {
-                const width = parseFloat(parts[0]);
-                const height = parseFloat(parts[1]);
-                if (!isNaN(width) && !isNaN(height) && height > 0) {
-                    return width / height;
-                }
-            }
-        }
-        return 16 / 9;
+    if (this.sceneTextTimer) {
+      clearTimeout(this.sceneTextTimer);
     }
-
-    // Cleanup method for React components
-    destroy() {
-        if (this.audioRef) {
-            this.audioRef.pause();
-        }
-        if (this.typingInterval) {
-            clearInterval(this.typingInterval);
-        }
-        if (this.sceneTextTimer) {
-            clearTimeout(this.sceneTextTimer);
-        }
-        if (this.canvasResizeObserver) {
-            this.canvasResizeObserver.disconnect();
-        }
-        if (this.parentResizeObserver) {
-            this.parentResizeObserver.disconnect();
-        }
+    if (this.canvasResizeObserver) {
+      this.canvasResizeObserver.disconnect();
     }
+    if (this.parentResizeObserver) {
+      this.parentResizeObserver.disconnect();
+    }
+  }
 }
 
 // Export for both ES modules and global usage
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = Engine;
-} else if (typeof window !== 'undefined') {
-    window.Engine = Engine;
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = Engine;
+} else if (typeof window !== "undefined") {
+  window.Engine = Engine;
 }

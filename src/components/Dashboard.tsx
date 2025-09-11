@@ -1,7 +1,17 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Project } from '../types';
-import { Plus, Trash2, Search, Layers, Shapes, Calendar, FolderOpen, Image as ImageIcon, ChevronDown } from 'lucide-react';
-import './Dashboard.css';
+import React, { useState, useEffect, useMemo } from "react";
+import { Project } from "../types";
+import {
+  Plus,
+  Trash2,
+  Search,
+  Layers,
+  Shapes,
+  Calendar,
+  FolderOpen,
+  Image as ImageIcon,
+  ChevronDown,
+} from "lucide-react";
+import "./Dashboard.css";
 
 interface DashboardProps {
   onOpenProject: (projectName: string) => void;
@@ -11,10 +21,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectName, setNewProjectName] = useState("");
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState<'recent' | 'name' | 'scenes'>('recent');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState<"recent" | "name" | "scenes">("recent");
 
   useEffect(() => {
     loadProjects();
@@ -22,11 +32,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
 
   const loadProjects = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/projects');
+      const response = await fetch("http://localhost:3001/api/projects");
       const projectsData = await response.json();
       setProjects(projectsData);
     } catch (error) {
-      console.error('Error loading projects:', error);
+      console.error("Error loading projects:", error);
     }
     setIsLoading(false);
   };
@@ -35,16 +45,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     if (!newProjectName.trim()) return;
 
     try {
-      const response = await fetch('http://localhost:3001/api/projects', {
-        method: 'POST',
+      const response = await fetch("http://localhost:3001/api/projects", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ name: newProjectName }),
       });
 
       if (response.ok) {
-        setNewProjectName('');
+        setNewProjectName("");
         setIsCreating(false);
         loadProjects();
       } else {
@@ -52,7 +62,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
         alert(error.error);
       }
     } catch (error) {
-      console.error('Error creating project:', error);
+      console.error("Error creating project:", error);
     }
   };
 
@@ -60,18 +70,23 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     if (!projectToDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(projectToDelete.name)}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/projects/${encodeURIComponent(
+          projectToDelete.name,
+        )}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (response.ok) {
         setProjectToDelete(null);
         loadProjects();
       } else {
-        alert('Failed to delete project.');
+        alert("Failed to delete project.");
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
     }
   };
 
@@ -81,24 +96,32 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
 
   const totals = useMemo(() => {
     const totalScenes = projects.reduce((acc, p) => acc + p.scenes.length, 0);
-    const totalElements = projects.reduce((acc, p) => acc + p.scenes.reduce((s, sc) => s + sc.elements.length, 0), 0);
+    const totalElements = projects.reduce(
+      (acc, p) => acc + p.scenes.reduce((s, sc) => s + sc.elements.length, 0),
+      0,
+    );
     return { totalScenes, totalElements };
   }, [projects]);
 
   const filteredProjects = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
-    let list = projects.filter(p => p.name.toLowerCase().includes(q));
+    let list = projects.filter((p) => p.name.toLowerCase().includes(q));
 
     switch (sortBy) {
-      case 'name':
+      case "name":
         list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case 'scenes':
+      case "scenes":
         list = list.slice().sort((a, b) => b.scenes.length - a.scenes.length);
         break;
-      case 'recent':
+      case "recent":
       default:
-        list = list.slice().sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        list = list
+          .slice()
+          .sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
         break;
     }
     return list;
@@ -117,7 +140,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     <div className="dashboard">
       <div className="dashboard-header">
         <div className="title-container">
-          <img src="/resources/logo.svg" alt="PACE Logo" className="dashboard-logo" />
+          <img
+            src="/resources/logo.svg"
+            alt="PACE Logo"
+            className="dashboard-logo"
+          />
           <h1 className="dashboard-title">PACE Editor</h1>
         </div>
         <p className="dashboard-subtitle">The Point-and-Click Engine Editor</p>
@@ -140,7 +167,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               <select
                 className="input select sort-select"
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'recent' | 'name' | 'scenes')}
+                onChange={(e) =>
+                  setSortBy(e.target.value as "recent" | "name" | "scenes")
+                }
                 aria-label="Sort projects"
               >
                 <option value="recent">Sort: Recent</option>
@@ -161,8 +190,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
         </div>
 
         <div className="stats-row">
-          <div className="stat-chip"><Layers size={14} /> {totals.totalScenes} scenes</div>
-          <div className="stat-chip"><Shapes size={14} /> {totals.totalElements} elements</div>
+          <div className="stat-chip">
+            <Layers size={14} /> {totals.totalScenes} scenes
+          </div>
+          <div className="stat-chip">
+            <Shapes size={14} /> {totals.totalElements} elements
+          </div>
           <div className="stat-chip">{filteredProjects.length} projects</div>
         </div>
 
@@ -175,8 +208,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
           ) : (
             filteredProjects.map((project) => {
               const sceneCount = project.scenes.length;
-              const elementCount = project.scenes.reduce((acc, s) => acc + s.elements.length, 0);
-              const thumb = project.scenes.find(s => s.backgroundImage)?.backgroundImage;
+              const elementCount = project.scenes.reduce(
+                (acc, s) => acc + s.elements.length,
+                0,
+              );
+              const thumb = project.scenes.find(
+                (s) => s.backgroundImage,
+              )?.backgroundImage;
 
               return (
                 <div
@@ -184,7 +222,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                   className="project-card"
                   onClick={() => onOpenProject(project.name)}
                 >
-                  <div className="project-thumb" style={thumb ? { backgroundImage: `url(http://localhost:3001${thumb})` } : undefined}>
+                  <div
+                    className="project-thumb"
+                    style={
+                      thumb
+                        ? {
+                            backgroundImage: `url(http://localhost:3001${thumb})`,
+                          }
+                        : undefined
+                    }
+                  >
                     {!thumb && (
                       <div className="thumb-empty">
                         <ImageIcon size={20} />
@@ -198,22 +245,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                   </div>
                   <div className="project-card-body">
                     <div className="project-meta">
-                      <span className="meta-item"><Layers size={14} /> {sceneCount}</span>
-                      <span className="meta-item"><Shapes size={14} /> {elementCount}</span>
-                      <span className="meta-item"><Calendar size={14} /> {formatDate(project.createdAt)}</span>
+                      <span className="meta-item">
+                        <Layers size={14} /> {sceneCount}
+                      </span>
+                      <span className="meta-item">
+                        <Shapes size={14} /> {elementCount}
+                      </span>
+                      <span className="meta-item">
+                        <Calendar size={14} /> {formatDate(project.createdAt)}
+                      </span>
                     </div>
                   </div>
 
                   <div className="project-actions">
                     <button
                       className="btn btn-secondary btn-small"
-                      onClick={(e) => { e.stopPropagation(); onOpenProject(project.name); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpenProject(project.name);
+                      }}
                     >
                       <FolderOpen size={14} /> Open
                     </button>
                     <button
                       className="btn btn-danger btn-small"
-                      onClick={(e) => { e.stopPropagation(); setProjectToDelete(project); }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setProjectToDelete(project);
+                      }}
                     >
                       <Trash2 size={14} /> Delete
                     </button>
@@ -242,7 +301,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                   placeholder="Enter project name..."
                   autoFocus
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === "Enter") {
                       handleCreateProject();
                     }
                   }}
@@ -254,7 +313,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 className="btn btn-secondary"
                 onClick={() => {
                   setIsCreating(false);
-                  setNewProjectName('');
+                  setNewProjectName("");
                 }}
               >
                 Cancel
@@ -278,8 +337,14 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               <h2 className="modal-title">Delete Project</h2>
             </div>
             <div className="modal-body">
-              <p>Are you sure you want to delete the project "<strong>{projectToDelete.name}</strong>"?</p>
-              <p>This action is irreversible and will delete all associated files.</p>
+              <p>
+                Are you sure you want to delete the project "
+                <strong>{projectToDelete.name}</strong>"?
+              </p>
+              <p>
+                This action is irreversible and will delete all associated
+                files.
+              </p>
             </div>
             <div className="modal-footer">
               <button
@@ -288,10 +353,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               >
                 Cancel
               </button>
-              <button
-                className="btn btn-danger"
-                onClick={handleDeleteProject}
-              >
+              <button className="btn btn-danger" onClick={handleDeleteProject}>
                 Delete Project
               </button>
             </div>

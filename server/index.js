@@ -1,8 +1,8 @@
-const express = require('express');
-const cors = require('cors');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs').promises;
+const express = require("express");
+const cors = require("cors");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs").promises;
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -10,25 +10,25 @@ const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use('/projects', express.static(path.join(__dirname, '../Projects')));
+app.use("/projects", express.static(path.join(__dirname, "../Projects")));
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const projectName = req.params.projectName;
-    const projectPath = path.join(__dirname, '../Projects', projectName);
+    const projectPath = path.join(__dirname, "../Projects", projectName);
     cb(null, projectPath);
   },
   filename: (req, file, cb) => {
     cb(null, file.originalname);
-  }
+  },
 });
 
 const upload = multer({ storage });
 
 // Ensure Projects directory exists
 async function ensureProjectsDir() {
-  const projectsDir = path.join(__dirname, '../Projects');
+  const projectsDir = path.join(__dirname, "../Projects");
   try {
     await fs.access(projectsDir);
   } catch {
@@ -37,9 +37,9 @@ async function ensureProjectsDir() {
 }
 
 // Get all projects
-app.get('/api/projects', async (req, res) => {
+app.get("/api/projects", async (req, res) => {
   try {
-    const projectsDir = path.join(__dirname, '../Projects');
+    const projectsDir = path.join(__dirname, "../Projects");
     const projects = [];
 
     const entries = await fs.readdir(projectsDir, { withFileTypes: true });
@@ -47,10 +47,10 @@ app.get('/api/projects', async (req, res) => {
     for (const entry of entries) {
       if (entry.isDirectory()) {
         const projectPath = path.join(projectsDir, entry.name);
-        const projectJsonPath = path.join(projectPath, 'project.json');
+        const projectJsonPath = path.join(projectPath, "project.json");
 
         try {
-          const projectData = await fs.readFile(projectJsonPath, 'utf-8');
+          const projectData = await fs.readFile(projectJsonPath, "utf-8");
           const project = JSON.parse(projectData);
           projects.push({ ...project, name: entry.name });
         } catch {
@@ -58,9 +58,12 @@ app.get('/api/projects', async (req, res) => {
           const basicProject = {
             name: entry.name,
             scenes: [],
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
           };
-          await fs.writeFile(projectJsonPath, JSON.stringify(basicProject, null, 2));
+          await fs.writeFile(
+            projectJsonPath,
+            JSON.stringify(basicProject, null, 2),
+          );
           projects.push({ ...basicProject, name: entry.name });
         }
       }
@@ -73,15 +76,15 @@ app.get('/api/projects', async (req, res) => {
 });
 
 // Create new project
-app.post('/api/projects', async (req, res) => {
+app.post("/api/projects", async (req, res) => {
   try {
     const { name } = req.body;
-    const projectPath = path.join(__dirname, '../Projects', name);
+    const projectPath = path.join(__dirname, "../Projects", name);
 
     // Check if project already exists
     try {
       await fs.access(projectPath);
-      return res.status(400).json({ error: 'Project already exists' });
+      return res.status(400).json({ error: "Project already exists" });
     } catch {
       // Project doesn't exist, continue
     }
@@ -93,12 +96,12 @@ app.post('/api/projects', async (req, res) => {
     const projectData = {
       name,
       scenes: [],
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     await fs.writeFile(
-      path.join(projectPath, 'project.json'),
-      JSON.stringify(projectData, null, 2)
+      path.join(projectPath, "project.json"),
+      JSON.stringify(projectData, null, 2),
     );
 
     res.json(projectData);
@@ -108,12 +111,17 @@ app.post('/api/projects', async (req, res) => {
 });
 
 // Get project details
-app.get('/api/projects/:projectName', async (req, res) => {
+app.get("/api/projects/:projectName", async (req, res) => {
   try {
     const { projectName } = req.params;
-    const projectPath = path.join(__dirname, '../Projects', projectName, 'project.json');
+    const projectPath = path.join(
+      __dirname,
+      "../Projects",
+      projectName,
+      "project.json",
+    );
 
-    const projectData = await fs.readFile(projectPath, 'utf-8');
+    const projectData = await fs.readFile(projectPath, "utf-8");
     const project = JSON.parse(projectData);
 
     res.json(project);
@@ -123,27 +131,43 @@ app.get('/api/projects/:projectName', async (req, res) => {
 });
 
 // Update project
-app.put('/api/projects/:projectName', async (req, res) => {
+app.put("/api/projects/:projectName", async (req, res) => {
   try {
     const { projectName } = req.params;
     const updatedProject = req.body;
-    const projectPathDir = path.join(__dirname, '../Projects', projectName);
-    const projectJsonPath = path.join(projectPathDir, 'project.json');
+    const projectPathDir = path.join(__dirname, "../Projects", projectName);
+    const projectJsonPath = path.join(projectPathDir, "project.json");
 
     // 1. Write the updated project.json
-    await fs.writeFile(projectJsonPath, JSON.stringify(updatedProject, null, 2));
+    await fs.writeFile(
+      projectJsonPath,
+      JSON.stringify(updatedProject, null, 2),
+    );
 
     // 2. Build a set of all used resources
     const usedResources = new Set();
     if (updatedProject.scenes) {
       for (const scene of updatedProject.scenes) {
-        if (scene.backgroundImage) usedResources.add(decodeURIComponent(path.basename(scene.backgroundImage)));
-        if (scene.music) usedResources.add(decodeURIComponent(path.basename(scene.music)));
+        if (scene.backgroundImage)
+          usedResources.add(
+            decodeURIComponent(path.basename(scene.backgroundImage)),
+          );
+        if (scene.music)
+          usedResources.add(decodeURIComponent(path.basename(scene.music)));
         if (scene.elements) {
           for (const element of scene.elements) {
-            if (element.image) usedResources.add(decodeURIComponent(path.basename(element.image)));
-            if (element.onClickSound) usedResources.add(decodeURIComponent(path.basename(element.onClickSound)));
-            if (element.onClickMusicChange) usedResources.add(decodeURIComponent(path.basename(element.onClickMusicChange)));
+            if (element.image)
+              usedResources.add(
+                decodeURIComponent(path.basename(element.image)),
+              );
+            if (element.onClickSound)
+              usedResources.add(
+                decodeURIComponent(path.basename(element.onClickSound)),
+              );
+            if (element.onClickMusicChange)
+              usedResources.add(
+                decodeURIComponent(path.basename(element.onClickMusicChange)),
+              );
           }
         }
       }
@@ -154,7 +178,7 @@ app.put('/api/projects/:projectName', async (req, res) => {
 
     // 4. Compare and delete unused files
     for (const fileName of directoryFiles) {
-      if (fileName === 'project.json') continue;
+      if (fileName === "project.json") continue;
 
       if (!usedResources.has(decodeURIComponent(fileName))) {
         try {
@@ -173,10 +197,10 @@ app.put('/api/projects/:projectName', async (req, res) => {
 });
 
 // Delete project
-app.delete('/api/projects/:projectName', async (req, res) => {
+app.delete("/api/projects/:projectName", async (req, res) => {
   try {
     const { projectName } = req.params;
-    const projectPath = path.join(__dirname, '../Projects', projectName);
+    const projectPath = path.join(__dirname, "../Projects", projectName);
 
     await fs.rm(projectPath, { recursive: true, force: true });
 
@@ -187,38 +211,44 @@ app.delete('/api/projects/:projectName', async (req, res) => {
 });
 
 // Upload file to project
-app.post('/api/projects/:projectName/upload', upload.single('file'), (req, res) => {
-  try {
-    const file = req.file;
-    if (!file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
+app.post(
+  "/api/projects/:projectName/upload",
+  upload.single("file"),
+  (req, res) => {
+    try {
+      const file = req.file;
+      if (!file) {
+        return res.status(400).json({ error: "No file uploaded" });
+      }
 
-    res.json({
-      filename: file.filename,
-      path: `/projects/${encodeURIComponent(req.params.projectName)}/${encodeURIComponent(file.filename)}`
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+      res.json({
+        filename: file.filename,
+        path: `/projects/${encodeURIComponent(
+          req.params.projectName,
+        )}/${encodeURIComponent(file.filename)}`,
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+);
 
 // Export project as single HTML file
-app.get('/api/projects/:projectName/export', async (req, res) => {
+app.get("/api/projects/:projectName/export", async (req, res) => {
   try {
     const { projectName } = req.params;
-    const projectPath = path.join(__dirname, '../Projects', projectName);
-    const projectJsonPath = path.join(projectPath, 'project.json');
+    const projectPath = path.join(__dirname, "../Projects", projectName);
+    const projectJsonPath = path.join(projectPath, "project.json");
 
     // Read project data
-    const projectData = await fs.readFile(projectJsonPath, 'utf-8');
+    const projectData = await fs.readFile(projectJsonPath, "utf-8");
     const project = JSON.parse(projectData);
 
     // Read Engine.css and Engine.js
-    const engineCSSPath = path.join(__dirname, '../src/components/Engine.css');
-    const engineJSPath = path.join(__dirname, '../src/components/Engine.js');
-    const engineCSS = await fs.readFile(engineCSSPath, 'utf-8');
-    const engineJS = await fs.readFile(engineJSPath, 'utf-8');
+    const engineCSSPath = path.join(__dirname, "../src/components/Engine.css");
+    const engineJSPath = path.join(__dirname, "../src/components/Engine.js");
+    const engineCSS = await fs.readFile(engineCSSPath, "utf-8");
+    const engineJS = await fs.readFile(engineJSPath, "utf-8");
 
     // Collect all resource files and convert to base64
     const resources = new Map();
@@ -227,13 +257,18 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
       for (const scene of project.scenes) {
         // Background images
         if (scene.backgroundImage) {
-          const fileName = decodeURIComponent(path.basename(scene.backgroundImage));
+          const fileName = decodeURIComponent(
+            path.basename(scene.backgroundImage),
+          );
           const filePath = path.join(projectPath, fileName);
           try {
             const fileBuffer = await fs.readFile(filePath);
             const mimeType = getMimeType(fileName);
-            const base64 = fileBuffer.toString('base64');
-            resources.set(scene.backgroundImage, `data:${mimeType};base64,${base64}`);
+            const base64 = fileBuffer.toString("base64");
+            resources.set(
+              scene.backgroundImage,
+              `data:${mimeType};base64,${base64}`,
+            );
           } catch (err) {
             console.warn(`Could not read background image: ${fileName}`);
           }
@@ -246,7 +281,7 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
           try {
             const fileBuffer = await fs.readFile(filePath);
             const mimeType = getMimeType(fileName);
-            const base64 = fileBuffer.toString('base64');
+            const base64 = fileBuffer.toString("base64");
             resources.set(scene.music, `data:${mimeType};base64,${base64}`);
           } catch (err) {
             console.warn(`Could not read music file: ${fileName}`);
@@ -263,8 +298,11 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
               try {
                 const fileBuffer = await fs.readFile(filePath);
                 const mimeType = getMimeType(fileName);
-                const base64 = fileBuffer.toString('base64');
-                resources.set(element.image, `data:${mimeType};base64,${base64}`);
+                const base64 = fileBuffer.toString("base64");
+                resources.set(
+                  element.image,
+                  `data:${mimeType};base64,${base64}`,
+                );
               } catch (err) {
                 console.warn(`Could not read element image: ${fileName}`);
               }
@@ -272,13 +310,18 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
 
             // Click sounds
             if (element.onClickSound) {
-              const fileName = decodeURIComponent(path.basename(element.onClickSound));
+              const fileName = decodeURIComponent(
+                path.basename(element.onClickSound),
+              );
               const filePath = path.join(projectPath, fileName);
               try {
                 const fileBuffer = await fs.readFile(filePath);
                 const mimeType = getMimeType(fileName);
-                const base64 = fileBuffer.toString('base64');
-                resources.set(element.onClickSound, `data:${mimeType};base64,${base64}`);
+                const base64 = fileBuffer.toString("base64");
+                resources.set(
+                  element.onClickSound,
+                  `data:${mimeType};base64,${base64}`,
+                );
               } catch (err) {
                 console.warn(`Could not read click sound: ${fileName}`);
               }
@@ -286,13 +329,18 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
 
             // Music change files
             if (element.onClickMusicChange) {
-              const fileName = decodeURIComponent(path.basename(element.onClickMusicChange));
+              const fileName = decodeURIComponent(
+                path.basename(element.onClickMusicChange),
+              );
               const filePath = path.join(projectPath, fileName);
               try {
                 const fileBuffer = await fs.readFile(filePath);
                 const mimeType = getMimeType(fileName);
-                const base64 = fileBuffer.toString('base64');
-                resources.set(element.onClickMusicChange, `data:${mimeType};base64,${base64}`);
+                const base64 = fileBuffer.toString("base64");
+                resources.set(
+                  element.onClickMusicChange,
+                  `data:${mimeType};base64,${base64}`,
+                );
               } catch (err) {
                 console.warn(`Could not read music change file: ${fileName}`);
               }
@@ -304,8 +352,11 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
 
     const html = generateExportHTML(project, engineCSS, engineJS, resources);
 
-    res.setHeader('Content-Type', 'text/html');
-    res.setHeader('Content-Disposition', `attachment; filename="${projectName}.html"`);
+    res.setHeader("Content-Type", "text/html");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${projectName}.html"`,
+    );
     res.send(html);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -316,18 +367,18 @@ app.get('/api/projects/:projectName/export', async (req, res) => {
 function getMimeType(fileName) {
   const ext = path.extname(fileName).toLowerCase();
   const mimeTypes = {
-    '.jpg': 'image/jpeg',
-    '.jpeg': 'image/jpeg',
-    '.png': 'image/png',
-    '.gif': 'image/gif',
-    '.webp': 'image/webp',
-    '.svg': 'image/svg+xml',
-    '.mp3': 'audio/mpeg',
-    '.wav': 'audio/wav',
-    '.ogg': 'audio/ogg',
-    '.m4a': 'audio/mp4'
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".svg": "image/svg+xml",
+    ".mp3": "audio/mpeg",
+    ".wav": "audio/wav",
+    ".ogg": "audio/ogg",
+    ".m4a": "audio/mp4",
   };
-  return mimeTypes[ext] || 'application/octet-stream';
+  return mimeTypes[ext] || "application/octet-stream";
 }
 
 // Helper function to generate the complete HTML
@@ -337,65 +388,67 @@ function generateExportHTML(project, engineCSS, engineJS, resources) {
     resourceMap[originalPath] = base64Data;
   }
 
-  return /*html*/`
+  return /*html*/ `
   <!DOCTYPE html>
   <html lang="en">
+
   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${project.name}</title>
-      <style>
-          ${engineCSS}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${project.name}</title>
+    <style>
+      ${engineCSS}
 
-          body {
-              margin: 0;
-              padding: 0;
-              background-color: #1e1e2e;
-              color: #cdd6f4;
-              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-              overflow: hidden;
-          }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #1e1e2e;
+        color: #cdd6f4;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+        overflow: hidden;
+      }
 
-          .pace-container {
-              height: 100vh;
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-              justify-content: center;
-              background-color: #1e1e2e;
-              position: relative;
-              padding: 16px;
-              box-sizing: border-box;
-          }
+      .pace-container {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #1e1e2e;
+        position: relative;
+        padding: 16px;
+        box-sizing: border-box;
+      }
 
-          .pace-canvas {
-              border: 2px solid #313244;
-              border-radius: 8px;
-              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-          }
-      </style>
+      .pace-canvas {
+        border: 2px solid #313244;
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      }
+    </style>
   </head>
+
   <body>
-      <div class="pace-container">
-          <div id="pace-canvas" class="pace-canvas"></div>
-      </div>
+    <div class="pace-container">
+      <div id="pace-canvas" class="pace-canvas"></div>
+    </div>
 
-      <script>
-          ${engineJS}
+    <script>
+      ${engineJS}
 
-          document.addEventListener('DOMContentLoaded', () => {
-              const PROJECT_DATA = ${JSON.stringify(project)};
-              const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
+      document.addEventListener('DOMContentLoaded', () => {
+        const PROJECT_DATA = ${JSON.stringify(project)};
+        const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
 
-              new Engine(PROJECT_DATA, RESOURCE_MAP, {
-                  canvasId: 'pace-canvas'
-              });
-          });
-      </script>
+        new Engine(PROJECT_DATA, RESOURCE_MAP, {
+          canvasId: 'pace-canvas'
+        });
+      });
+    </script>
   </body>
+
   </html>`;
 }
-
 
 app.listen(PORT, async () => {
   await ensureProjectsDir();

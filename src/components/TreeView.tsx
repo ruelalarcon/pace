@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { TreeNode } from '../types';
-import { Clapperboard, Box, ChevronRight } from 'lucide-react';
-import './TreeView.css';
+import React, { useState } from "react";
+import { TreeNode } from "../types";
+import { Clapperboard, Box, ChevronRight } from "lucide-react";
+import "./TreeView.css";
 
 interface TreeViewProps {
   treeData: TreeNode[];
@@ -12,7 +12,7 @@ interface TreeViewProps {
 const TreeView: React.FC<TreeViewProps> = ({
   treeData,
   onSelectItem,
-  selectedId
+  selectedId,
 }) => {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
@@ -36,25 +36,29 @@ const TreeView: React.FC<TreeViewProps> = ({
     return (
       <div key={node.id} className="tree-node">
         <div
-          className={`tree-node-content ${isSelected ? 'selected' : ''}`}
+          className={`tree-node-content ${isSelected ? "selected" : ""}`}
           style={{ paddingLeft: `${depth * 20 + 12}px` }}
           onClick={() => onSelectItem(node)}
         >
           <div className="tree-node-label">
             {hasChildren && (
               <button
-                className={`tree-expand-button ${isExpanded ? 'expanded' : ''}`}
+                className={`tree-expand-button ${isExpanded ? "expanded" : ""}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   toggleExpand(node.id);
                 }}
-                aria-label={isExpanded ? 'Collapse' : 'Expand'}
+                aria-label={isExpanded ? "Collapse" : "Expand"}
               >
                 <ChevronRight size={14} />
               </button>
             )}
             <span className={`tree-node-icon ${node.type}`}>
-              {node.type === 'scene' ? <Clapperboard size={14} /> : <Box size={14} />}
+              {node.type === "scene" ? (
+                <Clapperboard size={14} />
+              ) : (
+                <Box size={14} />
+              )}
             </span>
             <span className="tree-node-name">{node.name}</span>
           </div>
@@ -62,7 +66,7 @@ const TreeView: React.FC<TreeViewProps> = ({
 
         {hasChildren && isExpanded && (
           <div className="tree-node-children">
-            {node.children!.map(child => renderTreeNode(child, depth + 1))}
+            {node.children!.map((child) => renderTreeNode(child, depth + 1))}
           </div>
         )}
       </div>
@@ -73,7 +77,6 @@ const TreeView: React.FC<TreeViewProps> = ({
     <div className="tree-view">
       <div className="tree-header">
         <h3 className="tree-title">Project Structure</h3>
-
       </div>
 
       <div className="tree-content">
@@ -83,12 +86,10 @@ const TreeView: React.FC<TreeViewProps> = ({
           </div>
         ) : (
           <div className="tree-nodes">
-            {treeData.map(node => renderTreeNode(node))}
+            {treeData.map((node) => renderTreeNode(node))}
           </div>
         )}
       </div>
-
-
     </div>
   );
 };

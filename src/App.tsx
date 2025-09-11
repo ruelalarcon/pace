@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import Dashboard from './components/Dashboard';
-import Editor from './components/Editor';
-import Preview from './components/Preview';
-import { Project } from './types';
-import './App.css';
+import { useState } from "react";
+import Dashboard from "./components/Dashboard";
+import Editor from "./components/Editor";
+import Preview from "./components/Preview";
+import { Project } from "./types";
+import "./App.css";
 
 function App() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
@@ -13,11 +13,13 @@ function App() {
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(projectName)}`);
+      const response = await fetch(
+        `http://localhost:3001/api/projects/${encodeURIComponent(projectName)}`,
+      );
       const project = await response.json();
       setCurrentProject(project);
     } catch (error) {
-      console.error('Error loading project:', error);
+      console.error("Error loading project:", error);
     }
     setIsLoading(false);
   };
@@ -39,19 +41,22 @@ function App() {
     if (!currentProject) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(currentProject.name)}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `http://localhost:3001/api/projects/${encodeURIComponent(currentProject.name)}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedProject),
         },
-        body: JSON.stringify(updatedProject),
-      });
+      );
 
       if (response.ok) {
         setCurrentProject(updatedProject);
       }
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error("Error updating project:", error);
     }
   };
 
@@ -68,10 +73,7 @@ function App() {
     <div className="App">
       {currentProject ? (
         isPreviewMode ? (
-          <Preview
-            project={currentProject}
-            onExitPreview={handleExitPreview}
-          />
+          <Preview project={currentProject} onExitPreview={handleExitPreview} />
         ) : (
           <Editor
             project={currentProject}

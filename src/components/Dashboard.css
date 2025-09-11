@@ -28,7 +28,8 @@
 .dashboard-logo {
   height: 110px;
   margin-right: 10px;
-  filter: invert(79%) sepia(22%) saturate(1330%) hue-rotate(206deg) brightness(102%) contrast(88%);
+  filter: invert(79%) sepia(22%) saturate(1330%) hue-rotate(206deg)
+    brightness(102%) contrast(88%);
 }
 
 .dashboard-title {
@@ -177,7 +178,7 @@
 .thumb-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.35), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0));
 }
 
 .project-meta {

@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
-import { Project, Scene, Element, TreeNode } from '../types';
-import TreeView from './TreeView';
-import SceneCanvas from './SceneCanvas';
-import Inspector from './Inspector';
-import { Clapperboard, Box, Trash2, Play, Download } from 'lucide-react';
-import './Editor.css';
+import React, { useState, useCallback } from "react";
+import { Project, Scene, Element, TreeNode } from "../types";
+import TreeView from "./TreeView";
+import SceneCanvas from "./SceneCanvas";
+import Inspector from "./Inspector";
+import { Clapperboard, Box, Trash2, Play, Download } from "lucide-react";
+import "./Editor.css";
 
 interface EditorProps {
   project: Project;
@@ -13,28 +13,37 @@ interface EditorProps {
   onEnterPreview: () => void;
 }
 
-const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProject, onEnterPreview }) => {
-  const [selectedItem, setSelectedItem] = useState<Scene | Element | null>(null);
-  const [selectedItemType, setSelectedItemType] = useState<'scene' | 'element' | null>(null);
+const Editor: React.FC<EditorProps> = ({
+  project,
+  onUpdateProject,
+  onCloseProject,
+  onEnterPreview,
+}) => {
+  const [selectedItem, setSelectedItem] = useState<Scene | Element | null>(
+    null,
+  );
+  const [selectedItemType, setSelectedItemType] = useState<
+    "scene" | "element" | null
+  >(null);
   const [currentScene, setCurrentScene] = useState<Scene | null>(
-    project.scenes.length > 0 ? project.scenes[0] : null
+    project.scenes.length > 0 ? project.scenes[0] : null,
   );
   const [isCreatingScene, setIsCreatingScene] = useState(false);
-  const [newSceneName, setNewSceneName] = useState('');
+  const [newSceneName, setNewSceneName] = useState("");
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
 
   const generateTreeData = useCallback((): TreeNode[] => {
-    return project.scenes.map(scene => ({
+    return project.scenes.map((scene) => ({
       id: scene.id,
       name: scene.name,
-      type: 'scene',
+      type: "scene",
       data: scene,
-      children: scene.elements.map(element => ({
+      children: scene.elements.map((element) => ({
         id: element.id,
         name: element.name,
-        type: 'element',
-        data: element
-      }))
+        type: "element",
+        data: element,
+      })),
     }));
   }, [project.scenes]);
 
@@ -43,24 +52,24 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       id: `scene_${Date.now()}`,
       name: sceneName,
       elements: [],
-      aspectRatio: '16:9',
-      music: '',
-      sceneText: ''
+      aspectRatio: "16:9",
+      music: "",
+      sceneText: "",
     };
 
     const updatedProject = {
       ...project,
-      scenes: [...project.scenes, newScene]
+      scenes: [...project.scenes, newScene],
     };
 
     onUpdateProject(updatedProject);
     setCurrentScene(newScene);
     setSelectedItem(newScene);
-    setSelectedItemType('scene');
+    setSelectedItemType("scene");
   };
 
   const openCreateSceneModal = () => {
-    setNewSceneName('');
+    setNewSceneName("");
     setIsCreatingScene(true);
   };
 
@@ -84,21 +93,21 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
   };
 
   const handleSelectTreeItem = (node: TreeNode) => {
-    if (node.type === 'scene') {
+    if (node.type === "scene") {
       const scene = node.data as Scene;
       setCurrentScene(scene);
       setSelectedItem(scene);
-      setSelectedItemType('scene');
-    } else if (node.type === 'element') {
+      setSelectedItemType("scene");
+    } else if (node.type === "element") {
       const element = node.data as Element;
       setSelectedItem(element);
-      setSelectedItemType('element');
+      setSelectedItemType("element");
     }
   };
 
   const handleSelectElement = (element: Element) => {
     setSelectedItem(element);
-    setSelectedItemType('element');
+    setSelectedItemType("element");
   };
 
   const handleCreateElement = () => {
@@ -111,39 +120,39 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       y: 0.5,
       scale: 0.2,
       aspectRatio: 1,
-      destinationScene: '',
-      onClickText: '',
-      onClickSound: '',
-      onClickMusicChange: '',
+      destinationScene: "",
+      onClickText: "",
+      onClickSound: "",
+      onClickMusicChange: "",
       highlightOnHover: true,
-      highlightColor: '#ffffff',
-      cornerRadius: 0
+      highlightColor: "#ffffff",
+      cornerRadius: 0,
     };
 
     const updatedScene = {
       ...currentScene,
-      elements: [...currentScene.elements, newElement]
+      elements: [...currentScene.elements, newElement],
     };
 
     const updatedProject = {
       ...project,
-      scenes: project.scenes.map(scene =>
-        scene.id === currentScene.id ? updatedScene : scene
-      )
+      scenes: project.scenes.map((scene) =>
+        scene.id === currentScene.id ? updatedScene : scene,
+      ),
     };
 
     onUpdateProject(updatedProject);
     setCurrentScene(updatedScene);
     setSelectedItem(newElement);
-    setSelectedItemType('element');
+    setSelectedItemType("element");
   };
 
   const handleUpdateScene = (updatedScene: Scene) => {
     const updatedProject = {
       ...project,
-      scenes: project.scenes.map(scene =>
-        scene.id === updatedScene.id ? updatedScene : scene
-      )
+      scenes: project.scenes.map((scene) =>
+        scene.id === updatedScene.id ? updatedScene : scene,
+      ),
     };
 
     onUpdateProject(updatedProject);
@@ -156,16 +165,16 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
 
     const updatedScene = {
       ...currentScene,
-      elements: currentScene.elements.map(element =>
-        element.id === updatedElement.id ? updatedElement : element
-      )
+      elements: currentScene.elements.map((element) =>
+        element.id === updatedElement.id ? updatedElement : element,
+      ),
     };
 
     const updatedProject = {
       ...project,
-      scenes: project.scenes.map(scene =>
-        scene.id === currentScene.id ? updatedScene : scene
-      )
+      scenes: project.scenes.map((scene) =>
+        scene.id === currentScene.id ? updatedScene : scene,
+      ),
     };
 
     onUpdateProject(updatedProject);
@@ -176,23 +185,26 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
   const handleElementMove = (elementId: string, x: number, y: number) => {
     if (!currentScene) return;
 
-    const updatedElement = currentScene.elements.find(el => el.id === elementId);
+    const updatedElement = currentScene.elements.find(
+      (el) => el.id === elementId,
+    );
     if (!updatedElement) return;
 
     handleUpdateElement({ ...updatedElement, x, y });
   };
 
-  const handleDeleteItem = (id: string, type: 'scene' | 'element') => {
+  const handleDeleteItem = (id: string, type: "scene" | "element") => {
     let updatedProject: Project;
 
-    if (type === 'scene') {
+    if (type === "scene") {
       updatedProject = {
         ...project,
-        scenes: project.scenes.filter(scene => scene.id !== id)
+        scenes: project.scenes.filter((scene) => scene.id !== id),
       };
 
       if (currentScene?.id === id) {
-        const newCurrentScene = updatedProject.scenes.length > 0 ? updatedProject.scenes[0] : null;
+        const newCurrentScene =
+          updatedProject.scenes.length > 0 ? updatedProject.scenes[0] : null;
         setCurrentScene(newCurrentScene);
       }
     } else {
@@ -200,14 +212,14 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
 
       const updatedScene = {
         ...currentScene,
-        elements: currentScene.elements.filter(element => element.id !== id)
+        elements: currentScene.elements.filter((element) => element.id !== id),
       };
 
       updatedProject = {
         ...project,
-        scenes: project.scenes.map(scene =>
-          scene.id === currentScene.id ? updatedScene : scene
-        )
+        scenes: project.scenes.map((scene) =>
+          scene.id === currentScene.id ? updatedScene : scene,
+        ),
       };
 
       setCurrentScene(updatedScene);
@@ -221,7 +233,7 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
   const handleCanvasClick = () => {
     if (currentScene) {
       setSelectedItem(currentScene);
-      setSelectedItemType('scene');
+      setSelectedItemType("scene");
     }
   };
 
@@ -232,14 +244,17 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
 
   const handleExportProject = async () => {
     try {
-      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(project.name)}/export`, {
-        method: 'GET',
-      });
+      const response = await fetch(
+        `http://localhost:3001/api/projects/${encodeURIComponent(project.name)}/export`,
+        {
+          method: "GET",
+        },
+      );
 
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         a.href = url;
         a.download = `${project.name}.html`;
         document.body.appendChild(a);
@@ -247,10 +262,10 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
       } else {
-        console.error('Export failed:', response.statusText);
+        console.error("Export failed:", response.statusText);
       }
     } catch (error) {
-      console.error('Error exporting project:', error);
+      console.error("Error exporting project:", error);
     }
   };
 
@@ -259,7 +274,9 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
       <div className="editor-header">
         <div className="editor-title">
           <h1>{project.name}</h1>
-          {currentScene && <span className="current-scene">/ {currentScene.name}</span>}
+          {currentScene && (
+            <span className="current-scene">/ {currentScene.name}</span>
+          )}
         </div>
         <div className="editor-header-actions">
           <button className="btn btn-secondary" onClick={handleExportProject}>
@@ -286,13 +303,18 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
         <div className="editor-main" onClick={handleDeselect}>
           <SceneCanvas
             scene={currentScene}
-            selectedElement={selectedItemType === 'element' ? selectedItem as Element : null}
+            selectedElement={
+              selectedItemType === "element" ? (selectedItem as Element) : null
+            }
             onElementMove={handleElementMove}
             onElementSelect={handleSelectElement}
             onCanvasClick={handleCanvasClick}
           />
 
-          <div className="floating-toolbar" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="floating-toolbar"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               className="btn btn-secondary btn-small"
               onClick={openCreateSceneModal}
@@ -310,7 +332,11 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
               className="btn btn-danger btn-small"
               onClick={handleDeleteClick}
               disabled={!selectedItem}
-              title={selectedItem ? `Delete ${selectedItem.name}` : 'Select an item to delete'}
+              title={
+                selectedItem
+                  ? `Delete ${selectedItem.name}`
+                  : "Select an item to delete"
+              }
             >
               <Trash2 size={14} /> Delete
             </button>
@@ -347,14 +373,25 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
                   placeholder="Enter scene name..."
                   autoFocus
                   onKeyPress={(e) => {
-                    if (e.key === 'Enter') confirmCreateScene();
+                    if (e.key === "Enter") confirmCreateScene();
                   }}
                 />
               </div>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setIsCreatingScene(false)}>Cancel</button>
-              <button className="btn btn-primary" onClick={confirmCreateScene} disabled={!newSceneName.trim()}>Create</button>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setIsCreatingScene(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={confirmCreateScene}
+                disabled={!newSceneName.trim()}
+              >
+                Create
+              </button>
             </div>
           </div>
         </div>
@@ -367,10 +404,16 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
               <h2 className="modal-title">Confirm Deletion</h2>
             </div>
             <div className="modal-body">
-              <p>Are you sure you want to delete "{selectedItem.name}"? This action cannot be undone.</p>
+              <p>
+                Are you sure you want to delete "{selectedItem.name}"? This
+                action cannot be undone.
+              </p>
             </div>
             <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setIsDeleteConfirmVisible(false)}>
+              <button
+                className="btn btn-secondary"
+                onClick={() => setIsDeleteConfirmVisible(false)}
+              >
                 Cancel
               </button>
               <button className="btn btn-danger" onClick={confirmDelete}>

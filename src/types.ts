@@ -34,7 +34,7 @@ export interface Element {
 export interface TreeNode {
   id: string;
   name: string;
-  type: 'scene' | 'element';
+  type: "scene" | "element";
   children?: TreeNode[];
   data?: Scene | Element;
 }
