@@ -83,6 +83,10 @@ class Engine {
     const aspectRatio = this.getAspectRatio();
     this.canvas.style.aspectRatio = aspectRatio;
 
+    // Ensure canvas sizing reflects desired aspect before measuring/rendering
+    this.adjustCanvasSizeToAspect();
+    this.updateCanvasRect();
+
     // Set background image
     if (this.currentScene.backgroundImage) {
       const bgUrl = this.getResourceUrl(this.currentScene.backgroundImage);

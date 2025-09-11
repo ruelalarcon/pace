@@ -37,7 +37,8 @@
 .pace-element-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  pointer-events: none;
   border-radius: inherit;
 }
 
