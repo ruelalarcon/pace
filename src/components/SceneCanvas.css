@@ -30,6 +30,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  border-radius: var(--radius-md);
   cursor: default;
   user-select: none;
   overflow: hidden;

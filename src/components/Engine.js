@@ -46,11 +46,21 @@ class Engine {
         }
 
         // Set up resize observer
-        const resizeObserver = new ResizeObserver(() => {
+        this.canvasResizeObserver = new ResizeObserver(() => {
             this.updateCanvasRect();
+            this.adjustCanvasSizeToAspect();
         });
-        resizeObserver.observe(this.canvas);
+        this.canvasResizeObserver.observe(this.canvas);
+
+        if (this.canvas.parentElement) {
+            this.parentResizeObserver = new ResizeObserver(() => {
+                this.updateCanvasRect();
+                this.adjustCanvasSizeToAspect();
+            });
+            this.parentResizeObserver.observe(this.canvas.parentElement);
+        }
         this.updateCanvasRect();
+        this.adjustCanvasSizeToAspect();
     }
 
     updateCanvasRect() {
@@ -63,6 +73,7 @@ class Engine {
         this.setupScene();
         this.handleBackgroundMusic();
         this.scheduleSceneText();
+        this.adjustCanvasSizeToAspect();
     }
 
     setupScene() {
@@ -92,6 +103,28 @@ class Engine {
         this.currentScene.elements.forEach(element => {
             this.renderElement(element);
         });
+    }
+
+    adjustCanvasSizeToAspect() {
+        if (!this.canvas || !this.canvas.parentElement) return;
+
+        const parentRect = this.canvas.parentElement.getBoundingClientRect();
+        const availableWidth = parentRect.width;
+        const availableHeight = parentRect.height;
+        if (availableWidth === 0 || availableHeight === 0) return;
+
+        const desiredAspect = this.getAspectRatio();
+        const containerAspect = availableWidth / availableHeight;
+
+        if (containerAspect > desiredAspect) {
+            // Container is wider than desired; constrain by height
+            this.canvas.style.height = '100%';
+            this.canvas.style.width = 'auto';
+        } else {
+            // Container is narrower/taller; constrain by width
+            this.canvas.style.width = '100%';
+            this.canvas.style.height = 'auto';
+        }
     }
 
     getResourceUrl(resourcePath) {
@@ -407,6 +440,12 @@ class Engine {
         }
         if (this.sceneTextTimer) {
             clearTimeout(this.sceneTextTimer);
+        }
+        if (this.canvasResizeObserver) {
+            this.canvasResizeObserver.disconnect();
+        }
+        if (this.parentResizeObserver) {
+            this.parentResizeObserver.disconnect();
         }
     }
 }
