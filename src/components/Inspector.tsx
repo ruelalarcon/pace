@@ -264,7 +264,9 @@ const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
         <div className="field-tooltip">
-          Music that plays when this scene is active.
+          Music that plays when this scene is active. If the same music is
+          already playing from the previous scene, the music will not be
+          restarted.
         </div>
       </div>
       <div className="property-group has-tooltip">
@@ -533,7 +535,8 @@ const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
         <div className="field-tooltip">
-          Changes the current scene's music when this element is clicked.
+          Changes the current scene's music when this element is clicked. This
+          will not do anything if the chosen music is already playing.
         </div>
       </div>
 
