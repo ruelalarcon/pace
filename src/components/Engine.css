@@ -1,232 +1,157 @@
-/* Game Preview Styles */
-.game-preview {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--crust);
-  color: var(--text);
-}
-
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 20px;
-  background-color: var(--crust);
-  border-bottom: 1px solid var(--surface0);
-}
-
-.preview-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.preview-title h1 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.preview-scene-name {
-  font-size: 14px;
-  padding-top: 1px;
-  color: var(--primary);
-  font-weight: 500;
-}
-
-.preview-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--base);
-  position: relative;
-  padding: 16px;
-  box-sizing: border-box;
-  min-height: 0; /* Allow flex shrinking */
-}
-
-.preview-canvas {
+.pace-canvas {
   position: relative;
   height: 100%;
   max-height: 100%;
   width: auto;
   max-width: 100%;
-  background-color: var(--mantle);
+  background-color: #181825; /* mantle equivalent */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  border: 2px solid var(--surface0);
-  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-md);
 }
 
-.preview-canvas-placeholder {
+.pace-canvas-placeholder {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: var(--subtext1);
+  color: #7f849c; /* subtext1 equivalent */
   text-align: center;
   pointer-events: none;
 }
 
-.preview-element {
+.pace-element {
   position: absolute;
   transition: filter 0.2s ease, z-index 0s ease;
   z-index: 10;
 }
 
-.preview-element:active {
+.pace-element:active {
   transform: scale(0.98);
 }
 
-.preview-element-image {
+.pace-element-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
 }
 
-.preview-element-placeholder {
+.pace-element-placeholder {
   width: 100%;
   height: 100%;
-  background-color: var(--surface0);
-  border: 2px dashed var(--surface1);
+  background-color: #313244; /* surface0 equivalent */
+  border: 2px dashed #45475a; /* surface1 equivalent */
   border-radius: inherit;
 }
 
 /* RPG-style Textbox */
-.preview-textbox {
+.pace-textbox {
   position: absolute;
   bottom: 20px;
   left: 20px;
   right: 20px;
-  /* background-color: rgba(30, 30, 46, 0.82); */
   background-image: linear-gradient(rgba(44 44 44 / 0.47), rgba(24 24 24 / 0.48));
-  /* border: 3px solid var(--surface0); */
   border: 5px solid #93b6df;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   padding: 20px 24px 16px 24px;
-  /* box-shadow: var(--shadow-md); */
   box-shadow: 0 0 10px 0 rgba(147, 182, 223, 0.5);
   cursor: pointer;
   user-select: none;
   z-index: 100;
-  /* backdrop-filter: blur(8px); */
   backdrop-filter: blur(3px);
   transition: border-color 0.2s ease;
 }
 
-.preview-textbox:hover {
-  /* border-color: var(--surface1); */
+.pace-textbox:hover {
   border-color: #B6D4F7;
 }
 
-.textbox-content {
+.pace-textbox-content {
   margin-bottom: 8px;
 }
 
-.textbox-text {
+.pace-textbox-text {
   margin: 0;
   font-size: 30px;
-  font-family: 'MS Gothic', 'Geist';
+  font-family: 'MS Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   font-weight: 400;
   line-height: 1.5;
-  color: var(--text);
+  color: #cdd6f4; /* text equivalent */
   text-shadow: rgb(39, 39, 39) 2px 0px 0px, rgb(39, 39, 39) 1.75517px 0.958851px 0px, rgb(39, 39, 39) 1.0806px 1.68294px 0px, rgb(39, 39, 39) 0.141474px 1.99499px 0px, rgb(39, 39, 39) -0.832294px 1.81859px 0px, rgb(39, 39, 39) -1.60229px 1.19694px 0px, rgb(39, 39, 39) -1.97998px 0.28224px 0px, rgb(39, 39, 39) -1.87291px -0.701566px 0px, rgb(39, 39, 39) -1.30729px -1.5136px 0px, rgb(39, 39, 39) -0.421592px -1.95506px 0px, rgb(39, 39, 39) 0.567324px -1.91785px 0px, rgb(39, 39, 39) 1.41734px -1.41108px 0px, rgb(39, 39, 39) 1.92034px -0.558831px 0px;
   min-height: 24px;
 }
 
-.textbox-continue {
+.pace-textbox-continue {
   display: flex;
   justify-content: flex-end;
   margin-top: 8px;
 }
 
-.textbox-continue span {
+.pace-textbox-continue span {
   font-size: 14px;
-  color: var(--text);
+  color: #cdd6f4; /* text equivalent */
   font-style: italic;
   text-shadow: rgb(39, 39, 39) 2px 0px 0px, rgb(39, 39, 39) 1.75517px 0.958851px 0px, rgb(39, 39, 39) 1.0806px 1.68294px 0px, rgb(39, 39, 39) 0.141474px 1.99499px 0px, rgb(39, 39, 39) -0.832294px 1.81859px 0px, rgb(39, 39, 39) -1.60229px 1.19694px 0px, rgb(39, 39, 39) -1.97998px 0.28224px 0px, rgb(39, 39, 39) -1.87291px -0.701566px 0px, rgb(39, 39, 39) -1.30729px -1.5136px 0px, rgb(39, 39, 39) -0.421592px -1.95506px 0px, rgb(39, 39, 39) 0.567324px -1.91785px 0px, rgb(39, 39, 39) 1.41734px -1.41108px 0px, rgb(39, 39, 39) 1.92034px -0.558831px 0px;
   opacity: 0.8;
-  animation: pulse 1s infinite;
+  animation: pace-pulse 1s infinite;
 }
 
-@keyframes pulse {
+@keyframes pace-pulse {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
 }
 
-.preview-empty {
-  text-align: center;
-  color: var(--subtext1);
-}
-
-.preview-empty p {
-  margin: 0;
-  font-size: 16px;
-}
-
 /* Responsive design */
 @media (max-width: 768px) {
-  .preview-content {
-    padding: 10px;
-  }
-
-  .preview-canvas {
+  .pace-canvas {
     width: 100%;
     height: 100%;
     max-height: 100%;
   }
 
-  .preview-textbox {
+  .pace-textbox {
     left: 10px;
     right: 10px;
     bottom: 10px;
     padding: 16px 20px 12px 20px;
   }
 
-  .textbox-text {
+  .pace-textbox-text {
     font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .preview-canvas {
+  .pace-canvas {
     width: 100%;
     height: 100%;
     max-height: 100%;
   }
 }
 
-/* High contrast mode adjustments */
 @media (prefers-contrast: high) {
-  .preview-canvas {
+  .pace-canvas {
     border-width: 3px;
   }
 
-  .preview-textbox {
+  .pace-textbox {
     border-width: 4px;
-    background-color: var(--mantle);
+    background-color: #181825; /* mantle equivalent */
   }
 }
 
-/* Reduced motion adjustments */
 @media (prefers-reduced-motion: reduce) {
-  .preview-element {
+  .pace-element {
     transition: none;
   }
 
-  .preview-element:active {
+  .pace-element:active {
     transform: none;
   }
 
-  .textbox-continue span {
+  .pace-textbox-continue span {
     animation: none;
     opacity: 0.8;
   }

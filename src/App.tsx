@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Dashboard from './components/Dashboard';
 import Editor from './components/Editor';
-import GamePreview from './components/GamePreview';
+import Preview from './components/Preview';
 import { Project } from './types';
 import './App.css';
 
@@ -68,7 +68,7 @@ function App() {
     <div className="App">
       {currentProject ? (
         isPreviewMode ? (
-          <GamePreview
+          <Preview
             project={currentProject}
             onExitPreview={handleExitPreview}
           />

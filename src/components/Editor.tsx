@@ -3,7 +3,7 @@ import { Project, Scene, Element, TreeNode } from '../types';
 import TreeView from './TreeView';
 import SceneCanvas from './SceneCanvas';
 import Inspector from './Inspector';
-import { Clapperboard, Box, Trash2, Play } from 'lucide-react';
+import { Clapperboard, Box, Trash2, Play, Download } from 'lucide-react';
 import './Editor.css';
 
 interface EditorProps {
@@ -230,6 +230,30 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
     setSelectedItemType(null);
   };
 
+  const handleExportProject = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/api/projects/${encodeURIComponent(project.name)}/export`, {
+        method: 'GET',
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${project.name}.html`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        console.error('Export failed:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error exporting project:', error);
+    }
+  };
+
   return (
     <div className="editor">
       <div className="editor-header">
@@ -238,6 +262,9 @@ const Editor: React.FC<EditorProps> = ({ project, onUpdateProject, onCloseProjec
           {currentScene && <span className="current-scene">/ {currentScene.name}</span>}
         </div>
         <div className="editor-header-actions">
+          <button className="btn btn-secondary" onClick={handleExportProject}>
+            <Download size={16} /> Export
+          </button>
           <button className="btn btn-primary" onClick={onEnterPreview}>
             <Play size={16} /> Preview
           </button>

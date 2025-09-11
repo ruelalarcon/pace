@@ -203,6 +203,200 @@ app.post('/api/projects/:projectName/upload', upload.single('file'), (req, res) 
   }
 });
 
+// Export project as single HTML file
+app.get('/api/projects/:projectName/export', async (req, res) => {
+  try {
+    const { projectName } = req.params;
+    const projectPath = path.join(__dirname, '../Projects', projectName);
+    const projectJsonPath = path.join(projectPath, 'project.json');
+
+    // Read project data
+    const projectData = await fs.readFile(projectJsonPath, 'utf-8');
+    const project = JSON.parse(projectData);
+
+    // Read Engine.css and Engine.js
+    const engineCSSPath = path.join(__dirname, '../src/components/Engine.css');
+    const engineJSPath = path.join(__dirname, '../src/components/Engine.js');
+    const engineCSS = await fs.readFile(engineCSSPath, 'utf-8');
+    const engineJS = await fs.readFile(engineJSPath, 'utf-8');
+
+    // Collect all resource files and convert to base64
+    const resources = new Map();
+
+    if (project.scenes) {
+      for (const scene of project.scenes) {
+        // Background images
+        if (scene.backgroundImage) {
+          const fileName = decodeURIComponent(path.basename(scene.backgroundImage));
+          const filePath = path.join(projectPath, fileName);
+          try {
+            const fileBuffer = await fs.readFile(filePath);
+            const mimeType = getMimeType(fileName);
+            const base64 = fileBuffer.toString('base64');
+            resources.set(scene.backgroundImage, `data:${mimeType};base64,${base64}`);
+          } catch (err) {
+            console.warn(`Could not read background image: ${fileName}`);
+          }
+        }
+
+        // Music files
+        if (scene.music) {
+          const fileName = decodeURIComponent(path.basename(scene.music));
+          const filePath = path.join(projectPath, fileName);
+          try {
+            const fileBuffer = await fs.readFile(filePath);
+            const mimeType = getMimeType(fileName);
+            const base64 = fileBuffer.toString('base64');
+            resources.set(scene.music, `data:${mimeType};base64,${base64}`);
+          } catch (err) {
+            console.warn(`Could not read music file: ${fileName}`);
+          }
+        }
+
+        // Element images and sounds
+        if (scene.elements) {
+          for (const element of scene.elements) {
+            // Element images
+            if (element.image) {
+              const fileName = decodeURIComponent(path.basename(element.image));
+              const filePath = path.join(projectPath, fileName);
+              try {
+                const fileBuffer = await fs.readFile(filePath);
+                const mimeType = getMimeType(fileName);
+                const base64 = fileBuffer.toString('base64');
+                resources.set(element.image, `data:${mimeType};base64,${base64}`);
+              } catch (err) {
+                console.warn(`Could not read element image: ${fileName}`);
+              }
+            }
+
+            // Click sounds
+            if (element.onClickSound) {
+              const fileName = decodeURIComponent(path.basename(element.onClickSound));
+              const filePath = path.join(projectPath, fileName);
+              try {
+                const fileBuffer = await fs.readFile(filePath);
+                const mimeType = getMimeType(fileName);
+                const base64 = fileBuffer.toString('base64');
+                resources.set(element.onClickSound, `data:${mimeType};base64,${base64}`);
+              } catch (err) {
+                console.warn(`Could not read click sound: ${fileName}`);
+              }
+            }
+
+            // Music change files
+            if (element.onClickMusicChange) {
+              const fileName = decodeURIComponent(path.basename(element.onClickMusicChange));
+              const filePath = path.join(projectPath, fileName);
+              try {
+                const fileBuffer = await fs.readFile(filePath);
+                const mimeType = getMimeType(fileName);
+                const base64 = fileBuffer.toString('base64');
+                resources.set(element.onClickMusicChange, `data:${mimeType};base64,${base64}`);
+              } catch (err) {
+                console.warn(`Could not read music change file: ${fileName}`);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    const html = generateExportHTML(project, engineCSS, engineJS, resources);
+
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Content-Disposition', `attachment; filename="${projectName}.html"`);
+    res.send(html);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Helper function to get MIME type
+function getMimeType(fileName) {
+  const ext = path.extname(fileName).toLowerCase();
+  const mimeTypes = {
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.png': 'image/png',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml',
+    '.mp3': 'audio/mpeg',
+    '.wav': 'audio/wav',
+    '.ogg': 'audio/ogg',
+    '.m4a': 'audio/mp4'
+  };
+  return mimeTypes[ext] || 'application/octet-stream';
+}
+
+// Helper function to generate the complete HTML
+function generateExportHTML(project, engineCSS, engineJS, resources) {
+  const resourceMap = {};
+  for (const [originalPath, base64Data] of resources.entries()) {
+    resourceMap[originalPath] = base64Data;
+  }
+
+  return /*html*/`
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>${project.name}</title>
+      <style>
+          ${engineCSS}
+
+          body {
+              margin: 0;
+              padding: 0;
+              background-color: #1e1e2e;
+              color: #cdd6f4;
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+              overflow: hidden;
+          }
+
+          .pace-container {
+              height: 100vh;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              background-color: #1e1e2e;
+              position: relative;
+              padding: 16px;
+              box-sizing: border-box;
+          }
+
+          .pace-canvas {
+              border: 2px solid #313244;
+              border-radius: 8px;
+              box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+          }
+      </style>
+  </head>
+  <body>
+      <div class="pace-container">
+          <div id="pace-canvas" class="pace-canvas"></div>
+      </div>
+
+      <script>
+          ${engineJS}
+
+          document.addEventListener('DOMContentLoaded', () => {
+              const PROJECT_DATA = ${JSON.stringify(project)};
+              const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
+
+              new Engine(PROJECT_DATA, RESOURCE_MAP, {
+                  canvasId: 'pace-canvas'
+              });
+          });
+      </script>
+  </body>
+  </html>`;
+}
+
+
 app.listen(PORT, async () => {
   await ensureProjectsDir();
   console.log(`Server running on port ${PORT}`);
