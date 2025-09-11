@@ -91,7 +91,7 @@
     rgba(147, 182, 223, 0.08)
   );
   color: #cdd6f4;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 400;
   font-style: normal;
   box-shadow:
@@ -141,7 +141,7 @@
 }
 
 .pace-textbox-continue span {
-  font-size: 16px;
+  font-size: 18px;
   color: #cdd6f4; /* text equivalent */
   font-family: "Geist";
   font-style: italic;
