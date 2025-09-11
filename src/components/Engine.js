@@ -34,7 +34,7 @@ class Engine {
 
     // Configuration
     this.sceneTextDelay = 300;
-    this.textLetterDelay = 10;
+    this.textLetterDelay = 20;
 
     this.init();
   }
@@ -349,51 +349,6 @@ class Engine {
     }
   }
 
-  showTextbox(text) {
-    if (this.typingInterval) {
-      clearInterval(this.typingInterval);
-    }
-
-    if (this.sceneTextTimer) {
-      clearTimeout(this.sceneTextTimer);
-      this.sceneTextTimer = null;
-    }
-
-    const lines = text.split("\n").filter((l) => l.trim() !== "");
-    if (lines.length === 0) return;
-
-    this.textLines = lines;
-    this.currentLineIndex = 0;
-    this.textboxContent = lines[0];
-    this.startTyping(lines[0]);
-    this.textboxVisible = true;
-    this.renderTextbox();
-  }
-
-  startTyping(line) {
-    if (this.typingInterval) {
-      clearInterval(this.typingInterval);
-    }
-
-    this.textboxIndex = 0;
-    this.isTyping = true;
-
-    let index = 0;
-    this.typingInterval = setInterval(() => {
-      index++;
-      this.textboxIndex = index;
-      this.updateTextboxText();
-
-      if (index >= line.length) {
-        this.isTyping = false;
-        clearInterval(this.typingInterval);
-        this.updateTextboxContinue();
-      }
-    }, this.textLetterDelay);
-
-    this.updateTextboxContinue();
-  }
-
   renderTextbox() {
     // Always recreate the textbox to ensure fresh listeners and markup
     const existing = document.querySelector(".pace-textbox");
@@ -405,7 +360,6 @@ class Engine {
     textbox.className = "pace-textbox";
     textbox.addEventListener("click", (e) => {
       e.stopPropagation();
-      this.handleTextboxClick();
     });
     this.canvas.appendChild(textbox);
 
@@ -435,10 +389,18 @@ class Engine {
   updateTextboxContinue() {
     const continueElement = document.getElementById("textbox-continue");
     if (continueElement) {
-      continueElement.textContent = this.isTyping
-        ? "Click to Fast Forward"
-        : "Click to Continue";
+      const action = this.isTyping ? "Fast Forward" : "Continue";
+      continueElement.innerHTML = `Press <kbd class="pace-key">Space</kbd> to ${action}`;
     }
+  }
+
+  handleTextboxKeydown(e) {
+    if (!this.textboxVisible) return;
+    const isSpace = e.code === "Space" || e.key === " " || e.key === "Spacebar";
+    if (!isSpace) return;
+    e.preventDefault();
+    e.stopPropagation();
+    this.handleTextboxClick();
   }
 
   handleTextboxClick() {
@@ -468,6 +430,55 @@ class Engine {
     }
   }
 
+  showTextbox(text) {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
+
+    if (this.sceneTextTimer) {
+      clearTimeout(this.sceneTextTimer);
+      this.sceneTextTimer = null;
+    }
+
+    const lines = text.split("\n").filter((l) => l.trim() !== "");
+    if (lines.length === 0) return;
+
+    this.textLines = lines;
+    this.currentLineIndex = 0;
+    this.textboxContent = lines[0];
+    this.startTyping(lines[0]);
+    this.textboxVisible = true;
+    this.renderTextbox();
+
+    // Listen for Space to progress
+    this.boundHandleTextboxKeydown = this.handleTextboxKeydown.bind(this);
+    window.addEventListener("keydown", this.boundHandleTextboxKeydown);
+  }
+
+  startTyping(line) {
+    if (this.typingInterval) {
+      clearInterval(this.typingInterval);
+    }
+
+    this.textboxIndex = 0;
+    this.isTyping = true;
+
+    let index = 0;
+    this.typingInterval = setInterval(() => {
+      index++;
+      this.textboxIndex = index;
+      this.updateTextboxText();
+
+      if (index >= line.length) {
+        this.isTyping = false;
+        clearInterval(this.typingInterval);
+        this.updateTextboxContinue();
+      }
+    }, this.textLetterDelay);
+
+    this.updateTextboxContinue();
+  }
+
   clearTextbox() {
     const textbox = document.querySelector(".pace-textbox");
     if (textbox) {
@@ -483,6 +494,11 @@ class Engine {
 
     if (this.typingInterval) {
       clearInterval(this.typingInterval);
+    }
+
+    if (this.boundHandleTextboxKeydown) {
+      window.removeEventListener("keydown", this.boundHandleTextboxKeydown);
+      this.boundHandleTextboxKeydown = null;
     }
   }
 
@@ -528,6 +544,11 @@ class Engine {
 
     window.removeEventListener("click", this.boundHandleInteraction);
     window.removeEventListener("keydown", this.boundHandleInteraction);
+
+    if (this.boundHandleTextboxKeydown) {
+      window.removeEventListener("keydown", this.boundHandleTextboxKeydown);
+      this.boundHandleTextboxKeydown = null;
+    }
   }
 }
 

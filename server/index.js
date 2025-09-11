@@ -250,6 +250,27 @@ app.get("/api/projects/:projectName/export", async (req, res) => {
     const engineCSS = await fs.readFile(engineCSSPath, "utf-8");
     const engineJS = await fs.readFile(engineJSPath, "utf-8");
 
+    // Read Geist font and convert to base64
+    let geistFontCSS = "";
+    try {
+      const geistFontPath = path.join(
+        __dirname,
+        "../src/assets/fonts/Geist[wght].woff2",
+      );
+      const geistFontBuffer = await fs.readFile(geistFontPath);
+      const geistFontBase64 = geistFontBuffer.toString("base64");
+      geistFontCSS = `
+      @font-face {
+        font-family: 'Geist';
+        src: url('data:font/woff2;base64,${geistFontBase64}') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      `;
+    } catch (err) {
+      console.warn("Could not read Geist font file for embedding:", err);
+    }
+
     // Collect all resource files and convert to base64
     const resources = new Map();
 
@@ -350,7 +371,12 @@ app.get("/api/projects/:projectName/export", async (req, res) => {
       }
     }
 
-    const html = generateExportHTML(project, engineCSS, engineJS, resources);
+    const html = generateExportHTML(
+      project,
+      geistFontCSS + engineCSS,
+      engineJS,
+      resources,
+    );
 
     res.setHeader("Content-Type", "text/html");
     res.setHeader(
