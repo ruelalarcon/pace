@@ -29,6 +29,8 @@ class Engine {
     this.musicRef = null;
     this.soundEffectRef = null;
     this.currentMusicPath = null;
+    this.userHasInteracted = false;
+    this.queuedMusicPath = null;
 
     // Configuration
     this.sceneTextDelay = 300;
@@ -65,6 +67,25 @@ class Engine {
     }
     this.updateCanvasRect();
     this.adjustCanvasSizeToAspect();
+
+    this.boundHandleInteraction = this.handleFirstInteraction.bind(this);
+    window.addEventListener("click", this.boundHandleInteraction, {
+      once: true,
+    });
+    window.addEventListener("keydown", this.boundHandleInteraction, {
+      once: true,
+    });
+  }
+
+  handleFirstInteraction() {
+    if (this.userHasInteracted) return;
+    this.userHasInteracted = true;
+
+    // Play queued music if any
+    if (this.queuedMusicPath) {
+      this.playMusic(this.queuedMusicPath);
+      this.queuedMusicPath = null;
+    }
   }
 
   updateCanvasRect() {
@@ -274,10 +295,19 @@ class Engine {
   playMusic(musicPath) {
     if (!musicPath) return;
 
+    if (!this.userHasInteracted) {
+      this.queuedMusicPath = musicPath;
+      return;
+    }
+
     const newMusicUrl = this.getResourceUrl(musicPath);
 
     // Don't restart if same music is already playing
-    if (this.currentMusicPath === musicPath && this.musicRef && !this.musicRef.paused) {
+    if (
+      this.currentMusicPath === musicPath &&
+      this.musicRef &&
+      !this.musicRef.paused
+    ) {
       return;
     }
 
@@ -495,6 +525,9 @@ class Engine {
     if (this.parentResizeObserver) {
       this.parentResizeObserver.disconnect();
     }
+
+    window.removeEventListener("click", this.boundHandleInteraction);
+    window.removeEventListener("keydown", this.boundHandleInteraction);
   }
 }
 
