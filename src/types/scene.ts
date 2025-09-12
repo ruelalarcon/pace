@@ -1,9 +1,3 @@
-export interface Project {
-  name: string;
-  scenes: Scene[];
-  createdAt: string;
-}
-
 export interface Scene {
   id: string;
   name: string;
@@ -30,12 +24,4 @@ export interface Element {
   highlightOnHover?: boolean;
   highlightColor?: string;
   cornerRadius?: number; // Border radius in pixels
-}
-
-export interface TreeNode {
-  id: string;
-  name: string;
-  type: "scene" | "element";
-  children?: TreeNode[];
-  data?: Scene | Element;
 }

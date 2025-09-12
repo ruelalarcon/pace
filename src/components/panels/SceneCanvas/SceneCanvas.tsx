@@ -1,6 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
-import { Scene, Element } from "../types";
-import { apiService } from "../services/api";
+import { Scene, Element } from "../../../types";
+import { apiService } from "../../../services/api";
 import { Image } from "lucide-react";
 import "./SceneCanvas.css";
 

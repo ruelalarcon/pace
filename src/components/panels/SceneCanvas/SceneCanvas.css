@@ -53,8 +53,12 @@
 
 .scene-element {
   position: absolute;
+  transform: scale(1.01);
   cursor: grab;
   z-index: 10;
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
 }
 
 .scene-element.selected {

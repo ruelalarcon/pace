@@ -1,44 +1,12 @@
 /* Global Styles */
+@import "./styles/globals.css";
+
 @font-face {
   font-family: "Geist";
   src: url("./assets/fonts/Geist[wght].woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-}
-
-:root {
-  /* Palette */
-  --crust: #11111b;
-  --mantle: #181825;
-  --base: #1e1e2e;
-  --surface0: #313244;
-  --surface1: #45475a;
-  --surface2: #585b70;
-  --overlay0: #6c7086;
-  --overlay1: #7f849c;
-  --overlay2: #9399b2;
-  --text: #cdd6f4;
-  --subtext0: #a6adc8;
-  --subtext1: #7f849c;
-  --primary: #cba6f7;
-  --secondary: #f5c2e7;
-  --danger: #f38ba8;
-  --primary-hover: #ba9bdf;
-  --danger-hover: #f1688b;
-
-  --color-overlay: rgba(0, 0, 0, 0.5);
-
-  /* Effects */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --focus-ring: 0 0 0 2px rgba(0, 122, 204, 0.35);
-}
-
-* {
-  box-sizing: border-box;
 }
 
 .App {

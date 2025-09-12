@@ -23,15 +23,19 @@
 
 .pace-element {
   position: absolute;
+  transform: scale(
+    1.01
+  ); /* ensure element is hardware-accelerated by default */
   transition:
     filter 0.2s ease,
+    transform 0.2s ease,
     z-index 0s ease;
   user-select: none;
   z-index: 10;
 }
 
 .pace-element:active {
-  transform: scale(0.98);
+  transform: scale(0.99);
 }
 
 .pace-element-image {

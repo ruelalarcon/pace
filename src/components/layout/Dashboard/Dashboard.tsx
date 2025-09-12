@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Project } from "../types";
-import { apiService } from "../services/api";
+import { Project } from "../../../types";
+import { apiService } from "../../../services/api";
 import {
   Plus,
   Trash2,

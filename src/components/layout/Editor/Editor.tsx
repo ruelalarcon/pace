@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
-import { Project, Scene, Element, TreeNode } from "../types";
-import { apiService } from "../services/api";
-import TreeView from "./TreeView";
-import SceneCanvas from "./SceneCanvas";
-import Inspector from "./Inspector";
+import { Project, Scene, Element, TreeNode } from "../../../types";
+import { apiService } from "../../../services/api";
+import TreeView from "../../panels/TreeView/TreeView";
+import SceneCanvas from "../../panels/SceneCanvas/SceneCanvas";
+import Inspector from "../../panels/Inspector/Inspector";
 import { Clapperboard, Box, Trash2, Play, Download } from "lucide-react";
 import "./Editor.css";
 

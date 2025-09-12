@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Dashboard from "./components/Dashboard";
-import Editor from "./components/Editor";
-import Preview from "./components/Preview";
+import Dashboard from "./components/layout/Dashboard/Dashboard";
+import Editor from "./components/layout/Editor/Editor";
+import Preview from "./components/layout/Preview/Preview";
 import { Project } from "./types";
 import { apiService } from "./services/api";
 import "./App.css";

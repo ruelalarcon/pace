@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TreeNode } from "../types";
+import { TreeNode } from "../../../types";
 import { Clapperboard, Box, ChevronRight } from "lucide-react";
 import "./TreeView.css";
 

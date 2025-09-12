@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Scene, Element } from "../types";
-import { apiService } from "../services/api";
-import FileUpload from "./FileUpload";
+import { Scene, Element } from "../../../types";
+import { apiService } from "../../../services/api";
+import FileUpload from "../../common/FileUpload/FileUpload";
 import { Clapperboard, Box, ChevronDown, Info } from "lucide-react";
 import "./Inspector.css";
 

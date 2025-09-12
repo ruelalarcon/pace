@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Project, Scene } from "../types";
-import { apiService } from "../services/api";
+import { Project, Scene } from "../../../types";
+import { apiService } from "../../../services/api";
 import { ArrowLeft } from "lucide-react";
-import "./Engine.css";
+import "../../../engine/Engine.css";
 import "./Preview.css";
 
 interface PreviewProps {
@@ -28,7 +28,7 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
       const url = await apiService.getResourceUrl("");
       setServerUrl(url);
 
-      import("./Engine.js")
+      import("../../../engine/Engine.js")
         .then((module) => {
           const Engine = module.default || module;
 
