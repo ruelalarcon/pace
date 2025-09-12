@@ -1,8 +1,16 @@
+# Development Environment
+.vs/
+.vscode/
+.idea/
+
 # JavaScript Environment
 node_modules/
 
+# Build
+build/
+release/
+dist/
+out/
+
 # Environment
 .env
-
-# User Projects
-Projects/

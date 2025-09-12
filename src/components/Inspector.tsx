@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Scene, Element } from "../types";
+import { apiService } from "../services/api";
 import FileUpload from "./FileUpload";
 import { Clapperboard, Box, ChevronDown, Info } from "lucide-react";
 import "./Inspector.css";
@@ -24,6 +25,19 @@ const Inspector: React.FC<InspectorProps> = ({
   currentSceneId,
 }) => {
   const [localValues, setLocalValues] = useState<Record<string, any>>({});
+  const [serverUrl, setServerUrl] = useState<string>("");
+
+  useEffect(() => {
+    const initializeServerUrl = async () => {
+      try {
+        const url = await apiService.getResourceUrl("");
+        setServerUrl(url);
+      } catch (error) {
+        console.error("Error getting server URL:", error);
+      }
+    };
+    initializeServerUrl();
+  }, []);
 
   const getLocalValue = (key: string, defaultValue: any) => {
     return localValues[key] !== undefined ? localValues[key] : defaultValue;
@@ -70,19 +84,8 @@ const Inspector: React.FC<InspectorProps> = ({
   };
 
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(projectName)}/upload`,
-        {
-          method: "POST",
-          body: formData,
-        },
-      );
-
-      const result = await response.json();
+      const result = await apiService.uploadFile(projectName, file);
       return result.path;
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -227,7 +230,7 @@ const Inspector: React.FC<InspectorProps> = ({
             <div className="file-info">
               <div className="image-preview">
                 <img
-                  src={`http://localhost:3001${scene.backgroundImage}`}
+                  src={`${serverUrl}${scene.backgroundImage}`}
                   alt="Background"
                   className="preview-image"
                 />
@@ -429,7 +432,7 @@ const Inspector: React.FC<InspectorProps> = ({
             <div className="file-info">
               <div className="image-preview">
                 <img
-                  src={`http://localhost:3001${element.image}`}
+                  src={`${serverUrl}${element.image}`}
                   alt="Element"
                   className="preview-image"
                 />

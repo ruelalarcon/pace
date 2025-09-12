@@ -569,9 +569,8 @@ class Engine {
   }
 }
 
-// Export for both ES modules and global usage
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = Engine;
-} else if (typeof window !== "undefined") {
+// Global export - `export` line is removed when used in an exported game
+export default Engine;
+if (typeof window !== "undefined") {
   window.Engine = Engine;
 }

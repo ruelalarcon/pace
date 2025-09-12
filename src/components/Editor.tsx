@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { Project, Scene, Element, TreeNode } from "../types";
+import { apiService } from "../services/api";
 import TreeView from "./TreeView";
 import SceneCanvas from "./SceneCanvas";
 import Inspector from "./Inspector";
@@ -244,26 +245,15 @@ const Editor: React.FC<EditorProps> = ({
 
   const handleExportProject = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(project.name)}/export`,
-        {
-          method: "GET",
-        },
-      );
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${project.name}.html`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else {
-        console.error("Export failed:", response.statusText);
-      }
+      const blob = await apiService.exportProject(project.name);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${project.name}.html`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
     } catch (error) {
       console.error("Error exporting project:", error);
     }

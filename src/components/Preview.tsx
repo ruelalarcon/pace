@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Project, Scene } from "../types";
+import { apiService } from "../services/api";
 import { ArrowLeft } from "lucide-react";
 import "./Engine.css";
 import "./Preview.css";
@@ -13,45 +14,55 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
   const [currentSceneName, setCurrentSceneName] = useState<string>("");
   const gameEngineRef = useRef<any>(null);
   const canvasId = "pace-canvas-preview";
+  const [serverUrl, setServerUrl] = useState<string>("");
 
   useEffect(() => {
-    // Clean up any existing Engine instances first
-    if (gameEngineRef.current && gameEngineRef.current.destroy) {
-      gameEngineRef.current.destroy();
-      gameEngineRef.current = null;
-    }
+    const initializePreview = async () => {
+      // Clean up any existing Engine instances first
+      if (gameEngineRef.current && gameEngineRef.current.destroy) {
+        gameEngineRef.current.destroy();
+        gameEngineRef.current = null;
+      }
 
-    import("./Engine.js")
-      .then((module) => {
-        const Engine = module.default || module;
+      // Get server URL
+      const url = await apiService.getResourceUrl("");
+      setServerUrl(url);
 
-        const canvas = document.getElementById(canvasId);
-        if (canvas && !gameEngineRef.current) {
-          gameEngineRef.current = new Engine(
-            project,
-            {},
-            {
-              canvasId: canvasId,
-              serverUrl: "http://localhost:3001",
-            },
-          );
+      import("./Engine.js")
+        .then((module) => {
+          const Engine = module.default || module;
 
-          // Set up scene change listener to update header
-          const originalSetCurrentScene = gameEngineRef.current.setCurrentScene;
-          gameEngineRef.current.setCurrentScene = function (
-            scene: Scene | null,
-          ) {
-            setCurrentSceneName(scene ? scene.name : "");
-            originalSetCurrentScene.call(this, scene);
-          };
+          const canvas = document.getElementById(canvasId);
+          if (canvas && !gameEngineRef.current) {
+            gameEngineRef.current = new Engine(
+              project,
+              {},
+              {
+                canvasId: canvasId,
+                serverUrl: url,
+              },
+            );
 
-          // Set initial scene name
-          if (project.scenes && project.scenes.length > 0) {
-            setCurrentSceneName(project.scenes[0].name);
+            // Set up scene change listener to update header
+            const originalSetCurrentScene =
+              gameEngineRef.current.setCurrentScene;
+            gameEngineRef.current.setCurrentScene = function (
+              scene: Scene | null,
+            ) {
+              setCurrentSceneName(scene ? scene.name : "");
+              originalSetCurrentScene.call(this, scene);
+            };
+
+            // Set initial scene name
+            if (project.scenes && project.scenes.length > 0) {
+              setCurrentSceneName(project.scenes[0].name);
+            }
           }
-        }
-      })
-      .catch(console.error);
+        })
+        .catch(console.error);
+    };
+
+    initializePreview();
 
     return () => {
       if (gameEngineRef.current && gameEngineRef.current.destroy) {

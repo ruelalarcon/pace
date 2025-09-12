@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Project } from "../types";
+import { apiService } from "../services/api";
 import {
   Plus,
   Trash2,
@@ -25,15 +26,25 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<"recent" | "name" | "scenes">("recent");
+  const [serverUrl, setServerUrl] = useState<string>("");
 
   useEffect(() => {
     loadProjects();
+    initializeServerUrl();
   }, []);
+
+  const initializeServerUrl = async () => {
+    try {
+      const url = await apiService.getResourceUrl("");
+      setServerUrl(url);
+    } catch (error) {
+      console.error("Error getting server URL:", error);
+    }
+  };
 
   const loadProjects = async () => {
     try {
-      const response = await fetch("http://localhost:3001/api/projects");
-      const projectsData = await response.json();
+      const projectsData = await apiService.getProjects();
       setProjects(projectsData);
     } catch (error) {
       console.error("Error loading projects:", error);
@@ -45,24 +56,15 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     if (!newProjectName.trim()) return;
 
     try {
-      const response = await fetch("http://localhost:3001/api/projects", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: newProjectName }),
-      });
-
-      if (response.ok) {
-        setNewProjectName("");
-        setIsCreating(false);
-        loadProjects();
-      } else {
-        const error = await response.json();
-        alert(error.error);
-      }
+      await apiService.createProject(newProjectName);
+      setNewProjectName("");
+      setIsCreating(false);
+      loadProjects();
     } catch (error) {
       console.error("Error creating project:", error);
+      alert(
+        error instanceof Error ? error.message : "Failed to create project",
+      );
     }
   };
 
@@ -70,23 +72,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     if (!projectToDelete) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(
-          projectToDelete.name,
-        )}`,
-        {
-          method: "DELETE",
-        },
-      );
-
-      if (response.ok) {
-        setProjectToDelete(null);
-        loadProjects();
-      } else {
-        alert("Failed to delete project.");
-      }
+      await apiService.deleteProject(projectToDelete.name);
+      setProjectToDelete(null);
+      loadProjects();
     } catch (error) {
       console.error("Error deleting project:", error);
+      alert("Failed to delete project.");
     }
   };
 
@@ -141,7 +132,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       <div className="dashboard-header">
         <div className="title-container">
           <img
-            src="/resources/logo.svg"
+            src="./resources/logo.svg"
             alt="PACE Logo"
             className="dashboard-logo"
           />
@@ -230,9 +221,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                   <div
                     className="project-thumb"
                     style={
-                      thumb
+                      thumb && serverUrl
                         ? {
-                            backgroundImage: `url(http://localhost:3001${thumb})`,
+                            backgroundImage: `url(${serverUrl}${thumb})`,
                           }
                         : undefined
                     }

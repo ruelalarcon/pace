@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback, useEffect } from "react";
 import { Scene, Element } from "../types";
+import { apiService } from "../services/api";
 import { Image } from "lucide-react";
 import "./SceneCanvas.css";
 
@@ -26,6 +27,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     offsetY: number;
   } | null>(null);
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+  const [serverUrl, setServerUrl] = useState<string>("");
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -42,6 +44,18 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       resizeObserver.disconnect();
     };
   }, [scene]);
+
+  useEffect(() => {
+    const initializeServerUrl = async () => {
+      try {
+        const url = await apiService.getResourceUrl("");
+        setServerUrl(url);
+      } catch (error) {
+        console.error("Error getting server URL:", error);
+      }
+    };
+    initializeServerUrl();
+  }, []);
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent, element: Element) => {
@@ -151,7 +165,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       >
         {element.image ? (
           <img
-            src={`http://localhost:3001${element.image}`}
+            src={`${serverUrl}${element.image}`}
             alt={element.name}
             className="element-image"
             draggable={false}
@@ -203,9 +217,10 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
         onClick={handleCanvasClick}
         style={{
           aspectRatio: getAspectRatio(),
-          backgroundImage: scene.backgroundImage
-            ? `url(http://localhost:3001${scene.backgroundImage})`
-            : undefined,
+          backgroundImage:
+            scene.backgroundImage && serverUrl
+              ? `url(${serverUrl}${scene.backgroundImage})`
+              : undefined,
         }}
       >
         {scene.elements.map(renderElement)}

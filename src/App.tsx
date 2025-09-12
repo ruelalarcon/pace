@@ -3,6 +3,7 @@ import Dashboard from "./components/Dashboard";
 import Editor from "./components/Editor";
 import Preview from "./components/Preview";
 import { Project } from "./types";
+import { apiService } from "./services/api";
 import "./App.css";
 
 function App() {
@@ -13,10 +14,7 @@ function App() {
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(projectName)}`,
-      );
-      const project = await response.json();
+      const project = await apiService.getProject(projectName);
       setCurrentProject(project);
     } catch (error) {
       console.error("Error loading project:", error);
@@ -41,20 +39,8 @@ function App() {
     if (!currentProject) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(currentProject.name)}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedProject),
-        },
-      );
-
-      if (response.ok) {
-        setCurrentProject(updatedProject);
-      }
+      await apiService.updateProject(currentProject.name, updatedProject);
+      setCurrentProject(updatedProject);
     } catch (error) {
       console.error("Error updating project:", error);
     }
