@@ -281,12 +281,12 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       </div>
 
       {isCreating && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Create New Project</h2>
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <div className="dialog-header">
+              <h2 className="dialog-title">Create New Project</h2>
             </div>
-            <div className="modal-body">
+            <div className="dialog-body">
               <div className="form-group">
                 <label className="form-label">Project Name</label>
                 <input
@@ -304,7 +304,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 />
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="dialog-footer">
               <button
                 className="btn btn-secondary"
                 onClick={() => {
@@ -327,18 +327,19 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       )}
 
       {projectToDelete && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Delete Project</h2>
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <div className="dialog-header">
+              <h2 className="dialog-title">Delete Project</h2>
             </div>
-            <div className="modal-body">
-              <p className="modal-content">
-                Are you sure you want to delete the project <strong>{projectToDelete.name}</strong>?
-                This action is irreversible and will delete all associated files.
+            <div className="dialog-body">
+              <p className="dialog-text-small">
+                Are you sure you want to delete{" "}
+                <strong>{projectToDelete.name}</strong>? This action is
+                irreversible and will delete all associated files.
               </p>
             </div>
-            <div className="modal-footer">
+            <div className="dialog-footer">
               <button
                 className="btn btn-secondary"
                 onClick={() => setProjectToDelete(null)}

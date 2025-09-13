@@ -222,7 +222,7 @@ class ExportRoutes {
           const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
 
           new Engine(PROJECT_DATA, RESOURCE_MAP, {
-            canvasId: 'pace-canvas'${initialSceneId ? `,\n            initialSceneId: '${initialSceneId}'` : ''}
+            canvasId: 'pace-canvas'${initialSceneId ? `,\n            initialSceneId: '${initialSceneId}'` : ""}
           });
         });
       </script>

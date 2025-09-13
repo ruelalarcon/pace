@@ -4,7 +4,14 @@ import { apiService } from "../../../services/api";
 import TreeView from "../../panels/TreeView/TreeView";
 import SceneCanvas from "../../panels/SceneCanvas/SceneCanvas";
 import Inspector from "../../panels/Inspector/Inspector";
-import { Clapperboard, Box, Trash2, Play, Download, ChevronDown } from "lucide-react";
+import {
+  Clapperboard,
+  Box,
+  Trash2,
+  Play,
+  Download,
+  ChevronDown,
+} from "lucide-react";
 import "./Editor.css";
 
 interface EditorProps {
@@ -36,9 +43,9 @@ const Editor: React.FC<EditorProps> = ({
   const [isCreatingScene, setIsCreatingScene] = useState(false);
   const [newSceneName, setNewSceneName] = useState("");
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
-  const [isExportModalVisible, setIsExportModalVisible] = useState(false);
+  const [isExportDialogVisible, setIsExportDialogVisible] = useState(false);
   const [selectedExportSceneId, setSelectedExportSceneId] = useState<string>(
-    project.scenes.length > 0 ? project.scenes[0].id : ""
+    project.scenes.length > 0 ? project.scenes[0].id : "",
   );
 
   const generateTreeData = useCallback((): TreeNode[] => {
@@ -77,7 +84,7 @@ const Editor: React.FC<EditorProps> = ({
     setSelectedItemType("scene");
   };
 
-  const openCreateSceneModal = () => {
+  const openCreateSceneDialog = () => {
     setNewSceneName("");
     setIsCreatingScene(true);
   };
@@ -251,16 +258,16 @@ const Editor: React.FC<EditorProps> = ({
     setSelectedItemType(null);
   };
 
-  const openExportModal = () => {
+  const openExportDialog = () => {
     if (currentScene) {
       setSelectedExportSceneId(currentScene.id);
     }
-    setIsExportModalVisible(true);
+    setIsExportDialogVisible(true);
   };
 
   const handleExportProject = async (options: ExportOptions) => {
     try {
-      setIsExportModalVisible(false);
+      setIsExportDialogVisible(false);
       const blob = await apiService.exportProject(
         project.name,
         options.initialSceneId,
@@ -288,7 +295,7 @@ const Editor: React.FC<EditorProps> = ({
           )}
         </div>
         <div className="editor-header-actions">
-          <button className="btn btn-secondary" onClick={openExportModal}>
+          <button className="btn btn-secondary" onClick={openExportDialog}>
             <Download size={16} /> Export
           </button>
           <button
@@ -330,7 +337,7 @@ const Editor: React.FC<EditorProps> = ({
           >
             <button
               className="btn btn-secondary btn-small"
-              onClick={openCreateSceneModal}
+              onClick={openCreateSceneDialog}
             >
               <Clapperboard size={14} /> Add Scene
             </button>
@@ -370,12 +377,12 @@ const Editor: React.FC<EditorProps> = ({
       </div>
 
       {isCreatingScene && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Create New Scene</h2>
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <div className="dialog-header">
+              <h2 className="dialog-title">Create New Scene</h2>
             </div>
-            <div className="modal-body">
+            <div className="dialog-body">
               <div className="form-group">
                 <label className="form-label">Scene Name</label>
                 <input
@@ -391,7 +398,7 @@ const Editor: React.FC<EditorProps> = ({
                 />
               </div>
             </div>
-            <div className="modal-footer">
+            <div className="dialog-footer">
               <button
                 className="btn btn-secondary"
                 onClick={() => setIsCreatingScene(false)}
@@ -411,17 +418,21 @@ const Editor: React.FC<EditorProps> = ({
       )}
 
       {isDeleteConfirmVisible && selectedItem && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <div className="modal-header">
-              <h2 className="modal-title">Confirm Deletion</h2>
+        <div className="dialog-overlay">
+          <div className="dialog">
+            <div className="dialog-header">
+              <h2 className="dialog-title">
+                Delete {selectedItemType === "scene" ? "Scene" : "Element"}
+              </h2>
             </div>
-            <div className="modal-body">
-              <p className="modal-content">
-                Are you sure you want to delete <strong>{selectedItem.name}</strong>? This action cannot be undone.
+            <div className="dialog-body">
+              <p className="dialog-text-small">
+                Are you sure you want to delete{" "}
+                <strong>{selectedItem.name}</strong>? This action is
+                irreversible and cannot be undone.
               </p>
             </div>
-            <div className="modal-footer">
+            <div className="dialog-footer">
               <button
                 className="btn btn-secondary"
                 onClick={() => setIsDeleteConfirmVisible(false)}
@@ -436,15 +447,18 @@ const Editor: React.FC<EditorProps> = ({
         </div>
       )}
 
-      {isExportModalVisible && (
-        <div className="modal-overlay" onClick={() => setIsExportModalVisible(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h2 className="modal-title">Export Project</h2>
+      {isExportDialogVisible && (
+        <div
+          className="dialog-overlay"
+          onClick={() => setIsExportDialogVisible(false)}
+        >
+          <div className="dialog" onClick={(e) => e.stopPropagation()}>
+            <div className="dialog-header">
+              <h2 className="dialog-title">Export Project</h2>
             </div>
 
-            <div className="modal-body">
-              <p className="modal-content">
+            <div className="dialog-body">
+              <p className="dialog-text">
                 Configure export settings for "{project.name}"
               </p>
 
@@ -466,19 +480,24 @@ const Editor: React.FC<EditorProps> = ({
                     <ChevronDown size={16} />
                   </div>
                 </div>
-                <small style={{ color: "var(--subtext1)", fontSize: "12px", marginTop: "4px", display: "block" }}>
-                  The scene that is first displayed when the exported game starts.
-                </small>
+                <span className="input-description">
+                  The first scene displayed when the game starts.
+                </span>
               </div>
             </div>
 
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => setIsExportModalVisible(false)}>
+            <div className="dialog-footer">
+              <button
+                className="btn btn-secondary"
+                onClick={() => setIsExportDialogVisible(false)}
+              >
                 Cancel
               </button>
               <button
                 className="btn btn-primary"
-                onClick={() => handleExportProject({ initialSceneId: selectedExportSceneId })}
+                onClick={() =>
+                  handleExportProject({ initialSceneId: selectedExportSceneId })
+                }
                 disabled={!selectedExportSceneId}
               >
                 <Download size={16} /> Export
