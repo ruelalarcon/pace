@@ -15,17 +15,10 @@ class PaceElectronApp {
   }
 
   async initializeApp() {
-    // Initialize server
     this.server = new Server(this.projectsDir);
     await this.server.start();
-
-    // Initialize window manager
     this.windowManager = new WindowManager(this.server.getPort());
-
-    // Initialize IPC handlers
     this.ipcHandlers = new IpcHandlers(this.windowManager, this.projectsDir);
-
-    // Set up Electron app events
     this.setupElectronEvents();
   }
 
@@ -51,5 +44,4 @@ class PaceElectronApp {
   }
 }
 
-// Initialize the app
 new PaceElectronApp();

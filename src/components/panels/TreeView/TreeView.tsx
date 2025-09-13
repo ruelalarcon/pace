@@ -26,8 +26,6 @@ const TreeView: React.FC<TreeViewProps> = ({
     setExpandedNodes(newExpanded);
   };
 
-  // Scene creation moved to floating toolbar in Editor
-
   const renderTreeNode = (node: TreeNode, depth: number = 0) => {
     const isExpanded = expandedNodes.has(node.id);
     const hasChildren = node.children && node.children.length > 0;
