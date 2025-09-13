@@ -24,8 +24,8 @@ class ApiService {
     this.filesService.getResourceUrl(resourcePath);
 
   // Export methods
-  exportProject = (projectName: string) =>
-    this.exportService.exportProject(projectName);
+  exportProject = (projectName: string, initialSceneId?: string) =>
+    this.exportService.exportProject(projectName, initialSceneId);
 
   // Electron integration
   async getProjectsDir(): Promise<string> {

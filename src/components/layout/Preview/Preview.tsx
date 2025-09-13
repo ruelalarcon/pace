@@ -7,10 +7,15 @@ import "./Preview.css";
 
 interface PreviewProps {
   project: Project;
+  initialSceneId?: string;
   onExitPreview: () => void;
 }
 
-const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
+const Preview: React.FC<PreviewProps> = ({
+  project,
+  onExitPreview,
+  initialSceneId,
+}) => {
   const [currentSceneName, setCurrentSceneName] = useState<string>("");
   const gameEngineRef = useRef<any>(null);
   const canvasId = "pace-canvas-preview";
@@ -40,6 +45,7 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
               {
                 canvasId: canvasId,
                 serverUrl: url,
+                initialSceneId: initialSceneId,
               },
             );
 
@@ -55,7 +61,19 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
 
             // Set initial scene name
             if (project.scenes && project.scenes.length > 0) {
-              setCurrentSceneName(project.scenes[0].name);
+              let initialScene = project.scenes[0];
+
+              // Use specific initial scene if provided
+              if (initialSceneId) {
+                const foundScene = project.scenes.find(
+                  (scene) => scene.id === initialSceneId,
+                );
+                if (foundScene) {
+                  initialScene = foundScene;
+                }
+              }
+
+              setCurrentSceneName(initialScene.name);
             }
           }
         })
@@ -70,7 +88,7 @@ const Preview: React.FC<PreviewProps> = ({ project, onExitPreview }) => {
         gameEngineRef.current = null;
       }
     };
-  }, [project, canvasId]);
+  }, [project, canvasId, initialSceneId]);
 
   if (!project.scenes || project.scenes.length === 0) {
     return (

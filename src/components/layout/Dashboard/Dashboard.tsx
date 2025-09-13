@@ -333,13 +333,9 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
               <h2 className="modal-title">Delete Project</h2>
             </div>
             <div className="modal-body">
-              <p>
-                Are you sure you want to delete the project "
-                <strong>{projectToDelete.name}</strong>"?
-              </p>
-              <p>
-                This action is irreversible and will delete all associated
-                files.
+              <p className="modal-content">
+                Are you sure you want to delete the project <strong>{projectToDelete.name}</strong>?
+                This action is irreversible and will delete all associated files.
               </p>
             </div>
             <div className="modal-footer">

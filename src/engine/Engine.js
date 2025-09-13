@@ -9,6 +9,7 @@ class Engine {
     this.resources = resources || {};
     this.canvasId = options.canvasId || "pace-canvas";
     this.serverUrl = options.serverUrl || "http://localhost:3001";
+    this.initialSceneId = options.initialSceneId || null;
 
     // Game state
     this.currentScene = null;
@@ -48,7 +49,19 @@ class Engine {
 
     // Set up initial scene
     if (this.project.scenes && this.project.scenes.length > 0) {
-      this.setCurrentScene(this.project.scenes[0]);
+      let initialScene = this.project.scenes[0];
+
+      // Use specific initial scene if provided
+      if (this.initialSceneId) {
+        const foundScene = this.project.scenes.find(
+          (scene) => scene.id === this.initialSceneId,
+        );
+        if (foundScene) {
+          initialScene = foundScene;
+        }
+      }
+
+      this.setCurrentScene(initialScene);
     }
 
     // Set up resize observer

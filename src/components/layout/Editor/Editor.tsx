@@ -4,14 +4,18 @@ import { apiService } from "../../../services/api";
 import TreeView from "../../panels/TreeView/TreeView";
 import SceneCanvas from "../../panels/SceneCanvas/SceneCanvas";
 import Inspector from "../../panels/Inspector/Inspector";
-import { Clapperboard, Box, Trash2, Play, Download } from "lucide-react";
+import { Clapperboard, Box, Trash2, Play, Download, ChevronDown } from "lucide-react";
 import "./Editor.css";
 
 interface EditorProps {
   project: Project;
   onUpdateProject: (project: Project) => void;
   onCloseProject: () => void;
-  onEnterPreview: () => void;
+  onEnterPreview: (sceneId?: string) => void;
+}
+
+interface ExportOptions {
+  initialSceneId: string;
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -32,6 +36,10 @@ const Editor: React.FC<EditorProps> = ({
   const [isCreatingScene, setIsCreatingScene] = useState(false);
   const [newSceneName, setNewSceneName] = useState("");
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
+  const [isExportModalVisible, setIsExportModalVisible] = useState(false);
+  const [selectedExportSceneId, setSelectedExportSceneId] = useState<string>(
+    project.scenes.length > 0 ? project.scenes[0].id : ""
+  );
 
   const generateTreeData = useCallback((): TreeNode[] => {
     return project.scenes.map((scene) => ({
@@ -243,9 +251,20 @@ const Editor: React.FC<EditorProps> = ({
     setSelectedItemType(null);
   };
 
-  const handleExportProject = async () => {
+  const openExportModal = () => {
+    if (currentScene) {
+      setSelectedExportSceneId(currentScene.id);
+    }
+    setIsExportModalVisible(true);
+  };
+
+  const handleExportProject = async (options: ExportOptions) => {
     try {
-      const blob = await apiService.exportProject(project.name);
+      setIsExportModalVisible(false);
+      const blob = await apiService.exportProject(
+        project.name,
+        options.initialSceneId,
+      );
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -269,10 +288,14 @@ const Editor: React.FC<EditorProps> = ({
           )}
         </div>
         <div className="editor-header-actions">
-          <button className="btn btn-secondary" onClick={handleExportProject}>
+          <button className="btn btn-secondary" onClick={openExportModal}>
             <Download size={16} /> Export
           </button>
-          <button className="btn btn-primary" onClick={onEnterPreview}>
+          <button
+            className="btn btn-primary"
+            onClick={() => onEnterPreview(currentScene?.id)}
+            disabled={!currentScene}
+          >
             <Play size={16} /> Preview
           </button>
           <button className="btn btn-secondary" onClick={onCloseProject}>
@@ -394,9 +417,8 @@ const Editor: React.FC<EditorProps> = ({
               <h2 className="modal-title">Confirm Deletion</h2>
             </div>
             <div className="modal-body">
-              <p>
-                Are you sure you want to delete "{selectedItem.name}"? This
-                action cannot be undone.
+              <p className="modal-content">
+                Are you sure you want to delete <strong>{selectedItem.name}</strong>? This action cannot be undone.
               </p>
             </div>
             <div className="modal-footer">
@@ -408,6 +430,58 @@ const Editor: React.FC<EditorProps> = ({
               </button>
               <button className="btn btn-danger" onClick={confirmDelete}>
                 Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isExportModalVisible && (
+        <div className="modal-overlay" onClick={() => setIsExportModalVisible(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 className="modal-title">Export Project</h2>
+            </div>
+
+            <div className="modal-body">
+              <p className="modal-content">
+                Configure export settings for "{project.name}"
+              </p>
+
+              <div className="form-group">
+                <label className="form-label">Initial Scene</label>
+                <div className="select-wrapper">
+                  <select
+                    className="input select"
+                    value={selectedExportSceneId}
+                    onChange={(e) => setSelectedExportSceneId(e.target.value)}
+                  >
+                    {project.scenes.map((scene) => (
+                      <option key={scene.id} value={scene.id}>
+                        {scene.name}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="select-arrow">
+                    <ChevronDown size={16} />
+                  </div>
+                </div>
+                <small style={{ color: "var(--subtext1)", fontSize: "12px", marginTop: "4px", display: "block" }}>
+                  The scene that is first displayed when the exported game starts.
+                </small>
+              </div>
+            </div>
+
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setIsExportModalVisible(false)}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleExportProject({ initialSceneId: selectedExportSceneId })}
+                disabled={!selectedExportSceneId}
+              >
+                <Download size={16} /> Export
               </button>
             </div>
           </div>

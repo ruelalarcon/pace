@@ -10,6 +10,9 @@ function App() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewSceneId, setPreviewSceneId] = useState<string | undefined>(
+    undefined,
+  );
 
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
@@ -25,9 +28,11 @@ function App() {
   const handleCloseProject = () => {
     setCurrentProject(null);
     setIsPreviewMode(false);
+    setPreviewSceneId(undefined);
   };
 
-  const handleEnterPreview = () => {
+  const handleEnterPreview = (sceneId?: string) => {
+    setPreviewSceneId(sceneId);
     setIsPreviewMode(true);
   };
 
@@ -59,7 +64,11 @@ function App() {
     <div className="App">
       {currentProject ? (
         isPreviewMode ? (
-          <Preview project={currentProject} onExitPreview={handleExitPreview} />
+          <Preview
+            project={currentProject}
+            onExitPreview={handleExitPreview}
+            initialSceneId={previewSceneId}
+          />
         ) : (
           <Editor
             project={currentProject}

@@ -19,6 +19,7 @@ class ExportRoutes {
   async exportProject(req, res) {
     try {
       const { projectName } = req.params;
+      const { initialSceneId } = req.query;
       const projectPath = path.join(this.projectsDir, projectName);
       const projectJsonPath = path.join(projectPath, "project.json");
 
@@ -37,6 +38,7 @@ class ExportRoutes {
         geistFontCSS + engineCSS,
         engineJS,
         resources,
+        initialSceneId,
       );
 
       res.setHeader("Content-Type", "text/html");
@@ -161,7 +163,7 @@ class ExportRoutes {
     }
   }
 
-  generateExportHTML(project, engineCSS, engineJS, resources) {
+  generateExportHTML(project, engineCSS, engineJS, resources, initialSceneId) {
     const resourceMap = {};
     for (const [originalPath, base64Data] of resources.entries()) {
       resourceMap[originalPath] = base64Data;
@@ -220,7 +222,7 @@ class ExportRoutes {
           const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
 
           new Engine(PROJECT_DATA, RESOURCE_MAP, {
-            canvasId: 'pace-canvas'
+            canvasId: 'pace-canvas'${initialSceneId ? `,\n            initialSceneId: '${initialSceneId}'` : ''}
           });
         });
       </script>
