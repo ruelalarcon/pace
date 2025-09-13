@@ -7,6 +7,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
   getServerPort: () => ipcRenderer.invoke("get-server-port"),
   getProjectsDir: () => ipcRenderer.invoke("get-projects-dir"),
 
+  // Window controls
+  minimizeWindow: () => ipcRenderer.invoke("minimize-window"),
+  maximizeWindow: () => ipcRenderer.invoke("maximize-window"),
+  closeWindow: () => ipcRenderer.invoke("close-window"),
+  getPlatform: () => ipcRenderer.invoke("get-platform"),
+
   // Platform information
   platform: process.platform,
 

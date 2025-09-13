@@ -76,7 +76,7 @@ const TreeView: React.FC<TreeViewProps> = ({
   return (
     <div className="tree-view">
       <div className="tree-header">
-        <h3 className="tree-title">Project Structure</h3>
+        <h3 className="tree-title">Tree View</h3>
       </div>
 
       <div className="tree-content">

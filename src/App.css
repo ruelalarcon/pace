@@ -22,14 +22,29 @@
     sans-serif;
 }
 
+/* Title bar integration */
+.App.has-title-bar {
+  padding-top: 41px;
+}
+
+.App.has-title-bar .dashboard,
+.App.has-title-bar .editor,
+.App.has-title-bar .preview {
+  height: calc(100vh - 41px) !important;
+}
+
+.App.has-title-bar .loading {
+  height: calc(100vh - 41px) !important;
+}
+
 /* Loading Styles */
 .loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background-color: var(--base);
+  overflow: hidden;
 }
 
 .loading-spinner {
@@ -38,8 +53,14 @@
   border: 4px solid var(--surface0);
   border-top: 4px solid var(--primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation:
+    spin 1s linear infinite,
+    fadeInLoading 0.3s ease-out 0.1s both;
   margin-bottom: 16px;
+}
+
+.loading p {
+  animation: fadeInLoading 0.3s ease-out 0.1s both;
 }
 
 @keyframes spin {
@@ -48,6 +69,17 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInLoading {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 

@@ -2,6 +2,7 @@ import { useState } from "react";
 import Dashboard from "./components/layout/Dashboard/Dashboard";
 import Editor from "./components/layout/Editor/Editor";
 import Preview from "./components/layout/Preview/Preview";
+import TitleBar from "./components/common/TitleBar/TitleBar";
 import { Project } from "./types";
 import { apiService } from "./services/api";
 import "./App.css";
@@ -11,6 +12,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [previewSceneId, setPreviewSceneId] = useState<string | undefined>(
+    undefined,
+  );
+  const [currentSceneName, setCurrentSceneName] = useState<string | undefined>(
     undefined,
   );
 
@@ -29,6 +33,7 @@ function App() {
     setCurrentProject(null);
     setIsPreviewMode(false);
     setPreviewSceneId(undefined);
+    setCurrentSceneName(undefined);
   };
 
   const handleEnterPreview = (sceneId?: string) => {
@@ -53,15 +58,30 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
-        <p>Loading project...</p>
+      <div className="App has-title-bar">
+        <TitleBar title="PACE Editor" />
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading project...</p>
+        </div>
       </div>
     );
   }
 
+  const getTitleBarTitle = () => {
+    if (currentProject) {
+      return `PACE Editor - ${currentProject.name}`;
+    }
+    return "PACE Editor";
+  };
+
   return (
-    <div className="App">
+    <div className="App has-title-bar">
+      <TitleBar
+        title={getTitleBarTitle()}
+        currentScene={currentSceneName}
+        subtitle={isPreviewMode ? "Preview Mode" : undefined}
+      />
       {currentProject ? (
         isPreviewMode ? (
           <Preview
@@ -75,6 +95,7 @@ function App() {
             onUpdateProject={handleUpdateProject}
             onCloseProject={handleCloseProject}
             onEnterPreview={handleEnterPreview}
+            onSceneChange={setCurrentSceneName}
           />
         )
       ) : (

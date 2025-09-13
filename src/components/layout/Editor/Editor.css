@@ -27,13 +27,6 @@
   color: var(--text);
 }
 
-.current-scene {
-  font-size: 14px;
-  padding-top: 1px;
-  color: var(--primary);
-  font-weight: 500;
-}
-
 .editor-header-actions {
   display: flex;
   gap: 12px;

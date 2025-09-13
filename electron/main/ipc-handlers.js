@@ -26,6 +26,36 @@ class IpcHandlers {
     ipcMain.handle("get-projects-dir", () => {
       return this.projectsDir;
     });
+
+    // Window control handlers
+    ipcMain.handle("minimize-window", () => {
+      const mainWindow = this.windowManager.getMainWindow();
+      if (mainWindow) {
+        mainWindow.minimize();
+      }
+    });
+
+    ipcMain.handle("maximize-window", () => {
+      const mainWindow = this.windowManager.getMainWindow();
+      if (mainWindow) {
+        if (mainWindow.isMaximized()) {
+          mainWindow.unmaximize();
+        } else {
+          mainWindow.maximize();
+        }
+      }
+    });
+
+    ipcMain.handle("close-window", () => {
+      const mainWindow = this.windowManager.getMainWindow();
+      if (mainWindow) {
+        mainWindow.close();
+      }
+    });
+
+    ipcMain.handle("get-platform", () => {
+      return process.platform;
+    });
   }
 }
 

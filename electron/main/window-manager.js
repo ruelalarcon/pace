@@ -23,6 +23,9 @@ class WindowManager {
         : path.join(__dirname, "../public/favicon.ico"), // Production
       title: "PACE Editor",
       show: false, // Don't show until ready
+      // Custom title bar configuration
+      frame: false, // Remove entire frame including title bar and controls
+      titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "hidden",
     });
 
     if (!process.env.ELECTRON_RENDERER_URL) {

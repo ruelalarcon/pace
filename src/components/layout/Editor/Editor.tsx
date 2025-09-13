@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Project, Scene, Element, TreeNode } from "../../../types";
 import { apiService } from "../../../services/api";
 import TreeView from "../../panels/TreeView/TreeView";
@@ -19,6 +19,7 @@ interface EditorProps {
   onUpdateProject: (project: Project) => void;
   onCloseProject: () => void;
   onEnterPreview: (sceneId?: string) => void;
+  onSceneChange?: (sceneName: string | undefined) => void;
 }
 
 interface ExportOptions {
@@ -30,6 +31,7 @@ const Editor: React.FC<EditorProps> = ({
   onUpdateProject,
   onCloseProject,
   onEnterPreview,
+  onSceneChange,
 }) => {
   const [selectedItem, setSelectedItem] = useState<Scene | Element | null>(
     null,
@@ -47,6 +49,13 @@ const Editor: React.FC<EditorProps> = ({
   const [selectedExportSceneId, setSelectedExportSceneId] = useState<string>(
     project.scenes.length > 0 ? project.scenes[0].id : "",
   );
+
+  // Initialize current scene name
+  useEffect(() => {
+    if (currentScene) {
+      onSceneChange?.(currentScene.name);
+    }
+  }, []);
 
   const generateTreeData = useCallback((): TreeNode[] => {
     return project.scenes.map((scene) => ({
@@ -82,6 +91,7 @@ const Editor: React.FC<EditorProps> = ({
     setCurrentScene(newScene);
     setSelectedItem(newScene);
     setSelectedItemType("scene");
+    onSceneChange?.(newScene.name);
   };
 
   const openCreateSceneDialog = () => {
@@ -114,6 +124,7 @@ const Editor: React.FC<EditorProps> = ({
       setCurrentScene(scene);
       setSelectedItem(scene);
       setSelectedItemType("scene");
+      onSceneChange?.(scene.name);
     } else if (node.type === "element") {
       const element = node.data as Element;
       setSelectedItem(element);
@@ -289,10 +300,7 @@ const Editor: React.FC<EditorProps> = ({
     <div className="editor">
       <div className="editor-header">
         <div className="editor-title">
-          <h1>{project.name}</h1>
-          {currentScene && (
-            <span className="current-scene">/ {currentScene.name}</span>
-          )}
+          <h1>Project Editor</h1>
         </div>
         <div className="editor-header-actions">
           <button className="btn btn-secondary" onClick={openExportDialog}>
