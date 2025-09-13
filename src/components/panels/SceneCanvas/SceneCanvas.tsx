@@ -29,21 +29,66 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
   const [serverUrl, setServerUrl] = useState<string>("");
 
+  const getAspectRatio = useCallback(() => {
+    if (scene && scene.aspectRatio) {
+      const parts = scene.aspectRatio.split(":");
+      if (parts.length === 2) {
+        const width = parseFloat(parts[0]);
+        const height = parseFloat(parts[1]);
+        if (!isNaN(width) && !isNaN(height) && height > 0) {
+          return width / height;
+        }
+      }
+    }
+    return 16 / 9; // Default aspect ratio
+  }, [scene]);
+
+  const adjustCanvasSizeToAspect = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !canvas.parentElement) return;
+
+    const parentRect = canvas.parentElement.getBoundingClientRect();
+    const availableWidth = parentRect.width;
+    const availableHeight = parentRect.height;
+    if (availableWidth === 0 || availableHeight === 0) return;
+
+    const desiredAspect = getAspectRatio();
+    const containerAspect = availableWidth / availableHeight;
+
+    if (containerAspect > desiredAspect) {
+      // Container is wider than desired; constrain by height
+      canvas.style.height = "100%";
+      canvas.style.width = "auto";
+    } else {
+      // Container is narrower/taller; constrain by width
+      canvas.style.width = "100%";
+      canvas.style.height = "auto";
+    }
+
+    // Update canvas rect after size adjustment
+    setCanvasRect(canvas.getBoundingClientRect());
+  }, [getAspectRatio]);
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const resizeObserver = new ResizeObserver(() => {
-      setCanvasRect(canvas.getBoundingClientRect());
+      adjustCanvasSizeToAspect();
     });
 
     resizeObserver.observe(canvas);
-    setCanvasRect(canvas.getBoundingClientRect()); // Set initial size
+    if (canvas.parentElement) {
+      resizeObserver.observe(canvas.parentElement);
+    }
+
+    // Initial size adjustment
+    adjustCanvasSizeToAspect();
 
     return () => {
       resizeObserver.disconnect();
     };
-  }, [scene]);
+  }, [scene, adjustCanvasSizeToAspect]);
 
   useEffect(() => {
     const initializeServerUrl = async () => {
@@ -190,20 +235,6 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       </div>
     );
   }
-
-  const getAspectRatio = () => {
-    if (scene && scene.aspectRatio) {
-      const parts = scene.aspectRatio.split(":");
-      if (parts.length === 2) {
-        const width = parseFloat(parts[0]);
-        const height = parseFloat(parts[1]);
-        if (!isNaN(width) && !isNaN(height) && height > 0) {
-          return width / height;
-        }
-      }
-    }
-    return 16 / 9; // Default aspect ratio
-  };
 
   return (
     <div
