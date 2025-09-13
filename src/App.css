@@ -92,6 +92,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  user-select: none;
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -165,6 +166,7 @@
   font-family: inherit;
   font-size: 14px;
   outline: none;
+  user-select: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -205,6 +207,7 @@ textarea.input {
   -moz-appearance: none;
   width: 100%;
   padding-right: 32px; /* space for arrow */
+  user-select: none;
 }
 
 .select-arrow {
@@ -339,6 +342,7 @@ textarea.input {
   border: 1px solid var(--surface0);
   box-shadow: var(--shadow-md);
   transform-origin: 50% 45%;
+  user-select: none;
   animation: dialogPop 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
@@ -398,6 +402,7 @@ textarea.input {
   font-size: 12px;
   font-weight: 500;
   color: var(--subtext0);
+  user-select: none;
 }
 
 /* File Upload Styles */

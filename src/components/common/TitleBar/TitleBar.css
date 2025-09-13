@@ -46,15 +46,6 @@
   filter: brightness(0) saturate(100%) invert(93%) sepia(82%) saturate(2487%)
     hue-rotate(179deg) brightness(99%) contrast(94%);
   flex-shrink: 0;
-  transition:
-    filter 0.2s ease,
-    transform 0.2s ease;
-}
-
-.title-bar-logo:hover {
-  filter: invert(79%) sepia(22%) saturate(1330%) hue-rotate(206deg)
-    brightness(110%) contrast(95%) drop-shadow(0 0 4px var(--primary));
-  transform: scale(1.05);
 }
 
 .title-bar-text {

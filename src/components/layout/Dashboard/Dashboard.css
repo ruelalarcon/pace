@@ -31,6 +31,7 @@
 .dashboard-header {
   text-align: center;
   padding: 60px 20px 40px;
+  user-select: none;
 }
 
 .title-container {
@@ -176,6 +177,7 @@
   color: var(--subtext0);
   border-radius: 999px;
   font-size: 12px;
+  user-select: none;
 }
 
 .project-thumb {
@@ -206,6 +208,7 @@
   display: flex;
   gap: 12px;
   color: var(--subtext0);
+  user-select: none;
 }
 
 .meta-item {
@@ -276,6 +279,7 @@
   font-weight: 600;
   margin: 0;
   color: var(--text);
+  user-select: none;
 }
 
 .project-card-body {
