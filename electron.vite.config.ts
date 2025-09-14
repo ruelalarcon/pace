@@ -52,6 +52,10 @@ export default defineConfig({
           "express",
           "cors",
           "multer",
+          "sharp",
+          "fluent-ffmpeg",
+          "ffmpeg-static",
+          "prettier",
         ],
         output: {
           format: "cjs",

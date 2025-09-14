@@ -25,6 +25,7 @@ interface EditorProps {
 interface ExportOptions {
   initialSceneId: string;
   format: "standalone" | "website";
+  optimizeResources: boolean;
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -53,6 +54,8 @@ const Editor: React.FC<EditorProps> = ({
   const [selectedExportFormat, setSelectedExportFormat] = useState<
     "standalone" | "website"
   >("standalone");
+  const [optimizeResources, setOptimizeResources] = useState<boolean>(true);
+  const [isExporting, setIsExporting] = useState(false);
 
   // Initialize current scene name
   useEffect(() => {
@@ -281,12 +284,14 @@ const Editor: React.FC<EditorProps> = ({
   };
 
   const handleExportProject = async (options: ExportOptions) => {
+    setIsExporting(true);
     try {
       setIsExportDialogVisible(false);
       const blob = await apiService.exportProject(
         project.name,
         options.initialSceneId,
         options.format,
+        options.optimizeResources,
       );
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -301,94 +306,100 @@ const Editor: React.FC<EditorProps> = ({
       document.body.removeChild(a);
     } catch (error) {
       console.error("Error exporting project:", error);
+    } finally {
+      setIsExporting(false);
     }
   };
 
   return (
     <div className="editor">
-      <div className="editor-header">
-        <div className="editor-title">
-          <h1>Project Editor</h1>
-        </div>
-        <div className="editor-header-actions">
-          <button className="btn btn-secondary" onClick={openExportDialog}>
-            <Download size={16} /> Export
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => onEnterPreview(currentScene?.id)}
-            disabled={!currentScene}
-          >
-            <Play size={16} /> Preview
-          </button>
-          <button className="btn btn-secondary" onClick={onCloseProject}>
-            ← Back to Dashboard
-          </button>
-        </div>
-      </div>
-
-      <div className="editor-content">
-        <div className="editor-sidebar">
-          <TreeView
-            treeData={generateTreeData()}
-            onSelectItem={handleSelectTreeItem}
-            selectedId={selectedItem?.id || null}
-          />
-        </div>
-
-        <div className="editor-main" onClick={handleDeselect}>
-          <SceneCanvas
-            scene={currentScene}
-            selectedElement={
-              selectedItemType === "element" ? (selectedItem as Element) : null
-            }
-            onElementMove={handleElementMove}
-            onElementSelect={handleSelectElement}
-            onCanvasClick={handleCanvasClick}
-          />
-
-          <div
-            className="floating-toolbar"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-secondary btn-small"
-              onClick={openCreateSceneDialog}
-            >
-              <Clapperboard size={14} /> Add Scene
+      <div className={`editor-main-view ${isExporting ? "exporting" : ""}`}>
+        <div className="editor-header">
+          <div className="editor-title">
+            <h1>Project Editor</h1>
+          </div>
+          <div className="editor-header-actions">
+            <button className="btn btn-secondary" onClick={openExportDialog}>
+              <Download size={16} /> Export
             </button>
             <button
-              className="btn btn-primary btn-small"
-              onClick={handleCreateElement}
+              className="btn btn-primary"
+              onClick={() => onEnterPreview(currentScene?.id)}
               disabled={!currentScene}
             >
-              <Box size={14} /> Add Element
+              <Play size={16} /> Preview
             </button>
-            <button
-              className="btn btn-danger btn-small"
-              onClick={handleDeleteClick}
-              disabled={!selectedItem}
-              title={
-                selectedItem
-                  ? `Delete ${selectedItem.name}`
-                  : "Select an item to delete"
-              }
-            >
-              <Trash2 size={14} /> Delete
+            <button className="btn btn-secondary" onClick={onCloseProject}>
+              ← Back to Dashboard
             </button>
           </div>
         </div>
 
-        <div className="editor-inspector">
-          <Inspector
-            selectedItem={selectedItem}
-            selectedItemType={selectedItemType}
-            scenes={project.scenes}
-            onUpdateScene={handleUpdateScene}
-            onUpdateElement={handleUpdateElement}
-            projectName={project.name}
-            currentSceneId={currentScene?.id}
-          />
+        <div className="editor-content">
+          <div className="editor-sidebar">
+            <TreeView
+              treeData={generateTreeData()}
+              onSelectItem={handleSelectTreeItem}
+              selectedId={selectedItem?.id || null}
+            />
+          </div>
+
+          <div className="editor-main" onClick={handleDeselect}>
+            <SceneCanvas
+              scene={currentScene}
+              selectedElement={
+                selectedItemType === "element"
+                  ? (selectedItem as Element)
+                  : null
+              }
+              onElementMove={handleElementMove}
+              onElementSelect={handleSelectElement}
+              onCanvasClick={handleCanvasClick}
+            />
+
+            <div
+              className="floating-toolbar"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="btn btn-secondary btn-small"
+                onClick={openCreateSceneDialog}
+              >
+                <Clapperboard size={14} /> Add Scene
+              </button>
+              <button
+                className="btn btn-primary btn-small"
+                onClick={handleCreateElement}
+                disabled={!currentScene}
+              >
+                <Box size={14} /> Add Element
+              </button>
+              <button
+                className="btn btn-danger btn-small"
+                onClick={handleDeleteClick}
+                disabled={!selectedItem}
+                title={
+                  selectedItem
+                    ? `Delete ${selectedItem.name}`
+                    : "Select an item to delete"
+                }
+              >
+                <Trash2 size={14} /> Delete
+              </button>
+            </div>
+          </div>
+
+          <div className="editor-inspector">
+            <Inspector
+              selectedItem={selectedItem}
+              selectedItemType={selectedItemType}
+              scenes={project.scenes}
+              onUpdateScene={handleUpdateScene}
+              onUpdateElement={handleUpdateElement}
+              projectName={project.name}
+              currentSceneId={currentScene?.id}
+            />
+          </div>
         </div>
       </div>
 
@@ -526,6 +537,30 @@ const Editor: React.FC<EditorProps> = ({
                     : "ZIP with an index.html and separate resource files."}
                 </span>
               </div>
+
+              <div className="form-group">
+                <div className="property-group-row has-tooltip">
+                  <label
+                    className="form-label"
+                    style={{ marginBottom: 0 }}
+                    htmlFor="optimize-resources"
+                  >
+                    Optimize Resources
+                  </label>
+                  <label className="switch" htmlFor="optimize-resources">
+                    <input
+                      type="checkbox"
+                      id="optimize-resources"
+                      checked={optimizeResources}
+                      onChange={(e) => setOptimizeResources(e.target.checked)}
+                    />
+                    <span className="switch-slider"></span>
+                  </label>
+                </div>
+                <span className="dialog-text-small">
+                  Utilize efficient file formats, and cap image dimensions.
+                </span>
+              </div>
             </div>
 
             <div className="dialog-footer">
@@ -541,6 +576,7 @@ const Editor: React.FC<EditorProps> = ({
                   handleExportProject({
                     initialSceneId: selectedExportSceneId,
                     format: selectedExportFormat,
+                    optimizeResources,
                   })
                 }
                 disabled={!selectedExportSceneId}
@@ -548,6 +584,15 @@ const Editor: React.FC<EditorProps> = ({
                 <Download size={16} /> Export
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isExporting && (
+        <div className="dialog-overlay">
+          <div className="export-loading">
+            <div className="loading-spinner" />
+            <p>Generating export, this may take a moment...</p>
           </div>
         </div>
       )}

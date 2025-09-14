@@ -2,8 +2,19 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs").promises;
 const JSZip = require("jszip");
+const os = require("os");
+const { randomUUID } = require("crypto");
 const FileUtils = require("../utils/file-utils");
 const MimeTypes = require("../utils/mime-types");
+const sharp = require("sharp");
+const ffmpegPath = require("ffmpeg-static");
+const ffmpeg = require("fluent-ffmpeg");
+const prettier = require("prettier");
+
+// Configure ffmpeg binary path for audio conversions
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath);
+}
 
 class ExportRoutes {
   constructor(projectsDir) {
@@ -17,10 +28,19 @@ class ExportRoutes {
     this.router.get("/:projectName/export", this.exportProject.bind(this));
   }
 
+  async formatCode(source, parser) {
+    return prettier.format(source, { parser, printWidth: 100 });
+  }
+
   async exportProject(req, res) {
     try {
       const { projectName } = req.params;
-      const { initialSceneId, format = "standalone" } = req.query;
+      const {
+        initialSceneId,
+        format = "standalone",
+        optimizeResources = "true",
+      } = req.query;
+      const optimize = String(optimizeResources).toLowerCase() !== "false";
       const projectPath = path.join(this.projectsDir, projectName);
       const projectJsonPath = path.join(projectPath, "project.json");
 
@@ -33,6 +53,7 @@ class ExportRoutes {
           project,
           projectPath,
           initialSceneId,
+          optimize,
         );
 
         res.setHeader("Content-Type", "application/zip");
@@ -47,9 +68,13 @@ class ExportRoutes {
           await this.getEngineAssets();
 
         // Collect all resource files and convert to base64
-        const resources = await this.collectResources(project, projectPath);
+        const resources = await this.collectResources(
+          project,
+          projectPath,
+          optimize,
+        );
 
-        const html = this.generateExportHTML(
+        const html = await this.generateExportHTML(
           project,
           variablesCSS + geistFontCSS + engineCSS,
           engineJS,
@@ -122,44 +147,61 @@ class ExportRoutes {
     return { engineCSS, engineJS, geistFontCSS, variablesCSS };
   }
 
-  async collectResources(project, projectPath) {
+  async collectResources(project, projectPath, optimize) {
     const resources = new Map();
 
     if (project.scenes) {
       for (const scene of project.scenes) {
-        await this.collectSceneResources(scene, projectPath, resources);
+        await this.collectSceneResources(
+          scene,
+          projectPath,
+          resources,
+          optimize,
+        );
       }
     }
 
     return resources;
   }
 
-  async collectSceneResources(scene, projectPath, resources) {
+  async collectSceneResources(scene, projectPath, resources, optimize) {
     // Background images
     if (scene.backgroundImage) {
       await this.addResourceToMap(
         scene.backgroundImage,
         projectPath,
         resources,
+        optimize,
       );
     }
 
     // Music files
     if (scene.music) {
-      await this.addResourceToMap(scene.music, projectPath, resources);
+      await this.addResourceToMap(
+        scene.music,
+        projectPath,
+        resources,
+        optimize,
+      );
     }
 
     // Element images and sounds
     if (scene.elements) {
       for (const element of scene.elements) {
         if (element.image) {
-          await this.addResourceToMap(element.image, projectPath, resources);
+          await this.addResourceToMap(
+            element.image,
+            projectPath,
+            resources,
+            optimize,
+          );
         }
         if (element.onClickSound) {
           await this.addResourceToMap(
             element.onClickSound,
             projectPath,
             resources,
+            optimize,
           );
         }
         if (element.onClickMusicChange) {
@@ -167,18 +209,43 @@ class ExportRoutes {
             element.onClickMusicChange,
             projectPath,
             resources,
+            optimize,
           );
         }
       }
     }
   }
 
-  async addResourceToMap(resourcePath, projectPath, resources) {
+  async addResourceToMap(resourcePath, projectPath, resources, optimize) {
     const fileName = decodeURIComponent(path.basename(resourcePath));
     const filePath = path.join(projectPath, fileName);
     try {
-      const fileBuffer = await fs.readFile(filePath);
+      let fileBuffer = await fs.readFile(filePath);
+      const originalExt = path.extname(fileName).toLowerCase();
       const mimeType = MimeTypes.getMimeType(fileName);
+
+      if (optimize && this.shouldOptimizeImage(originalExt)) {
+        try {
+          const avifBuffer = await this.convertImageToAvif(fileBuffer);
+          const base64 = avifBuffer.toString("base64");
+          resources.set(resourcePath, `data:image/avif;base64,${base64}`);
+          return;
+        } catch (e) {
+          console.warn(`Failed to convert ${fileName} to AVIF, falling back.`);
+        }
+      }
+
+      if (optimize && this.shouldOptimizeAudio(originalExt)) {
+        try {
+          const opusBuffer = await this.convertAudioToOpus(fileBuffer);
+          const base64 = opusBuffer.toString("base64");
+          resources.set(resourcePath, `data:audio/opus;base64,${base64}`);
+          return;
+        } catch (e) {
+          console.warn(`Failed to convert ${fileName} to Opus, falling back.`);
+        }
+      }
+
       const base64 = fileBuffer.toString("base64");
       resources.set(resourcePath, `data:${mimeType};base64,${base64}`);
     } catch (err) {
@@ -186,13 +253,19 @@ class ExportRoutes {
     }
   }
 
-  generateExportHTML(project, engineCSS, engineJS, resources, initialSceneId) {
+  async generateExportHTML(
+    project,
+    engineCSS,
+    engineJS,
+    resources,
+    initialSceneId,
+  ) {
     const resourceMap = {};
     for (const [originalPath, base64Data] of resources.entries()) {
       resourceMap[originalPath] = base64Data;
     }
 
-    return /*html*/ `
+    const html = /*html*/ `
     <!DOCTYPE html>
     <html lang="en">
 
@@ -218,16 +291,22 @@ class ExportRoutes {
           const RESOURCE_MAP = ${JSON.stringify(resourceMap)};
 
           new Engine(PROJECT_DATA, RESOURCE_MAP, {
-            canvasId: 'pace-canvas'${initialSceneId ? `,\n            initialSceneId: '${initialSceneId}'` : ""}
+            canvasId: 'pace-canvas'${
+              initialSceneId
+                ? `,\n            initialSceneId: '${initialSceneId}'`
+                : ""
+            }
           });
         });
       </script>
     </body>
 
     </html>`;
+
+    return this.formatCode(html, "html");
   }
 
-  async generateWebsiteExport(project, projectPath, initialSceneId) {
+  async generateWebsiteExport(project, projectPath, initialSceneId, optimize) {
     const zip = new JSZip();
 
     // Create a folder with the project name
@@ -236,7 +315,8 @@ class ExportRoutes {
     // Get engine assets
     const { engineCSS, engineJS, variablesCSS } = await this.getEngineAssets();
 
-    const styles = `
+    const styles = await this.formatCode(
+      `
       ${variablesCSS}
       @font-face {
         font-family: 'Geist';
@@ -244,17 +324,37 @@ class ExportRoutes {
         font-weight: 100 900;
         font-style: normal;
       }
-      ${engineCSS}`;
+      ${engineCSS}`,
+      "css",
+    );
 
     projectFolder.file("styles.css", styles);
 
     // Create engine.js (remove export for browser compatibility)
-    const browserEngineJS = engineJS.replace(/export default Engine;.*$/m, "");
+    const browserEngineJS = await this.formatCode(
+      engineJS.replace(/export default Engine;.*$/m, ""),
+      "babel",
+    );
 
     projectFolder.file("engine.js", browserEngineJS);
 
+    // Prepare resources and optionally optimize
+    const resourcesFolder = projectFolder.folder("resources");
+    const resourcePathMap = {};
+    await this.addResourcesToZip(
+      project,
+      projectPath,
+      resourcesFolder,
+      optimize,
+      resourcePathMap,
+    );
+
+    const projectForExport = optimize
+      ? this.applyResourcePathMapping(project, resourcePathMap)
+      : project;
+
     // Create index.html
-    const indexHTML =
+    const indexHTML = await this.formatCode(
       /*html*/
       `<!DOCTYPE html>
       <html lang="en">
@@ -270,25 +370,27 @@ class ExportRoutes {
          </div>
 
          <script>
-           const PROJECT_DATA = ${JSON.stringify(project)};
+           const PROJECT_DATA = ${JSON.stringify(projectForExport)};
          </script>
          <script src="engine.js"></script>
          <script>
            document.addEventListener('DOMContentLoaded', () => {
              new Engine(PROJECT_DATA, {}, {
                canvasId: 'pace-canvas',
-               serverUrl: './resources'${initialSceneId ? `,\n               initialSceneId: '${initialSceneId}'` : ""}
+               serverUrl: './resources'${
+                 initialSceneId
+                   ? `,\n               initialSceneId: '${initialSceneId}'`
+                   : ""
+               }
              });
            });
          </script>
       </body>
-      </html>`;
+      </html>`,
+      "html",
+    );
 
     projectFolder.file("index.html", indexHTML);
-
-    // Create resources folder and copy all resource files
-    const resourcesFolder = projectFolder.folder("resources");
-    await this.addResourcesToZip(project, projectPath, resourcesFolder);
 
     // Add Geist font to resources
     await this.addGeistFontToZip(resourcesFolder);
@@ -297,21 +399,41 @@ class ExportRoutes {
     return await zip.generateAsync({ type: "nodebuffer" });
   }
 
-  async addResourcesToZip(project, projectPath, resourcesFolder) {
+  async addResourcesToZip(
+    project,
+    projectPath,
+    resourcesFolder,
+    optimize,
+    resourcePathMap,
+  ) {
     if (project.scenes) {
       for (const scene of project.scenes) {
-        await this.addSceneResourcesToZip(scene, projectPath, resourcesFolder);
+        await this.addSceneResourcesToZip(
+          scene,
+          projectPath,
+          resourcesFolder,
+          optimize,
+          resourcePathMap,
+        );
       }
     }
   }
 
-  async addSceneResourcesToZip(scene, projectPath, resourcesFolder) {
+  async addSceneResourcesToZip(
+    scene,
+    projectPath,
+    resourcesFolder,
+    optimize,
+    resourcePathMap,
+  ) {
     // Background images
     if (scene.backgroundImage) {
       await this.addResourceFileToZip(
         scene.backgroundImage,
         projectPath,
         resourcesFolder,
+        optimize,
+        resourcePathMap,
       );
     }
 
@@ -321,6 +443,8 @@ class ExportRoutes {
         scene.music,
         projectPath,
         resourcesFolder,
+        optimize,
+        resourcePathMap,
       );
     }
 
@@ -332,6 +456,8 @@ class ExportRoutes {
             element.image,
             projectPath,
             resourcesFolder,
+            optimize,
+            resourcePathMap,
           );
         }
         if (element.onClickSound) {
@@ -339,6 +465,8 @@ class ExportRoutes {
             element.onClickSound,
             projectPath,
             resourcesFolder,
+            optimize,
+            resourcePathMap,
           );
         }
         if (element.onClickMusicChange) {
@@ -346,19 +474,55 @@ class ExportRoutes {
             element.onClickMusicChange,
             projectPath,
             resourcesFolder,
+            optimize,
+            resourcePathMap,
           );
         }
       }
     }
   }
 
-  async addResourceFileToZip(resourcePath, projectPath, resourcesFolder) {
+  async addResourceFileToZip(
+    resourcePath,
+    projectPath,
+    resourcesFolder,
+    optimize,
+    resourcePathMap,
+  ) {
     const fileName = decodeURIComponent(path.basename(resourcePath));
     const filePath = path.join(projectPath, fileName);
     try {
-      const fileBuffer = await fs.readFile(filePath);
+      let fileBuffer = await fs.readFile(filePath);
+      const ext = path.extname(fileName).toLowerCase();
+      let outName = fileName;
+
+      if (optimize && this.shouldOptimizeImage(ext)) {
+        try {
+          const avifBuffer = await this.convertImageToAvif(fileBuffer);
+          outName = this.replaceExt(fileName, ".avif");
+          resourcesFolder.file(outName, avifBuffer);
+          resourcePathMap[resourcePath] = outName;
+          return;
+        } catch (e) {
+          console.warn(`Failed to convert ${fileName} to AVIF, falling back.`);
+        }
+      }
+
+      if (optimize && this.shouldOptimizeAudio(ext)) {
+        try {
+          const opusBuffer = await this.convertAudioToOpus(fileBuffer);
+          outName = this.replaceExt(fileName, ".opus");
+          resourcesFolder.file(outName, opusBuffer);
+          resourcePathMap[resourcePath] = outName;
+          return;
+        } catch (e) {
+          console.warn(`Failed to convert ${fileName} to Opus, falling back.`);
+        }
+      }
+
       // Save file directly in resources folder with just the filename
-      resourcesFolder.file(fileName, fileBuffer);
+      resourcesFolder.file(outName, fileBuffer);
+      resourcePathMap[resourcePath] = outName;
     } catch (err) {
       console.warn(`Could not read resource file: ${fileName}`);
     }
@@ -391,6 +555,81 @@ class ExportRoutes {
 
   getRouter() {
     return this.router;
+  }
+
+  replaceExt(fileName, newExt) {
+    return fileName.replace(/\.[^.]+$/i, newExt);
+  }
+
+  shouldOptimizeImage(ext) {
+    return [".jpg", ".jpeg", ".png", ".webp"].includes(ext);
+  }
+
+  shouldOptimizeAudio(ext) {
+    return [".mp3", ".wav", ".ogg", ".m4a"].includes(ext);
+  }
+
+  async convertImageToAvif(buffer) {
+    return await sharp(buffer)
+      .resize({
+        width: 1920,
+        height: 1920,
+        fit: "inside",
+        withoutEnlargement: true,
+      })
+      .avif({ quality: 60 })
+      .toBuffer();
+  }
+
+  async convertAudioToOpus(buffer) {
+    const inPath = path.join(os.tmpdir(), `pace-in-${randomUUID()}`);
+    const outPath = path.join(os.tmpdir(), `pace-out-${randomUUID()}.opus`);
+    await require("fs").promises.writeFile(inPath, buffer);
+
+    await new Promise((resolve, reject) => {
+      ffmpeg(inPath)
+        .audioCodec("libopus")
+        .format("opus")
+        .audioBitrate("96k")
+        .on("end", resolve)
+        .on("error", reject)
+        .save(outPath);
+    });
+
+    const outBuffer = await require("fs").promises.readFile(outPath);
+    try {
+      await require("fs").promises.unlink(inPath);
+      await require("fs").promises.unlink(outPath);
+    } catch {}
+    return outBuffer;
+  }
+
+  applyResourcePathMapping(project, mapping) {
+    const clone = JSON.parse(JSON.stringify(project));
+    if (clone.scenes) {
+      for (const scene of clone.scenes) {
+        if (scene.backgroundImage && mapping[scene.backgroundImage]) {
+          scene.backgroundImage = `/${mapping[scene.backgroundImage]}`;
+        }
+        if (scene.music && mapping[scene.music]) {
+          scene.music = `/${mapping[scene.music]}`;
+        }
+        if (scene.elements) {
+          for (const el of scene.elements) {
+            if (el.image && mapping[el.image]) {
+              el.image = `/${mapping[el.image]}`;
+            }
+            if (el.onClickSound && mapping[el.onClickSound]) {
+              el.onClickSound = `/${mapping[el.onClickSound]}`;
+            }
+            if (el.onClickMusicChange && mapping[el.onClickMusicChange]) {
+              el.onClickMusicChange = `/${mapping[el.onClickMusicChange]}`;
+            }
+          }
+        }
+      }
+    }
+    return clone;
   }
 }
 

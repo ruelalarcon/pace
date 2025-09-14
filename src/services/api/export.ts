@@ -5,6 +5,7 @@ export class ExportApiService extends BaseApiService {
     projectName: string,
     initialSceneId?: string,
     format: "standalone" | "website" = "standalone",
+    optimizeResources: boolean = true,
   ): Promise<Blob> {
     const baseUrl = await this.getBaseUrl();
     const url = new URL(
@@ -16,6 +17,7 @@ export class ExportApiService extends BaseApiService {
     }
 
     url.searchParams.append("format", format);
+    url.searchParams.append("optimizeResources", String(optimizeResources));
 
     const response = await fetch(url.toString(), {
       method: "GET",

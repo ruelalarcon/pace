@@ -28,7 +28,14 @@ class ApiService {
     projectName: string,
     initialSceneId?: string,
     format?: "standalone" | "website",
-  ) => this.exportService.exportProject(projectName, initialSceneId, format);
+    optimizeResources?: boolean,
+  ) =>
+    this.exportService.exportProject(
+      projectName,
+      initialSceneId,
+      format,
+      optimizeResources,
+    );
 
   // Electron integration
   async getProjectsDir(): Promise<string> {
