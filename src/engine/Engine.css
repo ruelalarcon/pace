@@ -1,0 +1,256 @@
+body.pace-export {
+  margin: 0;
+  padding: 0;
+  background-color: var(--base);
+  color: var(--text);
+  font-family: var(--font-family-primary);
+  overflow: hidden;
+}
+
+.pace-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--base);
+  position: relative;
+  padding: var(--spacing-md);
+  box-sizing: border-box;
+}
+
+.pace-canvas {
+  position: relative;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  max-width: 100%;
+  background-color: var(--mantle);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+  border: 2px solid var(--surface0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.pace-canvas-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--subtext1);
+  text-align: center;
+  pointer-events: none;
+}
+
+.pace-element {
+  position: absolute;
+  transform: scale(
+    1.01
+  ); /* ensure element is hardware-accelerated by default */
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease,
+    z-index 0s ease;
+  user-select: none;
+  z-index: 10;
+}
+
+.pace-element:active {
+  transform: scale(0.99);
+}
+
+.pace-element-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+.pace-element-placeholder {
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface0);
+  border: 2px dashed var(--surface1);
+  border-radius: inherit;
+}
+
+/* RPG-style Textbox */
+.pace-textbox {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  background-image: linear-gradient(
+    rgba(44 44 44 / 0.47),
+    rgba(24 24 24 / 0.48)
+  );
+  border: 5px solid #93b6df;
+  border-radius: var(--radius-md);
+  padding: 20px 24px 16px 24px;
+  box-shadow: 0 0 10px 0 rgba(147, 182, 223, 0.5);
+  cursor: default;
+  user-select: none;
+  z-index: 100;
+  backdrop-filter: blur(3px);
+  transition: border-color 0.2s ease;
+}
+
+.pace-textbox:hover {
+  border-color: #b6d4f7;
+}
+
+.pace-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 8px;
+  margin: 0 4px;
+  min-width: 44px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid #93b6df;
+  background: linear-gradient(
+    to bottom,
+    rgba(147, 182, 223, 0.12),
+    rgba(147, 182, 223, 0.08)
+  );
+  color: #cdd6f4;
+  font-size: 18px;
+  font-weight: 400;
+  font-style: normal;
+  box-shadow:
+    inset 0 -2px 0 rgba(147, 182, 223, 0.3),
+    inset 0 -3px 0 rgba(147, 182, 223, 0.3),
+    0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.pace-textbox-content {
+  margin-bottom: 8px;
+}
+
+.pace-textbox-text {
+  margin: 0;
+  font-size: 30px;
+  font-family:
+    "MS Gothic",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Roboto",
+    sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+  text-shadow:
+    rgb(39, 39, 39) 2px 0px 0px,
+    rgb(39, 39, 39) 1.75517px 0.958851px 0px,
+    rgb(39, 39, 39) 1.0806px 1.68294px 0px,
+    rgb(39, 39, 39) 0.141474px 1.99499px 0px,
+    rgb(39, 39, 39) -0.832294px 1.81859px 0px,
+    rgb(39, 39, 39) -1.60229px 1.19694px 0px,
+    rgb(39, 39, 39) -1.97998px 0.28224px 0px,
+    rgb(39, 39, 39) -1.87291px -0.701566px 0px,
+    rgb(39, 39, 39) -1.30729px -1.5136px 0px,
+    rgb(39, 39, 39) -0.421592px -1.95506px 0px,
+    rgb(39, 39, 39) 0.567324px -1.91785px 0px,
+    rgb(39, 39, 39) 1.41734px -1.41108px 0px,
+    rgb(39, 39, 39) 1.92034px -0.558831px 0px;
+  min-height: 24px;
+}
+
+.pace-textbox-continue {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.pace-textbox-continue span {
+  font-size: 18px;
+  color: var(--text);
+  font-family: "Geist";
+  font-style: italic;
+  text-shadow:
+    rgb(39, 39, 39) 2px 0px 0px,
+    rgb(39, 39, 39) 1.75517px 0.958851px 0px,
+    rgb(39, 39, 39) 1.0806px 1.68294px 0px,
+    rgb(39, 39, 39) 0.141474px 1.99499px 0px,
+    rgb(39, 39, 39) -0.832294px 1.81859px 0px,
+    rgb(39, 39, 39) -1.60229px 1.19694px 0px,
+    rgb(39, 39, 39) -1.97998px 0.28224px 0px,
+    rgb(39, 39, 39) -1.87291px -0.701566px 0px,
+    rgb(39, 39, 39) -1.30729px -1.5136px 0px,
+    rgb(39, 39, 39) -0.421592px -1.95506px 0px,
+    rgb(39, 39, 39) 0.567324px -1.91785px 0px,
+    rgb(39, 39, 39) 1.41734px -1.41108px 0px,
+    rgb(39, 39, 39) 1.92034px -0.558831px 0px;
+  opacity: 0.9;
+  animation: pace-pulse 1s infinite;
+}
+
+@keyframes pace-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .pace-canvas {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+
+  .pace-textbox {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: 16px 20px 12px 20px;
+  }
+
+  .pace-textbox-text {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pace-canvas {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .pace-canvas {
+    border-width: 3px;
+  }
+
+  .pace-textbox {
+    border-width: 4px;
+    background-color: #181825; /* mantle equivalent */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pace-element {
+    transition: none;
+  }
+
+  .pace-element:active {
+    transform: none;
+  }
+
+  .pace-textbox-continue span {
+    animation: none;
+    opacity: 0.8;
+  }
+}

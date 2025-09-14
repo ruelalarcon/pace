@@ -1,22 +1,27 @@
 import { useState } from "react";
-import Dashboard from "./components/Dashboard";
-import Editor from "./components/Editor";
-import Preview from "./components/Preview";
+import Dashboard from "./components/layout/Dashboard/Dashboard";
+import Editor from "./components/layout/Editor/Editor";
+import Preview from "./components/layout/Preview/Preview";
+import TitleBar from "./components/common/TitleBar/TitleBar";
 import { Project } from "./types";
+import { apiService } from "./services/api";
 import "./App.css";
 
 function App() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [previewSceneId, setPreviewSceneId] = useState<string | undefined>(
+    undefined,
+  );
+  const [currentSceneName, setCurrentSceneName] = useState<string | undefined>(
+    undefined,
+  );
 
   const handleOpenProject = async (projectName: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(projectName)}`,
-      );
-      const project = await response.json();
+      const project = await apiService.getProject(projectName);
       setCurrentProject(project);
     } catch (error) {
       console.error("Error loading project:", error);
@@ -27,9 +32,12 @@ function App() {
   const handleCloseProject = () => {
     setCurrentProject(null);
     setIsPreviewMode(false);
+    setPreviewSceneId(undefined);
+    setCurrentSceneName(undefined);
   };
 
-  const handleEnterPreview = () => {
+  const handleEnterPreview = (sceneId?: string) => {
+    setPreviewSceneId(sceneId);
     setIsPreviewMode(true);
   };
 
@@ -41,20 +49,8 @@ function App() {
     if (!currentProject) return;
 
     try {
-      const response = await fetch(
-        `http://localhost:3001/api/projects/${encodeURIComponent(currentProject.name)}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(updatedProject),
-        },
-      );
-
-      if (response.ok) {
-        setCurrentProject(updatedProject);
-      }
+      await apiService.updateProject(currentProject.name, updatedProject);
+      setCurrentProject(updatedProject);
     } catch (error) {
       console.error("Error updating project:", error);
     }
@@ -62,24 +58,44 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
-        <p>Loading project...</p>
+      <div className="App has-title-bar">
+        <TitleBar title="PACE Editor" />
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading project...</p>
+        </div>
       </div>
     );
   }
 
+  const getTitleBarTitle = () => {
+    if (currentProject) {
+      return `PACE Editor - ${currentProject.name}`;
+    }
+    return "PACE Editor";
+  };
+
   return (
-    <div className="App">
+    <div className="App has-title-bar">
+      <TitleBar
+        title={getTitleBarTitle()}
+        currentScene={currentSceneName}
+        subtitle={isPreviewMode ? "Preview Mode" : undefined}
+      />
       {currentProject ? (
         isPreviewMode ? (
-          <Preview project={currentProject} onExitPreview={handleExitPreview} />
+          <Preview
+            project={currentProject}
+            onExitPreview={handleExitPreview}
+            initialSceneId={previewSceneId}
+          />
         ) : (
           <Editor
             project={currentProject}
             onUpdateProject={handleUpdateProject}
             onCloseProject={handleCloseProject}
             onEnterPreview={handleEnterPreview}
+            onSceneChange={setCurrentSceneName}
           />
         )
       ) : (

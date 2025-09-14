@@ -1,0 +1,78 @@
+.preview {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--crust);
+  color: var(--text);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background-color: var(--crust);
+  border-bottom: 1px solid var(--surface0);
+}
+
+.preview-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-title h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.preview-scene-name {
+  font-size: 14px;
+  padding-top: 2px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.preview-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--base);
+  position: relative;
+  padding: 16px;
+  box-sizing: border-box;
+  min-height: 0; /* Allow flex shrinking */
+}
+
+/* Preview-specific styling for the pace-canvas */
+.preview-content .pace-canvas {
+  border: 2px solid var(--surface0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+}
+
+.preview-empty {
+  text-align: center;
+  color: var(--subtext1);
+}
+
+.preview-empty p {
+  margin: 0;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  .preview-content {
+    padding: 10px;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .preview-content .pace-canvas {
+    border-width: 3px;
+  }
+}

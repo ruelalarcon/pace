@@ -1,44 +1,12 @@
 /* Global Styles */
+@import "./styles/globals.css";
+
 @font-face {
   font-family: "Geist";
   src: url("./assets/fonts/Geist[wght].woff2") format("woff2");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-}
-
-:root {
-  /* Palette */
-  --crust: #11111b;
-  --mantle: #181825;
-  --base: #1e1e2e;
-  --surface0: #313244;
-  --surface1: #45475a;
-  --surface2: #585b70;
-  --overlay0: #6c7086;
-  --overlay1: #7f849c;
-  --overlay2: #9399b2;
-  --text: #cdd6f4;
-  --subtext0: #a6adc8;
-  --subtext1: #7f849c;
-  --primary: #cba6f7;
-  --secondary: #f5c2e7;
-  --danger: #f38ba8;
-  --primary-hover: #ba9bdf;
-  --danger-hover: #f1688b;
-
-  --color-overlay: rgba(0, 0, 0, 0.5);
-
-  /* Effects */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-  --focus-ring: 0 0 0 2px rgba(0, 122, 204, 0.35);
-}
-
-* {
-  box-sizing: border-box;
 }
 
 .App {
@@ -54,14 +22,29 @@
     sans-serif;
 }
 
+/* Title bar integration */
+.App.has-title-bar {
+  padding-top: 41px;
+}
+
+.App.has-title-bar .dashboard,
+.App.has-title-bar .editor,
+.App.has-title-bar .preview {
+  height: calc(100vh - 41px) !important;
+}
+
+.App.has-title-bar .loading {
+  height: calc(100vh - 41px) !important;
+}
+
 /* Loading Styles */
 .loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
   background-color: var(--base);
+  overflow: hidden;
 }
 
 .loading-spinner {
@@ -70,8 +53,14 @@
   border: 4px solid var(--surface0);
   border-top: 4px solid var(--primary);
   border-radius: 50%;
-  animation: spin 1s linear infinite;
+  animation:
+    spin 1s linear infinite,
+    fadeInLoading 0.3s ease-out 0.1s both;
   margin-bottom: 16px;
+}
+
+.loading p {
+  animation: fadeInLoading 0.3s ease-out 0.1s both;
 }
 
 @keyframes spin {
@@ -80,6 +69,17 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeInLoading {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -92,6 +92,7 @@
   border: 1px solid transparent;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  user-select: none;
   font-family: inherit;
   font-size: 14px;
   font-weight: 500;
@@ -165,6 +166,7 @@
   font-family: inherit;
   font-size: 14px;
   outline: none;
+  user-select: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease,
@@ -185,6 +187,11 @@
   cursor: not-allowed;
 }
 
+.input-description {
+  font-size: var(--font-size-sm);
+  color: var(--subtext1);
+}
+
 textarea.input {
   resize: vertical;
 }
@@ -200,6 +207,7 @@ textarea.input {
   -moz-appearance: none;
   width: 100%;
   padding-right: 32px; /* space for arrow */
+  user-select: none;
 }
 
 .select-arrow {
@@ -311,8 +319,8 @@ textarea.input {
   cursor: not-allowed;
 }
 
-/* Modal Styles */
-.modal-overlay {
+/* Dialog Styles */
+.dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -326,38 +334,50 @@ textarea.input {
   animation: overlayFade 180ms ease-out;
 }
 
-.modal {
+.dialog {
   background-color: var(--mantle);
   border-radius: var(--radius-md);
   padding: 24px;
-  min-width: 400px;
-  max-width: 540px;
+  width: 450px;
   border: 1px solid var(--surface0);
   box-shadow: var(--shadow-md);
   transform-origin: 50% 45%;
-  animation: modalPop 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  user-select: none;
+  animation: dialogPop 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.modal-header {
-  margin-bottom: 16px;
+.dialog-header {
+  margin-bottom: 8px;
 }
 
-.modal-title {
+.dialog-title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
 }
 
-.modal-body {
+.dialog-body {
   margin-bottom: 20px;
   line-height: 1.6;
   color: var(--subtext0);
 }
 
-.modal-footer {
+.dialog-text {
+  font-size: var(--font-size-md);
+  color: var(--subtext0);
+  margin: 0 0 16px 0;
+}
+
+.dialog-text-small {
+  font-size: var(--font-size-sm);
+  color: var(--subtext1);
+  margin: 0 0 16px 0;
+}
+
+.dialog-footer {
   display: flex;
   gap: 8px;
-  justify-content: flex-start;
+  justify-content: flex-end;
 }
 
 /* Form Styles */
@@ -382,6 +402,7 @@ textarea.input {
   font-size: 12px;
   font-weight: 500;
   color: var(--subtext0);
+  user-select: none;
 }
 
 /* File Upload Styles */
@@ -469,7 +490,7 @@ textarea.input {
   }
 }
 
-@keyframes modalPop {
+@keyframes dialogPop {
   from {
     opacity: 0;
     transform: scale(0.96) translateY(6px);

@@ -1,0 +1,8 @@
+# JavaScript Environment
+node_modules/
+
+# Build Artifacts
+build/
+release/
+dist/
+out/

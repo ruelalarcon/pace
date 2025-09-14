@@ -1,37 +1,30 @@
 {
   "name": "pace",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Editor and engine for extremely simple point-and-click adventure games.",
+  "main": "out/main/index.js",
+  "homepage": "./",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "dev": "electron-vite dev",
+    "start": "npm run dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "electron": "npm run build && electron out/main/index.js",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "node server/index.js",
-    "dev": "concurrently \"npm run server\" \"npm start\""
+    "dist": "npm run build && electron-builder",
+    "dist-win": "npm run build && electron-builder --win",
+    "dist-mac": "npm run build && electron-builder --mac",
+    "dist-linux": "npm run build && electron-builder --linux",
+    "dist-dir": "npm run build && electron-builder --dir"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^4.17.23",
-    "@types/multer": "^2.0.0",
-    "@types/node": "^24.3.1",
-    "@types/react": "^19.1.12",
-    "@types/react-dom": "^19.1.9",
-    "concurrently": "^9.2.1",
     "cors": "^2.8.5",
     "express": "^5.1.0",
-    "lucide-react": "^0.543.0",
-    "multer": "^2.0.2",
-    "react": "^19.1.1",
-    "react-arborist": "^3.4.3",
-    "react-dom": "^19.1.1",
-    "react-scripts": "^5.0.1",
-    "react-tree-graph": "^8.0.3",
-    "typescript": "^4.9.5"
+    "jszip": "^3.10.1",
+    "multer": "^2.0.2"
   },
   "browserslist": {
     "production": [
@@ -44,5 +37,56 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/electron": "^1.6.12",
+    "@types/express": "^4.17.23",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^24.3.1",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.2",
+    "electron": "^38.1.0",
+    "electron-builder": "^26.0.12",
+    "electron-vite": "^4.0.0",
+    "lucide-react": "^0.543.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.9.5",
+    "vite": "^7.1.5"
+  },
+  "build": {
+    "appId": "com.pace.editor",
+    "productName": "PACE Editor",
+    "directories": {
+      "output": "dist"
+    },
+    "extends": null,
+    "files": [
+      "out/**/*",
+      "public/favicon.ico",
+      "src/engine/**/*",
+      "src/assets/fonts/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools",
+      "target": "dmg",
+      "icon": "public/favicon.ico"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "public/favicon.ico"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "public/favicon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
   }
 }
