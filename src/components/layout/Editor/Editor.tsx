@@ -24,6 +24,7 @@ interface EditorProps {
 
 interface ExportOptions {
   initialSceneId: string;
+  format: "standalone" | "website";
 }
 
 const Editor: React.FC<EditorProps> = ({
@@ -49,6 +50,9 @@ const Editor: React.FC<EditorProps> = ({
   const [selectedExportSceneId, setSelectedExportSceneId] = useState<string>(
     project.scenes.length > 0 ? project.scenes[0].id : "",
   );
+  const [selectedExportFormat, setSelectedExportFormat] = useState<
+    "standalone" | "website"
+  >("standalone");
 
   // Initialize current scene name
   useEffect(() => {
@@ -282,11 +286,15 @@ const Editor: React.FC<EditorProps> = ({
       const blob = await apiService.exportProject(
         project.name,
         options.initialSceneId,
+        options.format,
       );
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${project.name}.html`;
+      a.download =
+        options.format === "website"
+          ? `${project.name}.zip`
+          : `${project.name}.html`;
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
@@ -492,6 +500,32 @@ const Editor: React.FC<EditorProps> = ({
                   The first scene displayed when the game starts.
                 </span>
               </div>
+
+              <div className="form-group">
+                <label className="form-label">Export Format</label>
+                <div className="select-wrapper">
+                  <select
+                    className="input select"
+                    value={selectedExportFormat}
+                    onChange={(e) =>
+                      setSelectedExportFormat(
+                        e.target.value as "standalone" | "website",
+                      )
+                    }
+                  >
+                    <option value="standalone">Standalone HTML</option>
+                    <option value="website">Website Folder</option>
+                  </select>
+                  <div className="select-arrow">
+                    <ChevronDown size={16} />
+                  </div>
+                </div>
+                <span className="dialog-text-small">
+                  {selectedExportFormat === "standalone"
+                    ? "Single HTML file with embedded resources."
+                    : "ZIP with an index.html and separate resource files."}
+                </span>
+              </div>
             </div>
 
             <div className="dialog-footer">
@@ -504,7 +538,10 @@ const Editor: React.FC<EditorProps> = ({
               <button
                 className="btn btn-primary"
                 onClick={() =>
-                  handleExportProject({ initialSceneId: selectedExportSceneId })
+                  handleExportProject({
+                    initialSceneId: selectedExportSceneId,
+                    format: selectedExportFormat,
+                  })
                 }
                 disabled={!selectedExportSceneId}
               >

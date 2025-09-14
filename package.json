@@ -23,6 +23,7 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
+    "jszip": "^3.10.1",
     "multer": "^2.0.2"
   },
   "browserslist": {

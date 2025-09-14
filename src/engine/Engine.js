@@ -170,9 +170,15 @@ class Engine {
   }
 
   getResourceUrl(resourcePath) {
-    // If we have a base64 resource map (for exports), use it
+    // If we have a base64 resource map (for standalone exports), use it
     if (this.resources[resourcePath]) {
       return this.resources[resourcePath];
+    }
+
+    // For website exports, extract just the filename and use with serverUrl
+    if (this.serverUrl && this.serverUrl.startsWith("./")) {
+      const fileName = resourcePath.split("/").pop();
+      return `${this.serverUrl}/${fileName}`;
     }
 
     // Otherwise, use server URL (for preview)
