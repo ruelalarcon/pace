@@ -1,6 +1,6 @@
 /**
  * PACE Game Engine - Standalone JavaScript implementation
- * Can be used both in React components and standalone HTML exports
+ * Can be used both in React components and HTML exports
  */
 
 class Engine {
