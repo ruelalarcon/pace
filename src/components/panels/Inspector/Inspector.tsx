@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Scene, Element } from "../../../types";
-import { apiService } from "../../../services/api";
-import FileUpload from "../../common/FileUpload/FileUpload";
-import { Clapperboard, Box, ChevronDown, Info } from "lucide-react";
-import "./Inspector.css";
+import React, { useEffect, useState } from 'react';
+
+import { Box, ChevronDown, Clapperboard, Info } from 'lucide-react';
+
+import { apiService } from '../../../services/api';
+import { Element, Scene } from '../../../types';
+import FileUpload from '../../common/FileUpload/FileUpload';
+import './Inspector.css';
 
 interface InspectorProps {
   selectedItem: Scene | Element | null;
-  selectedItemType: "scene" | "element" | null;
+  selectedItemType: 'scene' | 'element' | null;
   scenes: Scene[];
   onUpdateScene: (scene: Scene) => void;
   onUpdateElement: (element: Element) => void;
@@ -24,26 +26,31 @@ const Inspector: React.FC<InspectorProps> = ({
   projectName,
   currentSceneId,
 }) => {
-  const [localValues, setLocalValues] = useState<Record<string, any>>({});
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [localValues, setLocalValues] = useState<
+    Record<string, string | number | boolean>
+  >({});
+  const [serverUrl, setServerUrl] = useState<string>('');
 
   useEffect(() => {
     const initializeServerUrl = async () => {
       try {
-        const url = await apiService.getResourceUrl("");
+        const url = await apiService.getResourceUrl('');
         setServerUrl(url);
       } catch (error) {
-        console.error("Error getting server URL:", error);
+        console.error('Error getting server URL:', error);
       }
     };
     initializeServerUrl();
   }, []);
 
-  const getLocalValue = (key: string, defaultValue: any) => {
+  const getLocalValue = (
+    key: string,
+    defaultValue: string | number | boolean,
+  ) => {
     return localValues[key] !== undefined ? localValues[key] : defaultValue;
   };
 
-  const setLocalValue = (key: string, value: any) => {
+  const setLocalValue = (key: string, value: string | number | boolean) => {
     setLocalValues((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -51,29 +58,29 @@ const Inspector: React.FC<InspectorProps> = ({
     const value = localValues[key];
     if (value === undefined) return;
 
-    let nextValue: any = value;
+    let nextValue: string | number | boolean = value;
 
     // Coerce numeric fields on commit only
-    if (selectedItemType === "element") {
+    if (selectedItemType === 'element') {
       const element = selectedItem as Element | null;
-      if (["x", "y", "scale"].includes(key)) {
+      if (['x', 'y', 'scale'].includes(key)) {
         const parsed = parseFloat(String(value).trim());
         nextValue = isNaN(parsed)
-          ? ((element && (element as any)[key]) ?? 0)
+          ? ((element && element[key as keyof Element]) ?? 0)
           : parsed;
-      } else if (key === "cornerRadius") {
+      } else if (key === 'cornerRadius') {
         const parsed = parseInt(String(value).trim(), 10);
         const safe = isNaN(parsed)
-          ? ((element && (element as any)[key]) ?? 0)
+          ? ((element && element.cornerRadius) ?? 0)
           : Math.max(0, parsed);
         nextValue = safe;
       }
     }
 
-    if (selectedItemType === "scene" && selectedItem) {
+    if (selectedItemType === 'scene' && selectedItem) {
       const scene = selectedItem as Scene;
       onUpdateScene({ ...scene, [key]: nextValue });
-    } else if (selectedItemType === "element" && selectedItem) {
+    } else if (selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
       onUpdateElement({ ...element, [key]: nextValue });
     }
@@ -88,44 +95,44 @@ const Inspector: React.FC<InspectorProps> = ({
       const result = await apiService.uploadFile(projectName, file);
       return result.path;
     } catch (error) {
-      console.error("Error uploading file:", error);
+      console.error('Error uploading file:', error);
       return null;
     }
   };
 
   const handleBackgroundImageUpload = async (file: File) => {
     const imagePath = await handleFileUpload(file);
-    if (imagePath && selectedItemType === "scene" && selectedItem) {
+    if (imagePath && selectedItemType === 'scene' && selectedItem) {
       const scene = selectedItem as Scene;
       onUpdateScene({ ...scene, backgroundImage: imagePath });
     }
   };
 
   const handleRemoveBackgroundImage = () => {
-    if (selectedItemType === "scene" && selectedItem) {
+    if (selectedItemType === 'scene' && selectedItem) {
       const scene = selectedItem as Scene;
-      onUpdateScene({ ...scene, backgroundImage: "" });
+      onUpdateScene({ ...scene, backgroundImage: '' });
     }
   };
 
   const handleMusicUpload = async (file: File) => {
     const musicPath = await handleFileUpload(file);
-    if (musicPath && selectedItemType === "scene" && selectedItem) {
+    if (musicPath && selectedItemType === 'scene' && selectedItem) {
       const scene = selectedItem as Scene;
       onUpdateScene({ ...scene, music: musicPath });
     }
   };
 
   const handleRemoveMusic = () => {
-    if (selectedItemType === "scene" && selectedItem) {
+    if (selectedItemType === 'scene' && selectedItem) {
       const scene = selectedItem as Scene;
-      onUpdateScene({ ...scene, music: "" });
+      onUpdateScene({ ...scene, music: '' });
     }
   };
 
   const handleElementImageUpload = async (file: File) => {
     const imagePath = await handleFileUpload(file);
-    if (imagePath && selectedItemType === "element" && selectedItem) {
+    if (imagePath && selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
 
       const img = new Image();
@@ -145,39 +152,39 @@ const Inspector: React.FC<InspectorProps> = ({
   };
 
   const handleRemoveElementImage = () => {
-    if (selectedItemType === "element" && selectedItem) {
+    if (selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
-      onUpdateElement({ ...element, image: "" });
+      onUpdateElement({ ...element, image: '' });
     }
   };
 
   const handleSoundUpload = async (file: File) => {
     const soundPath = await handleFileUpload(file);
-    if (soundPath && selectedItemType === "element" && selectedItem) {
+    if (soundPath && selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
       onUpdateElement({ ...element, onClickSound: soundPath });
     }
   };
 
   const handleRemoveSound = () => {
-    if (selectedItemType === "element" && selectedItem) {
+    if (selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
-      onUpdateElement({ ...element, onClickSound: "" });
+      onUpdateElement({ ...element, onClickSound: '' });
     }
   };
 
   const handleMusicChangeUpload = async (file: File) => {
     const musicPath = await handleFileUpload(file);
-    if (musicPath && selectedItemType === "element" && selectedItem) {
+    if (musicPath && selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
       onUpdateElement({ ...element, onClickMusicChange: musicPath });
     }
   };
 
   const handleRemoveMusicChange = () => {
-    if (selectedItemType === "element" && selectedItem) {
+    if (selectedItemType === 'element' && selectedItem) {
       const element = selectedItem as Element;
-      onUpdateElement({ ...element, onClickMusicChange: "" });
+      onUpdateElement({ ...element, onClickMusicChange: '' });
     }
   };
 
@@ -188,12 +195,12 @@ const Inspector: React.FC<InspectorProps> = ({
         <input
           type="text"
           className="input property-input"
-          value={getLocalValue("name", scene.name)}
-          onChange={(e) => setLocalValue("name", e.target.value)}
-          onBlur={() => commitLocalValue("name")}
+          value={getLocalValue('name', scene.name)}
+          onChange={(e) => setLocalValue('name', e.target.value)}
+          onBlur={() => commitLocalValue('name')}
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              commitLocalValue("name");
+            if (e.key === 'Enter') {
+              commitLocalValue('name');
             }
           }}
         />
@@ -204,13 +211,13 @@ const Inspector: React.FC<InspectorProps> = ({
         <input
           type="text"
           className="input property-input"
-          value={getLocalValue("aspectRatio", scene.aspectRatio)}
-          onChange={(e) => setLocalValue("aspectRatio", e.target.value)}
-          onBlur={() => commitLocalValue("aspectRatio")}
+          value={getLocalValue('aspectRatio', scene.aspectRatio)}
+          onChange={(e) => setLocalValue('aspectRatio', e.target.value)}
+          onBlur={() => commitLocalValue('aspectRatio')}
           placeholder="e.g., 16:9"
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              commitLocalValue("aspectRatio");
+            if (e.key === 'Enter') {
+              commitLocalValue('aspectRatio');
             }
           }}
         />
@@ -276,9 +283,9 @@ const Inspector: React.FC<InspectorProps> = ({
         <label className="property-label">Scene Text</label>
         <textarea
           className="input property-input"
-          value={getLocalValue("sceneText", scene.sceneText || "")}
-          onChange={(e) => setLocalValue("sceneText", e.target.value)}
-          onBlur={() => commitLocalValue("sceneText")}
+          value={getLocalValue('sceneText', scene.sceneText || '')}
+          onChange={(e) => setLocalValue('sceneText', e.target.value)}
+          onBlur={() => commitLocalValue('sceneText')}
           rows={4}
         />
         <div className="field-tooltip">
@@ -291,8 +298,8 @@ const Inspector: React.FC<InspectorProps> = ({
         <div className="select-wrapper">
           <select
             className="input select"
-            value={scene.newSceneAfterText || ""}
-            disabled={!scene.sceneText || scene.sceneText.trim() === ""}
+            value={scene.newSceneAfterText || ''}
+            disabled={!scene.sceneText || scene.sceneText.trim() === ''}
             onChange={(e) =>
               onUpdateScene({ ...scene, newSceneAfterText: e.target.value })
             }
@@ -328,12 +335,12 @@ const Inspector: React.FC<InspectorProps> = ({
         <input
           type="text"
           className="input property-input"
-          value={getLocalValue("name", element.name)}
-          onChange={(e) => setLocalValue("name", e.target.value)}
-          onBlur={() => commitLocalValue("name")}
+          value={getLocalValue('name', element.name)}
+          onChange={(e) => setLocalValue('name', e.target.value)}
+          onBlur={() => commitLocalValue('name')}
           onKeyPress={(e) => {
-            if (e.key === "Enter") {
-              commitLocalValue("name");
+            if (e.key === 'Enter') {
+              commitLocalValue('name');
             }
           }}
         />
@@ -346,12 +353,12 @@ const Inspector: React.FC<InspectorProps> = ({
           <input
             type="text"
             className="input property-input"
-            value={String(getLocalValue("x", element.x))}
-            onChange={(e) => setLocalValue("x", e.target.value)}
-            onBlur={() => commitLocalValue("x")}
+            value={String(getLocalValue('x', element.x))}
+            onChange={(e) => setLocalValue('x', e.target.value)}
+            onBlur={() => commitLocalValue('x')}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                commitLocalValue("x");
+              if (e.key === 'Enter') {
+                commitLocalValue('x');
               }
             }}
           />
@@ -365,12 +372,12 @@ const Inspector: React.FC<InspectorProps> = ({
           <input
             type="text"
             className="input property-input"
-            value={String(getLocalValue("y", element.y))}
-            onChange={(e) => setLocalValue("y", e.target.value)}
-            onBlur={() => commitLocalValue("y")}
+            value={String(getLocalValue('y', element.y))}
+            onChange={(e) => setLocalValue('y', e.target.value)}
+            onBlur={() => commitLocalValue('y')}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                commitLocalValue("y");
+              if (e.key === 'Enter') {
+                commitLocalValue('y');
               }
             }}
           />
@@ -386,12 +393,12 @@ const Inspector: React.FC<InspectorProps> = ({
           <input
             type="text"
             className="input property-input"
-            value={String(getLocalValue("scale", element.scale))}
-            onChange={(e) => setLocalValue("scale", e.target.value)}
-            onBlur={() => commitLocalValue("scale")}
+            value={String(getLocalValue('scale', element.scale))}
+            onChange={(e) => setLocalValue('scale', e.target.value)}
+            onBlur={() => commitLocalValue('scale')}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                commitLocalValue("scale");
+              if (e.key === 'Enter') {
+                commitLocalValue('scale');
               }
             }}
           />
@@ -406,13 +413,13 @@ const Inspector: React.FC<InspectorProps> = ({
             type="text"
             className="input property-input"
             value={String(
-              getLocalValue("cornerRadius", element.cornerRadius ?? 0),
+              getLocalValue('cornerRadius', element.cornerRadius ?? 0),
             )}
-            onChange={(e) => setLocalValue("cornerRadius", e.target.value)}
-            onBlur={() => commitLocalValue("cornerRadius")}
+            onChange={(e) => setLocalValue('cornerRadius', e.target.value)}
+            onBlur={() => commitLocalValue('cornerRadius')}
             onKeyPress={(e) => {
-              if (e.key === "Enter") {
-                commitLocalValue("cornerRadius");
+              if (e.key === 'Enter') {
+                commitLocalValue('cornerRadius');
               }
             }}
           />
@@ -457,7 +464,7 @@ const Inspector: React.FC<InspectorProps> = ({
         <div className="select-wrapper">
           <select
             className="input select"
-            value={element.destinationScene || ""}
+            value={element.destinationScene || ''}
             onChange={(e) =>
               onUpdateElement({ ...element, destinationScene: e.target.value })
             }
@@ -484,9 +491,9 @@ const Inspector: React.FC<InspectorProps> = ({
         <label className="property-label">On-Click Text</label>
         <textarea
           className="input property-input"
-          value={getLocalValue("onClickText", element.onClickText || "")}
-          onChange={(e) => setLocalValue("onClickText", e.target.value)}
-          onBlur={() => commitLocalValue("onClickText")}
+          value={getLocalValue('onClickText', element.onClickText || '')}
+          onChange={(e) => setLocalValue('onClickText', e.target.value)}
+          onBlur={() => commitLocalValue('onClickText')}
           rows={4}
         />
         <div className="field-tooltip">
@@ -538,8 +545,8 @@ const Inspector: React.FC<InspectorProps> = ({
           )}
         </div>
         <div className="field-tooltip">
-          Changes the current scene's music when this element is clicked. This
-          will not do anything if the chosen music is already playing.
+          Changes the current scene&apos;s music when this element is clicked.
+          This will not do anything if the chosen music is already playing.
         </div>
       </div>
 
@@ -576,12 +583,12 @@ const Inspector: React.FC<InspectorProps> = ({
             type="color"
             className="input-color"
             value={getLocalValue(
-              "highlightColor",
-              element.highlightColor || "#ffffff",
+              'highlightColor',
+              element.highlightColor || '#ffffff',
             )}
             disabled={!element.highlightOnHover}
-            onChange={(e) => setLocalValue("highlightColor", e.target.value)}
-            onBlur={() => commitLocalValue("highlightColor")}
+            onChange={(e) => setLocalValue('highlightColor', e.target.value)}
+            onBlur={() => commitLocalValue('highlightColor')}
           />
         </div>
         <div className="field-tooltip">The color of the highlight glow.</div>
@@ -612,16 +619,16 @@ const Inspector: React.FC<InspectorProps> = ({
       <div className="inspector-header">
         <h2 className="inspector-title">Inspector</h2>
         <div className="inspector-subtitle">
-          {selectedItemType === "scene" ? (
+          {selectedItemType === 'scene' ? (
             <Clapperboard size={14} />
           ) : (
             <Box size={14} />
-          )}{" "}
+          )}{' '}
           {selectedItem.name}
         </div>
       </div>
       <div className="inspector-content">
-        {selectedItemType === "scene"
+        {selectedItemType === 'scene'
           ? renderSceneProperties(selectedItem as Scene)
           : renderElementProperties(selectedItem as Element)}
       </div>

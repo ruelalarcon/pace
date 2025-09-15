@@ -1,5 +1,5 @@
-import { BaseApiService } from "./base";
-import { FileUploadResponse } from "../../types";
+import { FileUploadResponse } from '../../types';
+import { BaseApiService } from './base';
 
 export class FilesApiService extends BaseApiService {
   async uploadFile(
@@ -8,12 +8,12 @@ export class FilesApiService extends BaseApiService {
   ): Promise<FileUploadResponse> {
     const baseUrl = await this.getBaseUrl();
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     const response = await fetch(
       `${baseUrl}/api/projects/${encodeURIComponent(projectName)}/upload`,
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
       },
     );

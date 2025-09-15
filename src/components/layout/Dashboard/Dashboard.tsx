@@ -1,18 +1,20 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Project } from "../../../types";
-import { apiService } from "../../../services/api";
+import React, { useEffect, useMemo, useState } from 'react';
+
 import {
-  Plus,
-  Trash2,
-  Search,
-  Layers,
-  Shapes,
   Calendar,
+  ChevronDown,
   FolderOpen,
   Image as ImageIcon,
-  ChevronDown,
-} from "lucide-react";
-import "./Dashboard.css";
+  Layers,
+  Plus,
+  Search,
+  Shapes,
+  Trash2,
+} from 'lucide-react';
+
+import { apiService } from '../../../services/api';
+import { Project } from '../../../types';
+import './Dashboard.css';
 
 interface DashboardProps {
   onOpenProject: (projectName: string) => void;
@@ -22,11 +24,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [newProjectName, setNewProjectName] = useState("");
+  const [newProjectName, setNewProjectName] = useState('');
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState<"recent" | "name" | "scenes">("recent");
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'recent' | 'name' | 'scenes'>('recent');
+  const [serverUrl, setServerUrl] = useState<string>('');
 
   useEffect(() => {
     loadProjects();
@@ -35,10 +37,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
 
   const initializeServerUrl = async () => {
     try {
-      const url = await apiService.getResourceUrl("");
+      const url = await apiService.getResourceUrl('');
       setServerUrl(url);
     } catch (error) {
-      console.error("Error getting server URL:", error);
+      console.error('Error getting server URL:', error);
     }
   };
 
@@ -47,7 +49,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       const projectsData = await apiService.getProjects();
       setProjects(projectsData);
     } catch (error) {
-      console.error("Error loading projects:", error);
+      console.error('Error loading projects:', error);
     }
     setIsLoading(false);
   };
@@ -57,13 +59,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
 
     try {
       await apiService.createProject(newProjectName);
-      setNewProjectName("");
+      setNewProjectName('');
       setIsCreating(false);
       loadProjects();
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error('Error creating project:', error);
       alert(
-        error instanceof Error ? error.message : "Failed to create project",
+        error instanceof Error ? error.message : 'Failed to create project',
       );
     }
   };
@@ -76,8 +78,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
       setProjectToDelete(null);
       loadProjects();
     } catch (error) {
-      console.error("Error deleting project:", error);
-      alert("Failed to delete project.");
+      console.error('Error deleting project:', error);
+      alert('Failed to delete project.');
     }
   };
 
@@ -99,13 +101,13 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     let list = projects.filter((p) => p.name.toLowerCase().includes(q));
 
     switch (sortBy) {
-      case "name":
+      case 'name':
         list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
         break;
-      case "scenes":
+      case 'scenes':
         list = list.slice().sort((a, b) => b.scenes.length - a.scenes.length);
         break;
-      case "recent":
+      case 'recent':
       default:
         list = list
           .slice()
@@ -141,7 +143,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
         <p className="dashboard-subtitle">
           The <span className="dashboard-subtitle-highlight">P</span>oint-
           <span className="dashboard-subtitle-highlight">a</span>nd-
-          <span className="dashboard-subtitle-highlight">C</span>lick{" "}
+          <span className="dashboard-subtitle-highlight">C</span>lick{' '}
           <span className="dashboard-subtitle-highlight">E</span>ngine Editor
         </p>
       </div>
@@ -164,7 +166,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 className="input select sort-select"
                 value={sortBy}
                 onChange={(e) =>
-                  setSortBy(e.target.value as "recent" | "name" | "scenes")
+                  setSortBy(e.target.value as 'recent' | 'name' | 'scenes')
                 }
                 aria-label="Sort projects"
               >
@@ -297,7 +299,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                   placeholder="Enter project name..."
                   autoFocus
                   onKeyPress={(e) => {
-                    if (e.key === "Enter") {
+                    if (e.key === 'Enter') {
                       handleCreateProject();
                     }
                   }}
@@ -309,7 +311,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
                 className="btn btn-secondary"
                 onClick={() => {
                   setIsCreating(false);
-                  setNewProjectName("");
+                  setNewProjectName('');
                 }}
               >
                 Cancel
@@ -334,7 +336,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
             </div>
             <div className="dialog-body">
               <p className="dialog-text-small">
-                Are you sure you want to delete{" "}
+                Are you sure you want to delete{' '}
                 <strong>{projectToDelete.name}</strong>? This action is
                 irreversible and will delete all associated files.
               </p>

@@ -1,9 +1,9 @@
 /* Global Styles */
-@import "./styles/globals.css";
+@import './styles/globals.css';
 
 @font-face {
-  font-family: "Geist";
-  src: url("./assets/fonts/Geist[wght].woff2") format("woff2");
+  font-family: 'Geist';
+  src: url('./assets/fonts/Geist[wght].woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -14,11 +14,11 @@
   background-color: var(--base);
   color: var(--text);
   font-family:
-    "Geist",
+    'Geist',
     -apple-system,
     BlinkMacSystemFont,
-    "Segoe UI",
-    "Roboto",
+    'Segoe UI',
+    'Roboto',
     sans-serif;
 }
 
@@ -265,7 +265,7 @@ textarea.input {
 
 .switch-slider:before {
   position: absolute;
-  content: "";
+  content: '';
   height: 14px;
   width: 14px;
   left: 2px;

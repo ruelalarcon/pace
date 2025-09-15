@@ -1,9 +1,9 @@
-import { Scene, Element } from "./scene";
+import { Element, Scene } from './scene';
 
 export interface TreeNode {
   id: string;
   name: string;
-  type: "scene" | "element";
+  type: 'scene' | 'element';
   children?: TreeNode[];
   data?: Scene | Element;
 }

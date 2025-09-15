@@ -1,5 +1,6 @@
-import React, { useRef } from "react";
-import { Upload } from "lucide-react";
+import React, { useRef } from 'react';
+
+import { Upload } from 'lucide-react';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
@@ -10,9 +11,9 @@ interface FileUploadProps {
 
 const FileUpload: React.FC<FileUploadProps> = ({
   onFileUpload,
-  accept = "*/*",
-  label = "Choose File",
-  className = "",
+  accept = '*/*',
+  label = 'Choose File',
+  className = '',
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -23,7 +24,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
     }
     // Reset the input so the same file can be selected again
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 

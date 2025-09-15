@@ -1,6 +1,7 @@
-import { ProjectsApiService } from "./projects";
-import { FilesApiService } from "./files";
-import { ExportApiService } from "./export";
+import { Project } from '../../types/project';
+import { ExportApiService } from './export';
+import { FilesApiService } from './files';
+import { ProjectsApiService } from './projects';
 
 class ApiService {
   private projectsService = new ProjectsApiService();
@@ -12,7 +13,7 @@ class ApiService {
   createProject = (name: string) => this.projectsService.createProject(name);
   getProject = (projectName: string) =>
     this.projectsService.getProject(projectName);
-  updateProject = (projectName: string, project: any) =>
+  updateProject = (projectName: string, project: Project) =>
     this.projectsService.updateProject(projectName, project);
   deleteProject = (projectName: string) =>
     this.projectsService.deleteProject(projectName);
@@ -27,7 +28,7 @@ class ApiService {
   exportProject = (
     projectName: string,
     initialSceneId?: string,
-    format?: "standalone" | "website",
+    format?: 'standalone' | 'website',
     optimizeResources?: boolean,
   ) =>
     this.exportService.exportProject(
@@ -39,7 +40,7 @@ class ApiService {
 
   // Electron integration
   async getProjectsDir(): Promise<string> {
-    return (window as any).electronAPI.getProjectsDir();
+    return window.electronAPI.getProjectsDir();
   }
 }
 

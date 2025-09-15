@@ -133,11 +133,11 @@
 }
 
 /* Platform-specific adjustments */
-.title-bar-drag-region[data-platform="darwin"] {
+.title-bar-drag-region[data-platform='darwin'] {
   padding-left: 70px; /* Space for macOS traffic lights */
 }
 
-.title-bar-drag-region[data-platform="darwin"] .title-bar-content {
+.title-bar-drag-region[data-platform='darwin'] .title-bar-content {
   padding-left: 0;
 }
 

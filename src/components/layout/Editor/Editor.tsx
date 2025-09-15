@@ -1,18 +1,20 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Project, Scene, Element, TreeNode } from "../../../types";
-import { apiService } from "../../../services/api";
-import TreeView from "../../panels/TreeView/TreeView";
-import SceneCanvas from "../../panels/SceneCanvas/SceneCanvas";
-import Inspector from "../../panels/Inspector/Inspector";
+import React, { useCallback, useEffect, useState } from 'react';
+
 import {
-  Clapperboard,
   Box,
-  Trash2,
-  Play,
-  Download,
   ChevronDown,
-} from "lucide-react";
-import "./Editor.css";
+  Clapperboard,
+  Download,
+  Play,
+  Trash2,
+} from 'lucide-react';
+
+import { apiService } from '../../../services/api';
+import { Element, Project, Scene, TreeNode } from '../../../types';
+import Inspector from '../../panels/Inspector/Inspector';
+import SceneCanvas from '../../panels/SceneCanvas/SceneCanvas';
+import TreeView from '../../panels/TreeView/TreeView';
+import './Editor.css';
 
 interface EditorProps {
   project: Project;
@@ -24,7 +26,7 @@ interface EditorProps {
 
 interface ExportOptions {
   initialSceneId: string;
-  format: "standalone" | "website";
+  format: 'standalone' | 'website';
   optimizeResources: boolean;
 }
 
@@ -39,21 +41,21 @@ const Editor: React.FC<EditorProps> = ({
     null,
   );
   const [selectedItemType, setSelectedItemType] = useState<
-    "scene" | "element" | null
+    'scene' | 'element' | null
   >(null);
   const [currentScene, setCurrentScene] = useState<Scene | null>(
     project.scenes.length > 0 ? project.scenes[0] : null,
   );
   const [isCreatingScene, setIsCreatingScene] = useState(false);
-  const [newSceneName, setNewSceneName] = useState("");
+  const [newSceneName, setNewSceneName] = useState('');
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
   const [isExportDialogVisible, setIsExportDialogVisible] = useState(false);
   const [selectedExportSceneId, setSelectedExportSceneId] = useState<string>(
-    project.scenes.length > 0 ? project.scenes[0].id : "",
+    project.scenes.length > 0 ? project.scenes[0].id : '',
   );
   const [selectedExportFormat, setSelectedExportFormat] = useState<
-    "standalone" | "website"
-  >("standalone");
+    'standalone' | 'website'
+  >('standalone');
   const [optimizeResources, setOptimizeResources] = useState<boolean>(true);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -62,18 +64,18 @@ const Editor: React.FC<EditorProps> = ({
     if (currentScene) {
       onSceneChange?.(currentScene.name);
     }
-  }, []);
+  }, [currentScene, onSceneChange]);
 
   const generateTreeData = useCallback((): TreeNode[] => {
     return project.scenes.map((scene) => ({
       id: scene.id,
       name: scene.name,
-      type: "scene",
+      type: 'scene',
       data: scene,
       children: scene.elements.map((element) => ({
         id: element.id,
         name: element.name,
-        type: "element",
+        type: 'element',
         data: element,
       })),
     }));
@@ -84,9 +86,9 @@ const Editor: React.FC<EditorProps> = ({
       id: `scene_${Date.now()}`,
       name: sceneName,
       elements: [],
-      aspectRatio: "16:9",
-      music: "",
-      sceneText: "",
+      aspectRatio: '16:9',
+      music: '',
+      sceneText: '',
     };
 
     const updatedProject = {
@@ -97,12 +99,12 @@ const Editor: React.FC<EditorProps> = ({
     onUpdateProject(updatedProject);
     setCurrentScene(newScene);
     setSelectedItem(newScene);
-    setSelectedItemType("scene");
+    setSelectedItemType('scene');
     onSceneChange?.(newScene.name);
   };
 
   const openCreateSceneDialog = () => {
-    setNewSceneName("");
+    setNewSceneName('');
     setIsCreatingScene(true);
   };
 
@@ -126,22 +128,22 @@ const Editor: React.FC<EditorProps> = ({
   };
 
   const handleSelectTreeItem = (node: TreeNode) => {
-    if (node.type === "scene") {
+    if (node.type === 'scene') {
       const scene = node.data as Scene;
       setCurrentScene(scene);
       setSelectedItem(scene);
-      setSelectedItemType("scene");
+      setSelectedItemType('scene');
       onSceneChange?.(scene.name);
-    } else if (node.type === "element") {
+    } else if (node.type === 'element') {
       const element = node.data as Element;
       setSelectedItem(element);
-      setSelectedItemType("element");
+      setSelectedItemType('element');
     }
   };
 
   const handleSelectElement = (element: Element) => {
     setSelectedItem(element);
-    setSelectedItemType("element");
+    setSelectedItemType('element');
   };
 
   const handleCreateElement = () => {
@@ -154,12 +156,12 @@ const Editor: React.FC<EditorProps> = ({
       y: 0.5,
       scale: 0.2,
       aspectRatio: 1,
-      destinationScene: "",
-      onClickText: "",
-      onClickSound: "",
-      onClickMusicChange: "",
+      destinationScene: '',
+      onClickText: '',
+      onClickSound: '',
+      onClickMusicChange: '',
       highlightOnHover: true,
-      highlightColor: "#ffffff",
+      highlightColor: '#ffffff',
       cornerRadius: 0,
     };
 
@@ -178,7 +180,7 @@ const Editor: React.FC<EditorProps> = ({
     onUpdateProject(updatedProject);
     setCurrentScene(updatedScene);
     setSelectedItem(newElement);
-    setSelectedItemType("element");
+    setSelectedItemType('element');
   };
 
   const handleUpdateScene = (updatedScene: Scene) => {
@@ -227,10 +229,10 @@ const Editor: React.FC<EditorProps> = ({
     handleUpdateElement({ ...updatedElement, x, y });
   };
 
-  const handleDeleteItem = (id: string, type: "scene" | "element") => {
+  const handleDeleteItem = (id: string, type: 'scene' | 'element') => {
     let updatedProject: Project;
 
-    if (type === "scene") {
+    if (type === 'scene') {
       updatedProject = {
         ...project,
         scenes: project.scenes.filter((scene) => scene.id !== id),
@@ -267,7 +269,7 @@ const Editor: React.FC<EditorProps> = ({
   const handleCanvasClick = () => {
     if (currentScene) {
       setSelectedItem(currentScene);
-      setSelectedItemType("scene");
+      setSelectedItemType('scene');
     }
   };
 
@@ -294,10 +296,10 @@ const Editor: React.FC<EditorProps> = ({
         options.optimizeResources,
       );
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download =
-        options.format === "website"
+        options.format === 'website'
           ? `${project.name}.zip`
           : `${project.name}.html`;
       document.body.appendChild(a);
@@ -305,7 +307,7 @@ const Editor: React.FC<EditorProps> = ({
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error("Error exporting project:", error);
+      console.error('Error exporting project:', error);
     } finally {
       setIsExporting(false);
     }
@@ -313,7 +315,7 @@ const Editor: React.FC<EditorProps> = ({
 
   return (
     <div className="editor">
-      <div className={`editor-main-view ${isExporting ? "exporting" : ""}`}>
+      <div className={`editor-main-view ${isExporting ? 'exporting' : ''}`}>
         <div className="editor-header">
           <div className="editor-title">
             <h1>Project Editor</h1>
@@ -348,7 +350,7 @@ const Editor: React.FC<EditorProps> = ({
             <SceneCanvas
               scene={currentScene}
               selectedElement={
-                selectedItemType === "element"
+                selectedItemType === 'element'
                   ? (selectedItem as Element)
                   : null
               }
@@ -381,7 +383,7 @@ const Editor: React.FC<EditorProps> = ({
                 title={
                   selectedItem
                     ? `Delete ${selectedItem.name}`
-                    : "Select an item to delete"
+                    : 'Select an item to delete'
                 }
               >
                 <Trash2 size={14} /> Delete
@@ -420,7 +422,7 @@ const Editor: React.FC<EditorProps> = ({
                   placeholder="Enter scene name..."
                   autoFocus
                   onKeyPress={(e) => {
-                    if (e.key === "Enter") confirmCreateScene();
+                    if (e.key === 'Enter') confirmCreateScene();
                   }}
                 />
               </div>
@@ -449,12 +451,12 @@ const Editor: React.FC<EditorProps> = ({
           <div className="dialog">
             <div className="dialog-header">
               <h2 className="dialog-title">
-                Delete {selectedItemType === "scene" ? "Scene" : "Element"}
+                Delete {selectedItemType === 'scene' ? 'Scene' : 'Element'}
               </h2>
             </div>
             <div className="dialog-body">
               <p className="dialog-text-small">
-                Are you sure you want to delete{" "}
+                Are you sure you want to delete{' '}
                 <strong>{selectedItem.name}</strong>? This action is
                 irreversible and cannot be undone.
               </p>
@@ -486,7 +488,7 @@ const Editor: React.FC<EditorProps> = ({
 
             <div className="dialog-body">
               <p className="dialog-text">
-                Configure export settings for "{project.name}"
+                Configure export settings for &quot;{project.name}&quot;
               </p>
 
               <div className="form-group">
@@ -520,7 +522,7 @@ const Editor: React.FC<EditorProps> = ({
                     value={selectedExportFormat}
                     onChange={(e) =>
                       setSelectedExportFormat(
-                        e.target.value as "standalone" | "website",
+                        e.target.value as 'standalone' | 'website',
                       )
                     }
                   >
@@ -532,9 +534,9 @@ const Editor: React.FC<EditorProps> = ({
                   </div>
                 </div>
                 <span className="dialog-text-small">
-                  {selectedExportFormat === "standalone"
-                    ? "Single HTML file with embedded resources."
-                    : "ZIP with an index.html and separate resource files."}
+                  {selectedExportFormat === 'standalone'
+                    ? 'Single HTML file with embedded resources.'
+                    : 'ZIP with an index.html and separate resource files.'}
                 </span>
               </div>
 

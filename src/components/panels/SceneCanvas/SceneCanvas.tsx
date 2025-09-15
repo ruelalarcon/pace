@@ -1,8 +1,10 @@
-import React, { useRef, useState, useCallback, useEffect } from "react";
-import { Scene, Element } from "../../../types";
-import { apiService } from "../../../services/api";
-import { Image } from "lucide-react";
-import "./SceneCanvas.css";
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { Image } from 'lucide-react';
+
+import { apiService } from '../../../services/api';
+import { Element, Scene } from '../../../types';
+import './SceneCanvas.css';
 
 interface SceneCanvasProps {
   scene: Scene | null;
@@ -27,11 +29,11 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     offsetY: number;
   } | null>(null);
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [serverUrl, setServerUrl] = useState<string>('');
 
   const getAspectRatio = useCallback(() => {
     if (scene && scene.aspectRatio) {
-      const parts = scene.aspectRatio.split(":");
+      const parts = scene.aspectRatio.split(':');
       if (parts.length === 2) {
         const width = parseFloat(parts[0]);
         const height = parseFloat(parts[1]);
@@ -57,12 +59,12 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
     if (containerAspect > desiredAspect) {
       // Container is wider than desired; constrain by height
-      canvas.style.height = "100%";
-      canvas.style.width = "auto";
+      canvas.style.height = '100%';
+      canvas.style.width = 'auto';
     } else {
       // Container is narrower/taller; constrain by width
-      canvas.style.width = "100%";
-      canvas.style.height = "auto";
+      canvas.style.width = '100%';
+      canvas.style.height = 'auto';
     }
 
     // Update canvas rect after size adjustment
@@ -93,10 +95,10 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   useEffect(() => {
     const initializeServerUrl = async () => {
       try {
-        const url = await apiService.getResourceUrl("");
+        const url = await apiService.getResourceUrl('');
         setServerUrl(url);
       } catch (error) {
-        console.error("Error getting server URL:", error);
+        console.error('Error getting server URL:', error);
       }
     };
     initializeServerUrl();
@@ -173,8 +175,8 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     const isSelected = selectedElement?.id === element.id;
     const isHovered = hoveredElementId === element.id;
 
-    let width = "10%";
-    let height = "10%";
+    let width = '10%';
+    let height = '10%';
 
     if (canvasRect) {
       const sceneAspectRatio = canvasRect.width / canvasRect.height;
@@ -184,23 +186,23 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
 
     const highlightStyle: React.CSSProperties = {};
     if (isHovered && element.highlightOnHover && !dragging) {
-      highlightStyle.filter = `drop-shadow(0 0 8px ${element.highlightColor || "#ffffff"})`;
+      highlightStyle.filter = `drop-shadow(0 0 8px ${element.highlightColor || '#ffffff'})`;
       highlightStyle.zIndex = 30;
     }
 
     return (
       <div
         key={element.id}
-        className={`scene-element ${isSelected ? "selected" : ""}`}
+        className={`scene-element ${isSelected ? 'selected' : ''}`}
         style={{
           left: `calc(${element.x * 100}% - (${width}) / 2)`,
           top: `calc(${element.y * 100}% - (${height}) / 2)`,
-          width: width,
-          height: height,
+          width,
+          height,
           borderRadius: element.cornerRadius
             ? `${element.cornerRadius}px`
             : undefined,
-          cursor: dragging?.elementId === element.id ? "grabbing" : "grab",
+          cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab',
           ...highlightStyle,
         }}
         onMouseDown={(e) => handleMouseDown(e, element)}

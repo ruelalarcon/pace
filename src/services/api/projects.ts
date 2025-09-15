@@ -1,5 +1,5 @@
-import { BaseApiService } from "./base";
-import { Project } from "../../types";
+import { Project } from '../../types';
+import { BaseApiService } from './base';
 
 export class ProjectsApiService extends BaseApiService {
   async getProjects(): Promise<Project[]> {
@@ -11,9 +11,9 @@ export class ProjectsApiService extends BaseApiService {
   async createProject(name: string): Promise<Project> {
     const baseUrl = await this.getBaseUrl();
     const response = await fetch(`${baseUrl}/api/projects`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ name }),
     });
@@ -33,9 +33,9 @@ export class ProjectsApiService extends BaseApiService {
     const response = await fetch(
       `${baseUrl}/api/projects/${encodeURIComponent(projectName)}`,
       {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(project),
       },
@@ -48,12 +48,12 @@ export class ProjectsApiService extends BaseApiService {
     const response = await fetch(
       `${baseUrl}/api/projects/${encodeURIComponent(projectName)}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
       },
     );
 
     if (!response.ok) {
-      throw new Error("Failed to delete project");
+      throw new Error('Failed to delete project');
     }
   }
 }

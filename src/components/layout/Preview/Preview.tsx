@@ -1,9 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Project, Scene } from "../../../types";
-import { apiService } from "../../../services/api";
-import { ArrowLeft } from "lucide-react";
-import "../../../engine/Engine.css";
-import "./Preview.css";
+import React, { useEffect, useRef, useState } from 'react';
+
+import { ArrowLeft } from 'lucide-react';
+
+import '../../../engine/Engine.css';
+import { apiService } from '../../../services/api';
+import { Project, Scene } from '../../../types';
+import './Preview.css';
 
 interface PreviewProps {
   project: Project;
@@ -16,10 +18,11 @@ const Preview: React.FC<PreviewProps> = ({
   onExitPreview,
   initialSceneId,
 }) => {
-  const [currentSceneName, setCurrentSceneName] = useState<string>("");
-  const gameEngineRef = useRef<any>(null);
-  const canvasId = "pace-canvas-preview";
-  const [serverUrl, setServerUrl] = useState<string>("");
+  const [currentSceneName, setCurrentSceneName] = useState<string>('');
+  const gameEngineRef = useRef<unknown>(null);
+  const canvasId = 'pace-canvas-preview';
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [serverUrl, setServerUrl] = useState<string>('');
 
   useEffect(() => {
     const initializePreview = async () => {
@@ -30,10 +33,10 @@ const Preview: React.FC<PreviewProps> = ({
       }
 
       // Get server URL
-      const url = await apiService.getResourceUrl("");
+      const url = await apiService.getResourceUrl('');
       setServerUrl(url);
 
-      import("../../../engine/Engine.js")
+      import('../../../engine/Engine.js')
         .then((module) => {
           const Engine = module.default || module;
 
@@ -43,9 +46,9 @@ const Preview: React.FC<PreviewProps> = ({
               project,
               {},
               {
-                canvasId: canvasId,
+                canvasId,
                 serverUrl: url,
-                initialSceneId: initialSceneId,
+                initialSceneId,
               },
             );
 
@@ -55,7 +58,7 @@ const Preview: React.FC<PreviewProps> = ({
             gameEngineRef.current.setCurrentScene = function (
               scene: Scene | null,
             ) {
-              setCurrentSceneName(scene ? scene.name : "");
+              setCurrentSceneName(scene ? scene.name : '');
               originalSetCurrentScene.call(this, scene);
             };
 

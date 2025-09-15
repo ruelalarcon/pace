@@ -7,14 +7,14 @@ class Engine {
   constructor(project, resources, options = {}) {
     this.project = project;
     this.resources = resources || {};
-    this.canvasId = options.canvasId || "pace-canvas";
-    this.serverUrl = options.serverUrl || "http://localhost:3001";
+    this.canvasId = options.canvasId || 'pace-canvas';
+    this.serverUrl = options.serverUrl || 'http://localhost:3001';
     this.initialSceneId = options.initialSceneId || null;
 
     // Game state
     this.currentScene = null;
     this.textboxVisible = false;
-    this.textboxContent = "";
+    this.textboxContent = '';
     this.textboxIndex = 0;
     this.isTyping = false;
     this.textLines = [];
@@ -82,10 +82,10 @@ class Engine {
     this.adjustCanvasSizeToAspect();
 
     this.boundHandleInteraction = this.handleFirstInteraction.bind(this);
-    window.addEventListener("click", this.boundHandleInteraction, {
+    window.addEventListener('click', this.boundHandleInteraction, {
       once: true,
     });
-    window.addEventListener("keydown", this.boundHandleInteraction, {
+    window.addEventListener('keydown', this.boundHandleInteraction, {
       once: true,
     });
   }
@@ -130,15 +130,15 @@ class Engine {
       const bgUrl = this.getResourceUrl(this.currentScene.backgroundImage);
       this.canvas.style.backgroundImage = `url(${bgUrl})`;
     } else {
-      this.canvas.style.backgroundImage = "";
+      this.canvas.style.backgroundImage = '';
     }
 
     // Clear and render elements
-    this.canvas.innerHTML = "";
+    this.canvas.innerHTML = '';
     if (!this.currentScene.backgroundImage) {
-      const placeholder = document.createElement("div");
-      placeholder.className = "pace-canvas-placeholder";
-      placeholder.innerHTML = "<p>No background image</p>";
+      const placeholder = document.createElement('div');
+      placeholder.className = 'pace-canvas-placeholder';
+      placeholder.innerHTML = '<p>No background image</p>';
       this.canvas.appendChild(placeholder);
     }
 
@@ -160,12 +160,12 @@ class Engine {
 
     if (containerAspect > desiredAspect) {
       // Container is wider than desired; constrain by height
-      this.canvas.style.height = "100%";
-      this.canvas.style.width = "auto";
+      this.canvas.style.height = '100%';
+      this.canvas.style.width = 'auto';
     } else {
       // Container is narrower/taller; constrain by width
-      this.canvas.style.width = "100%";
-      this.canvas.style.height = "auto";
+      this.canvas.style.width = '100%';
+      this.canvas.style.height = 'auto';
     }
   }
 
@@ -176,8 +176,8 @@ class Engine {
     }
 
     // For website exports, extract just the filename and use with serverUrl
-    if (this.serverUrl && this.serverUrl.startsWith("./")) {
-      const fileName = resourcePath.split("/").pop();
+    if (this.serverUrl && this.serverUrl.startsWith('./')) {
+      const fileName = resourcePath.split('/').pop();
       return `${this.serverUrl}/${fileName}`;
     }
 
@@ -186,8 +186,8 @@ class Engine {
   }
 
   renderElement(element) {
-    const elementDiv = document.createElement("div");
-    elementDiv.className = "pace-element";
+    const elementDiv = document.createElement('div');
+    elementDiv.className = 'pace-element';
     elementDiv.id = `element-${element.id}`;
 
     if (!this.canvasRect) {
@@ -206,7 +206,7 @@ class Engine {
     elementDiv.style.top = `calc(${element.y * 100}% - (${height}) / 2)`;
     elementDiv.style.width = width;
     elementDiv.style.height = height;
-    elementDiv.style.cursor = "pointer";
+    elementDiv.style.cursor = 'pointer';
 
     if (element.cornerRadius) {
       elementDiv.style.borderRadius = `${element.cornerRadius}px`;
@@ -214,26 +214,26 @@ class Engine {
 
     // Add image or placeholder
     if (element.image) {
-      const img = document.createElement("img");
+      const img = document.createElement('img');
       img.src = this.getResourceUrl(element.image);
       img.alt = element.name;
-      img.className = "pace-element-image";
+      img.className = 'pace-element-image';
       img.draggable = false;
       elementDiv.appendChild(img);
     } else {
-      const placeholder = document.createElement("div");
-      placeholder.className = "pace-element-placeholder";
+      const placeholder = document.createElement('div');
+      placeholder.className = 'pace-element-placeholder';
       elementDiv.appendChild(placeholder);
     }
 
     // Add event listeners
-    elementDiv.addEventListener("click", () =>
+    elementDiv.addEventListener('click', () =>
       this.handleElementClick(element),
     );
-    elementDiv.addEventListener("mouseenter", () =>
+    elementDiv.addEventListener('mouseenter', () =>
       this.handleElementHover(element, true),
     );
-    elementDiv.addEventListener("mouseleave", () =>
+    elementDiv.addEventListener('mouseleave', () =>
       this.handleElementHover(element, false),
     );
 
@@ -250,7 +250,7 @@ class Engine {
     }
 
     const hasText =
-      typeof element.onClickText === "string" &&
+      typeof element.onClickText === 'string' &&
       element.onClickText.trim().length > 0;
 
     // Cancel any pending scene text when element is clicked
@@ -283,11 +283,11 @@ class Engine {
     if (!elementDiv) return;
 
     if (isHovered && element.highlightOnHover) {
-      elementDiv.style.filter = `drop-shadow(0 0 8px ${element.highlightColor || "#ffffff"})`;
-      elementDiv.style.zIndex = "30";
+      elementDiv.style.filter = `drop-shadow(0 0 8px ${element.highlightColor || '#ffffff'})`;
+      elementDiv.style.zIndex = '30';
     } else {
-      elementDiv.style.filter = "";
-      elementDiv.style.zIndex = "10";
+      elementDiv.style.filter = '';
+      elementDiv.style.zIndex = '10';
     }
   }
 
@@ -387,14 +387,14 @@ class Engine {
 
   renderTextbox() {
     // Always recreate the textbox to ensure fresh listeners and markup
-    const existing = document.querySelector(".pace-textbox");
+    const existing = document.querySelector('.pace-textbox');
     if (existing && existing.parentElement) {
       existing.parentElement.removeChild(existing);
     }
 
-    const textbox = document.createElement("div");
-    textbox.className = "pace-textbox";
-    textbox.addEventListener("click", (e) => {
+    const textbox = document.createElement('div');
+    textbox.className = 'pace-textbox';
+    textbox.addEventListener('click', (e) => {
       e.stopPropagation();
     });
     this.canvas.appendChild(textbox);
@@ -413,26 +413,26 @@ class Engine {
   }
 
   updateTextboxText() {
-    const textElement = document.getElementById("textbox-text");
+    const textElement = document.getElementById('textbox-text');
     if (textElement) {
-      const currentLine = this.textLines[this.currentLineIndex] || "";
+      const currentLine = this.textLines[this.currentLineIndex] || '';
       const displayText =
-        currentLine.substring(0, this.textboxIndex) || "\u00A0";
+        currentLine.substring(0, this.textboxIndex) || '\u00A0';
       textElement.textContent = displayText;
     }
   }
 
   updateTextboxContinue() {
-    const continueElement = document.getElementById("textbox-continue");
+    const continueElement = document.getElementById('textbox-continue');
     if (continueElement) {
-      const action = this.isTyping ? "Fast Forward" : "Continue";
+      const action = this.isTyping ? 'Fast Forward' : 'Continue';
       continueElement.innerHTML = `Press <kbd class="pace-key">Space</kbd> to ${action}`;
     }
   }
 
   handleTextboxKeydown(e) {
     if (!this.textboxVisible) return;
-    const isSpace = e.code === "Space" || e.key === " " || e.key === "Spacebar";
+    const isSpace = e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar';
     if (!isSpace) return;
     e.preventDefault();
     e.stopPropagation();
@@ -476,7 +476,7 @@ class Engine {
       this.sceneTextTimer = null;
     }
 
-    const lines = text.split("\n").filter((l) => l.trim() !== "");
+    const lines = text.split('\n').filter((l) => l.trim() !== '');
     if (lines.length === 0) return;
 
     this.textLines = lines;
@@ -488,7 +488,7 @@ class Engine {
 
     // Listen for Space to progress
     this.boundHandleTextboxKeydown = this.handleTextboxKeydown.bind(this);
-    window.addEventListener("keydown", this.boundHandleTextboxKeydown);
+    window.addEventListener('keydown', this.boundHandleTextboxKeydown);
   }
 
   startTyping(line) {
@@ -516,13 +516,13 @@ class Engine {
   }
 
   clearTextbox() {
-    const textbox = document.querySelector(".pace-textbox");
+    const textbox = document.querySelector('.pace-textbox');
     if (textbox) {
       textbox.remove();
     }
 
     this.textboxVisible = false;
-    this.textboxContent = "";
+    this.textboxContent = '';
     this.textboxIndex = 0;
     this.isTyping = false;
     this.textLines = [];
@@ -533,14 +533,14 @@ class Engine {
     }
 
     if (this.boundHandleTextboxKeydown) {
-      window.removeEventListener("keydown", this.boundHandleTextboxKeydown);
+      window.removeEventListener('keydown', this.boundHandleTextboxKeydown);
       this.boundHandleTextboxKeydown = null;
     }
   }
 
   getAspectRatio() {
     if (this.currentScene && this.currentScene.aspectRatio) {
-      const parts = this.currentScene.aspectRatio.split(":");
+      const parts = this.currentScene.aspectRatio.split(':');
       if (parts.length === 2) {
         const width = parseFloat(parts[0]);
         const height = parseFloat(parts[1]);
@@ -578,11 +578,11 @@ class Engine {
       this.parentResizeObserver.disconnect();
     }
 
-    window.removeEventListener("click", this.boundHandleInteraction);
-    window.removeEventListener("keydown", this.boundHandleInteraction);
+    window.removeEventListener('click', this.boundHandleInteraction);
+    window.removeEventListener('keydown', this.boundHandleInteraction);
 
     if (this.boundHandleTextboxKeydown) {
-      window.removeEventListener("keydown", this.boundHandleTextboxKeydown);
+      window.removeEventListener('keydown', this.boundHandleTextboxKeydown);
       this.boundHandleTextboxKeydown = null;
     }
   }
@@ -590,6 +590,6 @@ class Engine {
 
 // Global export - `export` line is removed when used in an exported game
 export default Engine;
-if (typeof window !== "undefined") {
+if (typeof window !== 'undefined') {
   window.Engine = Engine;
 }

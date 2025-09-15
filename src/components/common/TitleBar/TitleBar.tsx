@@ -1,6 +1,8 @@
-import React from "react";
-import { Minimize2, Maximize, CircleX } from "lucide-react";
-import "./TitleBar.css";
+import React from 'react';
+
+import { CircleX, Maximize, Minimize2 } from 'lucide-react';
+
+import './TitleBar.css';
 
 interface TitleBarProps {
   title?: string;
@@ -10,7 +12,7 @@ interface TitleBarProps {
 }
 
 const TitleBar: React.FC<TitleBarProps> = ({
-  title = "PACE Editor",
+  title = 'PACE Editor',
   showWindowControls = true,
   subtitle,
   currentScene,

@@ -1,11 +1,12 @@
-import { useState } from "react";
-import Dashboard from "./components/layout/Dashboard/Dashboard";
-import Editor from "./components/layout/Editor/Editor";
-import Preview from "./components/layout/Preview/Preview";
-import TitleBar from "./components/common/TitleBar/TitleBar";
-import { Project } from "./types";
-import { apiService } from "./services/api";
-import "./App.css";
+import { useState } from 'react';
+
+import './App.css';
+import TitleBar from './components/common/TitleBar/TitleBar';
+import Dashboard from './components/layout/Dashboard/Dashboard';
+import Editor from './components/layout/Editor/Editor';
+import Preview from './components/layout/Preview/Preview';
+import { apiService } from './services/api';
+import { Project } from './types';
 
 function App() {
   const [currentProject, setCurrentProject] = useState<Project | null>(null);
@@ -24,7 +25,7 @@ function App() {
       const project = await apiService.getProject(projectName);
       setCurrentProject(project);
     } catch (error) {
-      console.error("Error loading project:", error);
+      console.error('Error loading project:', error);
     }
     setIsLoading(false);
   };
@@ -52,7 +53,7 @@ function App() {
       await apiService.updateProject(currentProject.name, updatedProject);
       setCurrentProject(updatedProject);
     } catch (error) {
-      console.error("Error updating project:", error);
+      console.error('Error updating project:', error);
     }
   };
 
@@ -72,7 +73,7 @@ function App() {
     if (currentProject) {
       return `PACE Editor - ${currentProject.name}`;
     }
-    return "PACE Editor";
+    return 'PACE Editor';
   };
 
   return (
@@ -80,7 +81,7 @@ function App() {
       <TitleBar
         title={getTitleBarTitle()}
         currentScene={currentSceneName}
-        subtitle={isPreviewMode ? "Preview Mode" : undefined}
+        subtitle={isPreviewMode ? 'Preview Mode' : undefined}
       />
       {currentProject ? (
         isPreviewMode ? (

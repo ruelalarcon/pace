@@ -1,22 +1,22 @@
 export class ElectronIpcService {
-  async showOpenDialog(options: any): Promise<any> {
-    return (window as any).electronAPI.showOpenDialog(options);
+  async showOpenDialog(options: OpenDialogOptions): Promise<OpenDialogResult> {
+    return window.electronAPI.showOpenDialog(options);
   }
 
   async getServerPort(): Promise<number> {
-    return (window as any).electronAPI.getServerPort();
+    return window.electronAPI.getServerPort();
   }
 
   async getProjectsDir(): Promise<string> {
-    return (window as any).electronAPI.getProjectsDir();
+    return window.electronAPI.getProjectsDir();
   }
 
   getPlatform(): string {
-    return (window as any).electronAPI.platform;
+    return window.electronAPI.platform;
   }
 
-  getVersions(): any {
-    return (window as any).electronAPI.versions;
+  getVersions(): { node: string; chrome: string; electron: string } {
+    return window.electronAPI.versions;
   }
 }
 
