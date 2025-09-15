@@ -68,14 +68,19 @@ class ExportRoutes {
           await this.getEngineAssets();
 
         // Collect all resource files and convert to base64
-        const resources = await this.collectResources(
+        const { resources, resourcePathMap } = await this.collectResources(
           project,
           projectPath,
           optimize,
         );
 
+        // Apply resource path mapping for optimized files
+        const projectForExport = optimize
+          ? this.applyResourcePathMappingStandalone(project, resourcePathMap)
+          : project;
+
         const html = await this.generateExportHTML(
-          project,
+          projectForExport,
           variablesCSS + geistFontCSS + engineCSS,
           engineJS,
           resources,
@@ -149,6 +154,7 @@ class ExportRoutes {
 
   async collectResources(project, projectPath, optimize) {
     const resources = new Map();
+    const resourcePathMap = {};
 
     if (project.scenes) {
       for (const scene of project.scenes) {
@@ -157,14 +163,15 @@ class ExportRoutes {
           projectPath,
           resources,
           optimize,
+          resourcePathMap,
         );
       }
     }
 
-    return resources;
+    return { resources, resourcePathMap };
   }
 
-  async collectSceneResources(scene, projectPath, resources, optimize) {
+  async collectSceneResources(scene, projectPath, resources, optimize, resourcePathMap) {
     // Background images
     if (scene.backgroundImage) {
       await this.addResourceToMap(
@@ -172,6 +179,7 @@ class ExportRoutes {
         projectPath,
         resources,
         optimize,
+        resourcePathMap,
       );
     }
 
@@ -182,6 +190,7 @@ class ExportRoutes {
         projectPath,
         resources,
         optimize,
+        resourcePathMap,
       );
     }
 
@@ -194,6 +203,7 @@ class ExportRoutes {
             projectPath,
             resources,
             optimize,
+            resourcePathMap,
           );
         }
         if (element.onClickSound) {
@@ -202,6 +212,7 @@ class ExportRoutes {
             projectPath,
             resources,
             optimize,
+            resourcePathMap,
           );
         }
         if (element.onClickMusicChange) {
@@ -210,13 +221,14 @@ class ExportRoutes {
             projectPath,
             resources,
             optimize,
+            resourcePathMap,
           );
         }
       }
     }
   }
 
-  async addResourceToMap(resourcePath, projectPath, resources, optimize) {
+  async addResourceToMap(resourcePath, projectPath, resources, optimize, resourcePathMap) {
     const fileName = decodeURIComponent(path.basename(resourcePath));
     const filePath = path.join(projectPath, fileName);
     try {
@@ -228,7 +240,10 @@ class ExportRoutes {
         try {
           const avifBuffer = await this.convertImageToAvif(fileBuffer);
           const base64 = avifBuffer.toString("base64");
-          resources.set(resourcePath, `data:image/avif;base64,${base64}`);
+          const newFileName = this.replaceExt(fileName, ".avif");
+          const newResourcePath = this.replaceExt(resourcePath, ".avif");
+          resources.set(newResourcePath, `data:image/avif;base64,${base64}`);
+          resourcePathMap[resourcePath] = newResourcePath;
           return;
         } catch (e) {
           console.warn(`Failed to convert ${fileName} to AVIF, falling back.`);
@@ -239,7 +254,10 @@ class ExportRoutes {
         try {
           const opusBuffer = await this.convertAudioToOpus(fileBuffer);
           const base64 = opusBuffer.toString("base64");
-          resources.set(resourcePath, `data:audio/opus;base64,${base64}`);
+          const newFileName = this.replaceExt(fileName, ".opus");
+          const newResourcePath = this.replaceExt(resourcePath, ".opus");
+          resources.set(newResourcePath, `data:audio/ogg;codecs=opus;base64,${base64}`);
+          resourcePathMap[resourcePath] = newResourcePath;
           return;
         } catch (e) {
           console.warn(`Failed to convert ${fileName} to Opus, falling back.`);
@@ -248,6 +266,7 @@ class ExportRoutes {
 
       const base64 = fileBuffer.toString("base64");
       resources.set(resourcePath, `data:${mimeType};base64,${base64}`);
+      resourcePathMap[resourcePath] = resourcePath;
     } catch (err) {
       console.warn(`Could not read resource file: ${fileName}`);
     }
@@ -624,6 +643,34 @@ class ExportRoutes {
             }
             if (el.onClickMusicChange && mapping[el.onClickMusicChange]) {
               el.onClickMusicChange = `/${mapping[el.onClickMusicChange]}`;
+            }
+          }
+        }
+      }
+    }
+    return clone;
+  }
+
+  applyResourcePathMappingStandalone(project, mapping) {
+    const clone = JSON.parse(JSON.stringify(project));
+    if (clone.scenes) {
+      for (const scene of clone.scenes) {
+        if (scene.backgroundImage && mapping[scene.backgroundImage]) {
+          scene.backgroundImage = mapping[scene.backgroundImage];
+        }
+        if (scene.music && mapping[scene.music]) {
+          scene.music = mapping[scene.music];
+        }
+        if (scene.elements) {
+          for (const el of scene.elements) {
+            if (el.image && mapping[el.image]) {
+              el.image = mapping[el.image];
+            }
+            if (el.onClickSound && mapping[el.onClickSound]) {
+              el.onClickSound = mapping[el.onClickSound];
+            }
+            if (el.onClickMusicChange && mapping[el.onClickMusicChange]) {
+              el.onClickMusicChange = mapping[el.onClickMusicChange];
             }
           }
         }
