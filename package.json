@@ -83,6 +83,7 @@
       "out/**/*",
       "public/favicon.ico",
       "src/engine/**/*",
+      "src/styles/**/*",
       "src/assets/fonts/**/*",
       "node_modules/**/*"
     ],
