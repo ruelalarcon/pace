@@ -1,6 +1,6 @@
-import { resolve } from "path";
-import { defineConfig, externalizeDepsPlugin } from "electron-vite";
-import react from "@vitejs/plugin-react";
+import react from '@vitejs/plugin-react';
+import { defineConfig, externalizeDepsPlugin } from 'electron-vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   main: {
@@ -8,60 +8,60 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, "electron/main/index.js"),
-          "window-manager": resolve(
+          index: resolve(__dirname, 'electron/main/index.js'),
+          'window-manager': resolve(
             __dirname,
-            "electron/main/window-manager.js",
+            'electron/main/window-manager.js',
           ),
-          "ipc-handlers": resolve(__dirname, "electron/main/ipc-handlers.js"),
-          "server/index": resolve(__dirname, "electron/server/index.js"),
-          "server/routes/projects": resolve(
+          'ipc-handlers': resolve(__dirname, 'electron/main/ipc-handlers.js'),
+          'server/index': resolve(__dirname, 'electron/server/index.js'),
+          'server/routes/projects': resolve(
             __dirname,
-            "electron/server/routes/projects.js",
+            'electron/server/routes/projects.js',
           ),
-          "server/routes/files": resolve(
+          'server/routes/files': resolve(
             __dirname,
-            "electron/server/routes/files.js",
+            'electron/server/routes/files.js',
           ),
-          "server/routes/export": resolve(
+          'server/routes/export': resolve(
             __dirname,
-            "electron/server/routes/export.js",
+            'electron/server/routes/export.js',
           ),
-          "server/middleware/cors": resolve(
+          'server/middleware/cors': resolve(
             __dirname,
-            "electron/server/middleware/cors.js",
+            'electron/server/middleware/cors.js',
           ),
-          "server/middleware/upload": resolve(
+          'server/middleware/upload': resolve(
             __dirname,
-            "electron/server/middleware/upload.js",
+            'electron/server/middleware/upload.js',
           ),
-          "server/utils/file-utils": resolve(
+          'server/utils/file-utils': resolve(
             __dirname,
-            "electron/server/utils/file-utils.js",
+            'electron/server/utils/file-utils.js',
           ),
-          "server/utils/mime-types": resolve(
+          'server/utils/mime-types': resolve(
             __dirname,
-            "electron/server/utils/mime-types.js",
+            'electron/server/utils/mime-types.js',
           ),
         },
         external: [
           // Keep Node.js built-in modules external
-          "electron",
-          "path",
-          "fs",
-          "express",
-          "cors",
-          "multer",
-          "sharp",
-          "fluent-ffmpeg",
-          "ffmpeg-static",
-          "prettier",
+          'electron',
+          'path',
+          'fs',
+          'express',
+          'cors',
+          'multer',
+          'sharp',
+          'fluent-ffmpeg',
+          'ffmpeg-static',
+          'prettier',
         ],
         output: {
-          format: "cjs",
+          format: 'cjs',
           entryFileNames: (chunkInfo) => {
             // Preserve directory structure for server modules
-            if (chunkInfo.name.startsWith("server/")) {
+            if (chunkInfo.name.startsWith('server/')) {
               return `${chunkInfo.name}.js`;
             }
             return `${chunkInfo.name}.js`;
@@ -76,24 +76,24 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, "electron/preload/index.js"),
+          index: resolve(__dirname, 'electron/preload/index.js'),
         },
       },
     },
   },
   renderer: {
-    root: ".",
+    root: '.',
     build: {
       rollupOptions: {
         input: {
-          index: resolve(__dirname, "index.html"),
+          index: resolve(__dirname, 'index.html'),
         },
       },
     },
     plugins: [react()],
     resolve: {
       alias: {
-        "@": resolve(__dirname, "src"),
+        '@': resolve(__dirname, 'src'),
       },
     },
   },

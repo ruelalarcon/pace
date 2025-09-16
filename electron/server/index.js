@@ -1,9 +1,9 @@
-const express = require("express");
-const fs = require("fs").promises;
-const ProjectRoutes = require("./routes/projects");
-const FileRoutes = require("./routes/files");
-const ExportRoutes = require("./routes/export");
-const corsMiddleware = require("./middleware/cors");
+const express = require('express');
+const fs = require('fs').promises;
+const ProjectRoutes = require('./routes/projects');
+const FileRoutes = require('./routes/files');
+const ExportRoutes = require('./routes/export');
+const corsMiddleware = require('./middleware/cors');
 
 class Server {
   constructor(projectsDir) {
@@ -22,7 +22,7 @@ class Server {
 
     // Start server on a random available port
     return new Promise((resolve) => {
-      this.server = this.app.listen(0, "localhost", () => {
+      this.server = this.app.listen(0, 'localhost', () => {
         this.serverPort = this.server.address().port;
         console.log(`Server running via port ${this.serverPort}`);
         resolve();
@@ -44,16 +44,16 @@ class Server {
     // Middleware
     this.app.use(corsMiddleware());
     this.app.use(express.json());
-    this.app.use("/projects", express.static(this.projectsDir));
+    this.app.use('/projects', express.static(this.projectsDir));
 
     // Routes
     this.app.use(
-      "/api/projects",
+      '/api/projects',
       new ProjectRoutes(this.projectsDir).getRouter(),
     );
-    this.app.use("/api/projects", new FileRoutes(this.projectsDir).getRouter());
+    this.app.use('/api/projects', new FileRoutes(this.projectsDir).getRouter());
     this.app.use(
-      "/api/projects",
+      '/api/projects',
       new ExportRoutes(this.projectsDir).getRouter(),
     );
   }

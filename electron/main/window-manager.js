@@ -1,5 +1,5 @@
-const { BrowserWindow } = require("electron");
-const path = require("path");
+const { BrowserWindow } = require('electron');
+const path = require('path');
 
 class WindowManager {
   constructor(serverPort) {
@@ -16,16 +16,16 @@ class WindowManager {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: true,
-        preload: path.join(__dirname, "../preload/index.js"),
+        preload: path.join(__dirname, '../preload/index.js'),
       },
       icon: process.env.ELECTRON_RENDERER_URL
-        ? path.join(__dirname, "../../public/favicon.ico") // Development
-        : path.join(__dirname, "../public/favicon.ico"), // Production
-      title: "PACE Editor",
+        ? path.join(__dirname, '../../public/favicon.ico') // Development
+        : path.join(__dirname, '../public/favicon.ico'), // Production
+      title: 'PACE Editor',
       show: false, // Don't show until ready
       // Custom title bar configuration
       frame: false, // Remove entire frame including title bar and controls
-      titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "hidden",
+      titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'hidden',
     });
 
     if (!process.env.ELECTRON_RENDERER_URL) {
@@ -45,10 +45,10 @@ class WindowManager {
           this.mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL);
         } else {
           // Load the built React app
-          const buildPath = path.join(__dirname, "../renderer/index.html");
+          const buildPath = path.join(__dirname, '../renderer/index.html');
           this.mainWindow.loadFile(buildPath);
         }
-        this.mainWindow.once("ready-to-show", () => {
+        this.mainWindow.once('ready-to-show', () => {
           this.mainWindow.maximize();
           this.mainWindow.show();
         });

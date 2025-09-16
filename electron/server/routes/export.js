@@ -1,15 +1,15 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs").promises;
-const JSZip = require("jszip");
-const os = require("os");
-const { randomUUID } = require("crypto");
-const FileUtils = require("../utils/file-utils");
-const MimeTypes = require("../utils/mime-types");
-const sharp = require("sharp");
-const ffmpegPath = require("ffmpeg-static");
-const ffmpeg = require("fluent-ffmpeg");
-const prettier = require("prettier");
+const express = require('express');
+const path = require('path');
+const fs = require('fs').promises;
+const JSZip = require('jszip');
+const os = require('os');
+const { randomUUID } = require('crypto');
+const FileUtils = require('../utils/file-utils');
+const MimeTypes = require('../utils/mime-types');
+const sharp = require('sharp');
+const ffmpegPath = require('ffmpeg-static');
+const ffmpeg = require('fluent-ffmpeg');
+const prettier = require('prettier');
 
 // Configure ffmpeg binary path for audio conversions
 if (ffmpegPath) {
@@ -20,13 +20,13 @@ if (ffmpegPath) {
     // Production - use unpacked ffmpeg binary
     const unpackedFfmpegPath = path.join(
       process.resourcesPath,
-      "app.asar.unpacked",
-      "node_modules",
-      "ffmpeg-static",
-      path.basename(ffmpegPath)
+      'app.asar.unpacked',
+      'node_modules',
+      'ffmpeg-static',
+      path.basename(ffmpegPath),
     );
 
-    if (require("fs").existsSync(unpackedFfmpegPath)) {
+    if (require('fs').existsSync(unpackedFfmpegPath)) {
       ffmpeg.setFfmpegPath(unpackedFfmpegPath);
     }
   }
@@ -41,7 +41,7 @@ class ExportRoutes {
 
   setupRoutes() {
     // Export project as single HTML file
-    this.router.get("/:projectName/export", this.exportProject.bind(this));
+    this.router.get('/:projectName/export', this.exportProject.bind(this));
   }
 
   async formatCode(source, parser) {
@@ -53,17 +53,17 @@ class ExportRoutes {
       const { projectName } = req.params;
       const {
         initialSceneId,
-        format = "standalone",
-        optimizeResources = "true",
+        format = 'standalone',
+        optimizeResources = 'true',
       } = req.query;
-      const optimize = String(optimizeResources).toLowerCase() !== "false";
+      const optimize = String(optimizeResources).toLowerCase() !== 'false';
       const projectPath = path.join(this.projectsDir, projectName);
-      const projectJsonPath = path.join(projectPath, "project.json");
+      const projectJsonPath = path.join(projectPath, 'project.json');
 
       // Read project data
       const project = await FileUtils.readJsonFile(projectJsonPath);
 
-      if (format === "website") {
+      if (format === 'website') {
         // Export as website folder (ZIP)
         const zipBuffer = await this.generateWebsiteExport(
           project,
@@ -72,9 +72,9 @@ class ExportRoutes {
           optimize,
         );
 
-        res.setHeader("Content-Type", "application/zip");
+        res.setHeader('Content-Type', 'application/zip');
         res.setHeader(
-          "Content-Disposition",
+          'Content-Disposition',
           `attachment; filename="${projectName}.zip"`,
         );
         res.send(zipBuffer);
@@ -103,9 +103,9 @@ class ExportRoutes {
           initialSceneId,
         );
 
-        res.setHeader("Content-Type", "text/html");
+        res.setHeader('Content-Type', 'text/html');
         res.setHeader(
-          "Content-Disposition",
+          'Content-Disposition',
           `attachment; filename="${projectName}.html"`,
         );
         res.send(html);
@@ -121,38 +121,38 @@ class ExportRoutes {
     // Check if we're in development (running from out/) or production (packaged)
     if (process.env.ELECTRON_RENDERER_URL) {
       // Development - go up from out/main/server/routes/ to reach project root
-      engineCSSPath = path.join(__dirname, "../../../../src/engine/Engine.css");
-      engineJSPath = path.join(__dirname, "../../../../src/engine/Engine.js");
+      engineCSSPath = path.join(__dirname, '../../../../src/engine/Engine.css');
+      engineJSPath = path.join(__dirname, '../../../../src/engine/Engine.js');
       variablesCSSPath = path.join(
         __dirname,
-        "../../../../src/styles/variables.css",
+        '../../../../src/styles/variables.css',
       );
       geistFontPath = path.join(
         __dirname,
-        "../../../../src/assets/fonts/Geist[wght].woff2",
+        '../../../../src/assets/fonts/Geist[wght].woff2',
       );
     } else {
       // Production - files are included in app bundle
-      const { app } = require("electron");
+      const { app } = require('electron');
       const appPath = app.getAppPath();
-      engineCSSPath = path.join(appPath, "src/engine/Engine.css");
-      engineJSPath = path.join(appPath, "src/engine/Engine.js");
-      variablesCSSPath = path.join(appPath, "src/styles/variables.css");
-      geistFontPath = path.join(appPath, "src/assets/fonts/Geist[wght].woff2");
+      engineCSSPath = path.join(appPath, 'src/engine/Engine.css');
+      engineJSPath = path.join(appPath, 'src/engine/Engine.js');
+      variablesCSSPath = path.join(appPath, 'src/styles/variables.css');
+      geistFontPath = path.join(appPath, 'src/assets/fonts/Geist[wght].woff2');
     }
 
-    const engineCSS = await fs.readFile(engineCSSPath, "utf-8");
-    const variablesCSS = await fs.readFile(variablesCSSPath, "utf-8");
-    let engineJS = await fs.readFile(engineJSPath, "utf-8");
+    const engineCSS = await fs.readFile(engineCSSPath, 'utf-8');
+    const variablesCSS = await fs.readFile(variablesCSSPath, 'utf-8');
+    let engineJS = await fs.readFile(engineJSPath, 'utf-8');
 
     // Remove ES module export for browser compatibility in exported file
-    engineJS = engineJS.replace("export default Engine;", "");
+    engineJS = engineJS.replace('export default Engine;', '');
 
     // Read Geist font and convert to base64
-    let geistFontCSS = "";
+    let geistFontCSS = '';
     try {
       const geistFontBuffer = await fs.readFile(geistFontPath);
-      const geistFontBase64 = geistFontBuffer.toString("base64");
+      const geistFontBase64 = geistFontBuffer.toString('base64');
       geistFontCSS = `
       @font-face {
         font-family: 'Geist';
@@ -162,7 +162,7 @@ class ExportRoutes {
       }
       `;
     } catch (err) {
-      console.warn("Could not read Geist font file for embedding:", err);
+      console.warn('Could not read Geist font file for embedding:', err);
     }
 
     return { engineCSS, engineJS, geistFontCSS, variablesCSS };
@@ -187,7 +187,13 @@ class ExportRoutes {
     return { resources, resourcePathMap };
   }
 
-  async collectSceneResources(scene, projectPath, resources, optimize, resourcePathMap) {
+  async collectSceneResources(
+    scene,
+    projectPath,
+    resources,
+    optimize,
+    resourcePathMap,
+  ) {
     // Background images
     if (scene.backgroundImage) {
       await this.addResourceToMap(
@@ -244,7 +250,13 @@ class ExportRoutes {
     }
   }
 
-  async addResourceToMap(resourcePath, projectPath, resources, optimize, resourcePathMap) {
+  async addResourceToMap(
+    resourcePath,
+    projectPath,
+    resources,
+    optimize,
+    resourcePathMap,
+  ) {
     const fileName = decodeURIComponent(path.basename(resourcePath));
     const filePath = path.join(projectPath, fileName);
     try {
@@ -255,9 +267,9 @@ class ExportRoutes {
       if (optimize && this.shouldOptimizeImage(originalExt)) {
         try {
           const avifBuffer = await this.convertImageToAvif(fileBuffer);
-          const base64 = avifBuffer.toString("base64");
-          const newFileName = this.replaceExt(fileName, ".avif");
-          const newResourcePath = this.replaceExt(resourcePath, ".avif");
+          const base64 = avifBuffer.toString('base64');
+          const newFileName = this.replaceExt(fileName, '.avif');
+          const newResourcePath = this.replaceExt(resourcePath, '.avif');
           resources.set(newResourcePath, `data:image/avif;base64,${base64}`);
           resourcePathMap[resourcePath] = newResourcePath;
           return;
@@ -269,10 +281,13 @@ class ExportRoutes {
       if (optimize && this.shouldOptimizeAudio(originalExt)) {
         try {
           const opusBuffer = await this.convertAudioToOpus(fileBuffer);
-          const base64 = opusBuffer.toString("base64");
-          const newFileName = this.replaceExt(fileName, ".opus");
-          const newResourcePath = this.replaceExt(resourcePath, ".opus");
-          resources.set(newResourcePath, `data:audio/ogg;codecs=opus;base64,${base64}`);
+          const base64 = opusBuffer.toString('base64');
+          const newFileName = this.replaceExt(fileName, '.opus');
+          const newResourcePath = this.replaceExt(resourcePath, '.opus');
+          resources.set(
+            newResourcePath,
+            `data:audio/ogg;codecs=opus;base64,${base64}`,
+          );
           resourcePathMap[resourcePath] = newResourcePath;
           return;
         } catch (e) {
@@ -280,7 +295,7 @@ class ExportRoutes {
         }
       }
 
-      const base64 = fileBuffer.toString("base64");
+      const base64 = fileBuffer.toString('base64');
       resources.set(resourcePath, `data:${mimeType};base64,${base64}`);
       resourcePathMap[resourcePath] = resourcePath;
     } catch (err) {
@@ -329,7 +344,7 @@ class ExportRoutes {
             canvasId: 'pace-canvas'${
               initialSceneId
                 ? `,\n            initialSceneId: '${initialSceneId}'`
-                : ""
+                : ''
             }
           });
         });
@@ -338,7 +353,7 @@ class ExportRoutes {
 
     </html>`;
 
-    return this.formatCode(html, "html");
+    return this.formatCode(html, 'html');
   }
 
   async generateWebsiteExport(project, projectPath, initialSceneId, optimize) {
@@ -360,21 +375,21 @@ class ExportRoutes {
         font-style: normal;
       }
       ${engineCSS}`,
-      "css",
+      'css',
     );
 
-    projectFolder.file("styles.css", styles);
+    projectFolder.file('styles.css', styles);
 
     // Create engine.js (remove export for browser compatibility)
     const browserEngineJS = await this.formatCode(
-      engineJS.replace(/export default Engine;.*$/m, ""),
-      "babel",
+      engineJS.replace(/export default Engine;.*$/m, ''),
+      'babel',
     );
 
-    projectFolder.file("engine.js", browserEngineJS);
+    projectFolder.file('engine.js', browserEngineJS);
 
     // Prepare resources and optionally optimize
-    const resourcesFolder = projectFolder.folder("resources");
+    const resourcesFolder = projectFolder.folder('resources');
     const resourcePathMap = {};
     await this.addResourcesToZip(
       project,
@@ -415,23 +430,23 @@ class ExportRoutes {
                serverUrl: './resources'${
                  initialSceneId
                    ? `,\n               initialSceneId: '${initialSceneId}'`
-                   : ""
+                   : ''
                }
              });
            });
          </script>
       </body>
       </html>`,
-      "html",
+      'html',
     );
 
-    projectFolder.file("index.html", indexHTML);
+    projectFolder.file('index.html', indexHTML);
 
     // Add Geist font to resources
     await this.addGeistFontToZip(resourcesFolder);
 
     // Generate ZIP buffer
-    return await zip.generateAsync({ type: "nodebuffer" });
+    return await zip.generateAsync({ type: 'nodebuffer' });
   }
 
   async addResourcesToZip(
@@ -534,7 +549,7 @@ class ExportRoutes {
       if (optimize && this.shouldOptimizeImage(ext)) {
         try {
           const avifBuffer = await this.convertImageToAvif(fileBuffer);
-          outName = this.replaceExt(fileName, ".avif");
+          outName = this.replaceExt(fileName, '.avif');
           resourcesFolder.file(outName, avifBuffer);
           resourcePathMap[resourcePath] = outName;
           return;
@@ -546,7 +561,7 @@ class ExportRoutes {
       if (optimize && this.shouldOptimizeAudio(ext)) {
         try {
           const opusBuffer = await this.convertAudioToOpus(fileBuffer);
-          outName = this.replaceExt(fileName, ".opus");
+          outName = this.replaceExt(fileName, '.opus');
           resourcesFolder.file(outName, opusBuffer);
           resourcePathMap[resourcePath] = outName;
           return;
@@ -571,20 +586,20 @@ class ExportRoutes {
       // Development
       geistFontPath = path.join(
         __dirname,
-        "../../../../src/assets/fonts/Geist[wght].woff2",
+        '../../../../src/assets/fonts/Geist[wght].woff2',
       );
     } else {
       // Production
-      const { app } = require("electron");
+      const { app } = require('electron');
       const appPath = app.getAppPath();
-      geistFontPath = path.join(appPath, "src/assets/fonts/Geist[wght].woff2");
+      geistFontPath = path.join(appPath, 'src/assets/fonts/Geist[wght].woff2');
     }
 
     try {
       const geistFontBuffer = await fs.readFile(geistFontPath);
-      resourcesFolder.file("Geist[wght].woff2", geistFontBuffer);
+      resourcesFolder.file('Geist[wght].woff2', geistFontBuffer);
     } catch (err) {
-      console.warn("Could not read Geist font file for website export:", err);
+      console.warn('Could not read Geist font file for website export:', err);
     }
   }
 
@@ -597,11 +612,11 @@ class ExportRoutes {
   }
 
   shouldOptimizeImage(ext) {
-    return [".jpg", ".jpeg", ".png", ".webp"].includes(ext);
+    return ['.jpg', '.jpeg', '.png', '.webp'].includes(ext);
   }
 
   shouldOptimizeAudio(ext) {
-    return [".mp3", ".wav", ".ogg", ".m4a"].includes(ext);
+    return ['.mp3', '.wav', '.ogg', '.m4a'].includes(ext);
   }
 
   async convertImageToAvif(buffer) {
@@ -609,7 +624,7 @@ class ExportRoutes {
       .resize({
         width: 1920,
         height: 1920,
-        fit: "inside",
+        fit: 'inside',
         withoutEnlargement: true,
       })
       .avif({ quality: 60 })
@@ -619,22 +634,22 @@ class ExportRoutes {
   async convertAudioToOpus(buffer) {
     const inPath = path.join(os.tmpdir(), `pace-in-${randomUUID()}`);
     const outPath = path.join(os.tmpdir(), `pace-out-${randomUUID()}.opus`);
-    await require("fs").promises.writeFile(inPath, buffer);
+    await require('fs').promises.writeFile(inPath, buffer);
 
     await new Promise((resolve, reject) => {
       ffmpeg(inPath)
-        .audioCodec("libopus")
-        .format("opus")
-        .audioBitrate("96k")
-        .on("end", resolve)
-        .on("error", reject)
+        .audioCodec('libopus')
+        .format('opus')
+        .audioBitrate('96k')
+        .on('end', resolve)
+        .on('error', reject)
         .save(outPath);
     });
 
-    const outBuffer = await require("fs").promises.readFile(outPath);
+    const outBuffer = await require('fs').promises.readFile(outPath);
     try {
-      await require("fs").promises.unlink(inPath);
-      await require("fs").promises.unlink(outPath);
+      await require('fs').promises.unlink(inPath);
+      await require('fs').promises.unlink(outPath);
     } catch {}
     return outBuffer;
   }

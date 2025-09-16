@@ -1,5 +1,5 @@
-const fs = require("fs").promises;
-const path = require("path");
+const fs = require('fs').promises;
+const path = require('path');
 
 class FileUtils {
   static async ensureDirectoryExists(dirPath) {
@@ -20,7 +20,7 @@ class FileUtils {
   }
 
   static async readJsonFile(filePath) {
-    const data = await fs.readFile(filePath, "utf-8");
+    const data = await fs.readFile(filePath, 'utf-8');
     return JSON.parse(data);
   }
 
@@ -36,7 +36,7 @@ class FileUtils {
     const directoryFiles = await fs.readdir(projectDir);
 
     for (const fileName of directoryFiles) {
-      if (fileName === "project.json") continue;
+      if (fileName === 'project.json') continue;
 
       if (!usedResources.has(decodeURIComponent(fileName))) {
         try {

@@ -6,15 +6,8 @@ module.exports = {
   tabWidth: 2,
   useTabs: false,
   // Import sorting and spacing
-  importOrder: [
-    '^react$',
-    '^react-dom$',
-    '^@?\\w',
-    '^[./]',
-  ],
+  importOrder: ['^react$', '^react-dom$', '^@?\\w', '^[./]'],
   importOrderSeparation: true,
   importOrderSortSpecifiers: true,
-  plugins: [
-    '@trivago/prettier-plugin-sort-imports',
-  ],
+  plugins: ['@trivago/prettier-plugin-sort-imports'],
 };

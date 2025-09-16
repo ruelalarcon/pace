@@ -1,5 +1,5 @@
-const express = require("express");
-const createUploadMiddleware = require("../middleware/upload");
+const express = require('express');
+const createUploadMiddleware = require('../middleware/upload');
 
 class FileRoutes {
   constructor(projectsDir) {
@@ -12,8 +12,8 @@ class FileRoutes {
   setupRoutes() {
     // Upload file to project
     this.router.post(
-      "/:projectName/upload",
-      this.upload.single("file"),
+      '/:projectName/upload',
+      this.upload.single('file'),
       this.uploadFile.bind(this),
     );
   }
@@ -22,7 +22,7 @@ class FileRoutes {
     try {
       const file = req.file;
       if (!file) {
-        return res.status(400).json({ error: "No file uploaded" });
+        return res.status(400).json({ error: 'No file uploaded' });
       }
 
       res.json({

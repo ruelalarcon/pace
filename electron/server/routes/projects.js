@@ -1,7 +1,7 @@
-const express = require("express");
-const path = require("path");
-const fs = require("fs").promises;
-const FileUtils = require("../utils/file-utils");
+const express = require('express');
+const path = require('path');
+const fs = require('fs').promises;
+const FileUtils = require('../utils/file-utils');
 
 class ProjectRoutes {
   constructor(projectsDir) {
@@ -12,19 +12,19 @@ class ProjectRoutes {
 
   setupRoutes() {
     // Get all projects
-    this.router.get("/", this.getAllProjects.bind(this));
+    this.router.get('/', this.getAllProjects.bind(this));
 
     // Create new project
-    this.router.post("/", this.createProject.bind(this));
+    this.router.post('/', this.createProject.bind(this));
 
     // Get project details
-    this.router.get("/:projectName", this.getProject.bind(this));
+    this.router.get('/:projectName', this.getProject.bind(this));
 
     // Update project
-    this.router.put("/:projectName", this.updateProject.bind(this));
+    this.router.put('/:projectName', this.updateProject.bind(this));
 
     // Delete project
-    this.router.delete("/:projectName", this.deleteProject.bind(this));
+    this.router.delete('/:projectName', this.deleteProject.bind(this));
   }
 
   async getAllProjects(req, res) {
@@ -37,7 +37,7 @@ class ProjectRoutes {
       for (const entry of entries) {
         if (entry.isDirectory()) {
           const projectPath = path.join(this.projectsDir, entry.name);
-          const projectJsonPath = path.join(projectPath, "project.json");
+          const projectJsonPath = path.join(projectPath, 'project.json');
 
           try {
             const project = await FileUtils.readJsonFile(projectJsonPath);
@@ -68,7 +68,7 @@ class ProjectRoutes {
 
       // Check if project already exists
       if (await FileUtils.directoryExists(projectPath)) {
-        return res.status(400).json({ error: "Project already exists" });
+        return res.status(400).json({ error: 'Project already exists' });
       }
 
       // Create project directory
@@ -82,7 +82,7 @@ class ProjectRoutes {
       };
 
       await FileUtils.writeJsonFile(
-        path.join(projectPath, "project.json"),
+        path.join(projectPath, 'project.json'),
         projectData,
       );
 
@@ -98,7 +98,7 @@ class ProjectRoutes {
       const projectPath = path.join(
         this.projectsDir,
         projectName,
-        "project.json",
+        'project.json',
       );
 
       const project = await FileUtils.readJsonFile(projectPath);
@@ -113,7 +113,7 @@ class ProjectRoutes {
       const { projectName } = req.params;
       const updatedProject = req.body;
       const projectPathDir = path.join(this.projectsDir, projectName);
-      const projectJsonPath = path.join(projectPathDir, "project.json");
+      const projectJsonPath = path.join(projectPathDir, 'project.json');
 
       // Write the updated project.json
       await FileUtils.writeJsonFile(projectJsonPath, updatedProject);
