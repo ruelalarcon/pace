@@ -58,6 +58,9 @@ const Editor: React.FC<EditorProps> = ({
   >('standalone');
   const [optimizeResources, setOptimizeResources] = useState<boolean>(true);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState<string>(
+    'Generating export, this may take a moment...',
+  );
 
   // Initialize current scene name
   useEffect(() => {
@@ -287,13 +290,17 @@ const Editor: React.FC<EditorProps> = ({
 
   const handleExportProject = async (options: ExportOptions) => {
     setIsExporting(true);
+    setExportProgress('Initializing export...');
     try {
       setIsExportDialogVisible(false);
-      const blob = await apiService.exportProject(
+      const blob = await apiService.exportProjectWithProgress(
         project.name,
         options.initialSceneId,
         options.format,
         options.optimizeResources,
+        (status: string) => {
+          setExportProgress(status);
+        },
       );
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -308,8 +315,10 @@ const Editor: React.FC<EditorProps> = ({
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error exporting project:', error);
+      setExportProgress('Export failed. Please try again.');
     } finally {
       setIsExporting(false);
+      setExportProgress('Generating export, this may take a moment...');
     }
   };
 
@@ -594,7 +603,8 @@ const Editor: React.FC<EditorProps> = ({
         <div className="dialog-overlay">
           <div className="export-loading">
             <div className="loading-spinner" />
-            <p>Generating export, this may take a moment...</p>
+            <span className="loading-title">Generating export...</span>
+            <span className="loading-subtitle">{exportProgress}</span>
           </div>
         </div>
       )}

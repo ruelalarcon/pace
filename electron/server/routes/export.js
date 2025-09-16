@@ -42,10 +42,110 @@ class ExportRoutes {
   setupRoutes() {
     // Export project as single HTML file
     this.router.get('/:projectName/export', this.exportProject.bind(this));
+    // Export with progress updates
+    this.router.get(
+      '/:projectName/export-progress',
+      this.exportProjectWithProgress.bind(this),
+    );
   }
 
   async formatCode(source, parser) {
     return prettier.format(source, { parser, printWidth: 100 });
+  }
+
+  async exportProjectWithProgress(req, res) {
+    const { projectName } = req.params;
+    const {
+      initialSceneId,
+      format = 'standalone',
+      optimizeResources = 'true',
+    } = req.query;
+    const optimize = String(optimizeResources).toLowerCase() !== 'false';
+
+    // Set up Server-Sent Events
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Headers': 'Cache-Control',
+    });
+
+    const sendProgress = (message) => {
+      res.write(`data: ${JSON.stringify({ status: message })}\n\n`);
+    };
+
+    const sendComplete = (data) => {
+      res.write(`data: ${JSON.stringify({ complete: true, data })}\n\n`);
+      res.end();
+    };
+
+    const sendError = (error) => {
+      res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+      res.end();
+    };
+
+    try {
+      const projectPath = path.join(this.projectsDir, projectName);
+      const projectJsonPath = path.join(projectPath, 'project.json');
+
+      sendProgress('Reading project data');
+      const project = await FileUtils.readJsonFile(projectJsonPath);
+
+      if (format === 'website') {
+        const zipBuffer = await this.generateWebsiteExportWithProgress(
+          project,
+          projectPath,
+          initialSceneId,
+          optimize,
+          sendProgress,
+        );
+
+        const base64Data = zipBuffer.toString('base64');
+        sendComplete({
+          type: 'application/zip',
+          filename: `${projectName}.zip`,
+          data: base64Data,
+        });
+      } else {
+        sendProgress('Loading engine assets');
+        const { engineCSS, engineJS, geistFontCSS, variablesCSS } =
+          await this.getEngineAssets();
+
+        const { resources, resourcePathMap } =
+          await this.collectResourcesWithProgress(
+            project,
+            projectPath,
+            optimize,
+            sendProgress,
+          );
+
+        sendProgress('Preparing project data');
+        const projectForExport = optimize
+          ? this.applyResourcePathMappingStandalone(project, resourcePathMap)
+          : project;
+
+        sendProgress('Generating HTML file');
+        const html = await this.generateExportHTML(
+          projectForExport,
+          variablesCSS + geistFontCSS + engineCSS,
+          engineJS,
+          resources,
+          initialSceneId,
+        );
+
+        sendProgress('Formatting HTML');
+        const formattedHtml = await this.formatCode(html, 'html');
+
+        sendComplete({
+          type: 'text/html',
+          filename: `${projectName}.html`,
+          data: Buffer.from(formattedHtml).toString('base64'),
+        });
+      }
+    } catch (error) {
+      sendError(error);
+    }
   }
 
   async exportProject(req, res) {
@@ -166,6 +266,49 @@ class ExportRoutes {
     }
 
     return { engineCSS, engineJS, geistFontCSS, variablesCSS };
+  }
+
+  async collectResourcesWithProgress(
+    project,
+    projectPath,
+    optimize,
+    sendProgress,
+  ) {
+    const resources = new Map();
+    const resourcePathMap = {};
+
+    if (project.scenes) {
+      // First, collect all unique resource paths
+      const uniqueResourcePaths = new Set();
+      for (const scene of project.scenes) {
+        this.collectUniqueResourcePaths(scene, uniqueResourcePaths);
+      }
+
+      // Process each unique resource only once
+      let processed = 0;
+      const total = uniqueResourcePaths.size;
+
+      for (const resourcePath of uniqueResourcePaths) {
+        const fileName = decodeURIComponent(path.basename(resourcePath));
+        if (optimize) {
+          sendProgress(`Optimizing ${fileName} (${processed}/${total})`);
+        } else {
+          sendProgress(`Processing files (${processed}/${total})`);
+        }
+
+        await this.addResourceToMap(
+          resourcePath,
+          projectPath,
+          resources,
+          optimize,
+          resourcePathMap,
+        );
+
+        processed++;
+      }
+    }
+
+    return { resources, resourcePathMap };
   }
 
   async collectResources(project, projectPath, optimize) {
@@ -325,6 +468,108 @@ class ExportRoutes {
     return this.formatCode(html, 'html');
   }
 
+  async generateWebsiteExportWithProgress(
+    project,
+    projectPath,
+    initialSceneId,
+    optimize,
+    sendProgress,
+  ) {
+    const zip = new JSZip();
+
+    // Create a folder with the project name
+    const projectFolder = zip.folder(project.name);
+
+    sendProgress('Loading engine assets');
+    const { engineCSS, engineJS, variablesCSS } = await this.getEngineAssets();
+
+    sendProgress('Formatting styles.css');
+    const styles = await this.formatCode(
+      `
+      ${variablesCSS}
+      @font-face {
+        font-family: 'Geist';
+        src: url('./resources/Geist[wght].woff2') format('woff2');
+        font-weight: 100 900;
+        font-style: normal;
+      }
+      ${engineCSS}`,
+      'css',
+    );
+
+    projectFolder.file('styles.css', styles);
+
+    sendProgress('Formatting engine.js');
+    const browserEngineJS = await this.formatCode(
+      engineJS.replace(/export default Engine;.*$/m, ''),
+      'babel',
+    );
+
+    projectFolder.file('engine.js', browserEngineJS);
+
+    // Prepare resources and optionally optimize
+    const resourcesFolder = projectFolder.folder('resources');
+    const resourcePathMap = {};
+    await this.addResourcesToZipWithProgress(
+      project,
+      projectPath,
+      resourcesFolder,
+      optimize,
+      resourcePathMap,
+      sendProgress,
+    );
+
+    sendProgress('Preparing project data');
+    const projectForExport = optimize
+      ? this.applyResourcePathMapping(project, resourcePathMap)
+      : project;
+
+    sendProgress('Formatting index.html');
+    const indexHTML = await this.formatCode(
+      /*html*/
+      `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${project.name}</title>
+        <link rel="stylesheet" href="styles.css">
+       </head>
+       <body class="pace-export">
+         <div class="pace-container">
+           <div id="pace-canvas" class="pace-canvas"></div>
+         </div>
+
+         <script>
+           const PROJECT_DATA = ${JSON.stringify(projectForExport)};
+         </script>
+         <script src="engine.js"></script>
+         <script>
+           document.addEventListener('DOMContentLoaded', () => {
+             new Engine(PROJECT_DATA, {}, {
+               canvasId: 'pace-canvas',
+               serverUrl: './resources'${
+                 initialSceneId
+                   ? `,\n               initialSceneId: '${initialSceneId}'`
+                   : ''
+               }
+             });
+           });
+         </script>
+      </body>
+      </html>`,
+      'html',
+    );
+
+    projectFolder.file('index.html', indexHTML);
+
+    sendProgress('Adding font files');
+    await this.addGeistFontToZip(resourcesFolder);
+
+    sendProgress('Zipping files');
+    return await zip.generateAsync({ type: 'nodebuffer' });
+  }
+
   async generateWebsiteExport(project, projectPath, initialSceneId, optimize) {
     const zip = new JSZip();
 
@@ -416,6 +661,46 @@ class ExportRoutes {
 
     // Generate ZIP buffer
     return await zip.generateAsync({ type: 'nodebuffer' });
+  }
+
+  async addResourcesToZipWithProgress(
+    project,
+    projectPath,
+    resourcesFolder,
+    optimize,
+    resourcePathMap,
+    sendProgress,
+  ) {
+    if (project.scenes) {
+      // First, collect all unique resource paths
+      const uniqueResourcePaths = new Set();
+      for (const scene of project.scenes) {
+        this.collectUniqueResourcePaths(scene, uniqueResourcePaths);
+      }
+
+      // Process each unique resource only once
+      let processed = 0;
+      const total = uniqueResourcePaths.size;
+
+      for (const resourcePath of uniqueResourcePaths) {
+        const fileName = decodeURIComponent(path.basename(resourcePath));
+        if (optimize) {
+          sendProgress(`Optimizing ${fileName} (${processed}/${total})`);
+        } else {
+          sendProgress(`Adding ${fileName} (${processed}/${total})`);
+        }
+
+        await this.addResourceFileToZip(
+          resourcePath,
+          projectPath,
+          resourcesFolder,
+          optimize,
+          resourcePathMap,
+        );
+
+        processed++;
+      }
+    }
   }
 
   async addResourcesToZip(

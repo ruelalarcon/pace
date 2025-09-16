@@ -63,7 +63,7 @@ function App() {
         <TitleBar title="PACE Editor" />
         <div className="loading">
           <div className="loading-spinner"></div>
-          <p>Loading project...</p>
+          <span className="loading-title">Loading project...</span>
         </div>
       </div>
     );

@@ -59,7 +59,16 @@
   margin-bottom: 16px;
 }
 
-.loading p {
+.loading-title {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  animation: fadeInLoading 0.3s ease-out 0.1s both;
+}
+
+.loading-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--subtext0);
+  margin-top: 4px;
   animation: fadeInLoading 0.3s ease-out 0.1s both;
 }
 

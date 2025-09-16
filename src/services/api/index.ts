@@ -38,6 +38,21 @@ class ApiService {
       optimizeResources,
     );
 
+  exportProjectWithProgress = (
+    projectName: string,
+    initialSceneId?: string,
+    format?: 'standalone' | 'website',
+    optimizeResources?: boolean,
+    onProgress?: (status: string) => void,
+  ) =>
+    this.exportService.exportProjectWithProgress(
+      projectName,
+      initialSceneId,
+      format,
+      optimizeResources,
+      onProgress,
+    );
+
   // Electron integration
   async getProjectsDir(): Promise<string> {
     return window.electronAPI.getProjectsDir();

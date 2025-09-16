@@ -124,7 +124,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onOpenProject }) => {
     return (
       <div className="dashboard-loading">
         <div className="loading-spinner"></div>
-        <p>Loading projects...</p>
+        <span className="loading-title">Loading projects...</span>
       </div>
     );
   }
