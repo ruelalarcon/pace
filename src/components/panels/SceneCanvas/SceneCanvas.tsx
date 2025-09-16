@@ -27,8 +27,14 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
     elementId: string;
     offsetX: number;
     offsetY: number;
+    startX: number;
+    startY: number;
   } | null>(null);
   const [hoveredElementId, setHoveredElementId] = useState<string | null>(null);
+  const [dragPosition, setDragPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
   const [serverUrl, setServerUrl] = useState<string>('');
 
   const getAspectRatio = useCallback(() => {
@@ -128,6 +134,8 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
         elementId: element.id,
         offsetX,
         offsetY,
+        startX: element.x,
+        startY: element.y,
       });
     },
     [onElementSelect, canvasRect],
@@ -155,14 +163,18 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       const relY =
         (absY + (elementHeight * canvasRect.height) / 2) / canvasRect.height;
 
-      onElementMove(dragging.elementId, relX, relY);
+      setDragPosition({ x: relX, y: relY });
     },
-    [dragging, onElementMove, scene, canvasRect],
+    [dragging, scene, canvasRect],
   );
 
   const handleMouseUp = useCallback(() => {
+    if (dragging && dragPosition) {
+      onElementMove(dragging.elementId, dragPosition.x, dragPosition.y);
+    }
     setDragging(null);
-  }, []);
+    setDragPosition(null);
+  }, [dragging, dragPosition, onElementMove]);
 
   const handleCanvasClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -174,6 +186,7 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
   const renderElement = (element: Element) => {
     const isSelected = selectedElement?.id === element.id;
     const isHovered = hoveredElementId === element.id;
+    const isDragging = dragging?.elementId === element.id;
 
     let width = '10%';
     let height = '10%';
@@ -190,19 +203,22 @@ const SceneCanvas: React.FC<SceneCanvasProps> = ({
       highlightStyle.zIndex = 30;
     }
 
+    const currentX = isDragging && dragPosition ? dragPosition.x : element.x;
+    const currentY = isDragging && dragPosition ? dragPosition.y : element.y;
+
     return (
       <div
         key={element.id}
         className={`scene-element ${isSelected ? 'selected' : ''}`}
         style={{
-          left: `calc(${element.x * 100}% - (${width}) / 2)`,
-          top: `calc(${element.y * 100}% - (${height}) / 2)`,
+          left: `calc(${currentX * 100}% - (${width}) / 2)`,
+          top: `calc(${currentY * 100}% - (${height}) / 2)`,
           width,
           height,
           borderRadius: element.cornerRadius
             ? `${element.cornerRadius}px`
             : undefined,
-          cursor: dragging?.elementId === element.id ? 'grabbing' : 'grab',
+          cursor: isDragging ? 'grabbing' : 'grab',
           ...highlightStyle,
         }}
         onMouseDown={(e) => handleMouseDown(e, element)}
