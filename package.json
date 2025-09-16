@@ -87,6 +87,9 @@
       "src/assets/fonts/**/*",
       "node_modules/**/*"
     ],
+    "asarUnpack": [
+      "node_modules/ffmpeg-static/**/*"
+    ],
     "mac": {
       "category": "public.app-category.developer-tools",
       "target": "dmg",

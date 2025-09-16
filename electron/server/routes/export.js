@@ -13,7 +13,23 @@ const prettier = require("prettier");
 
 // Configure ffmpeg binary path for audio conversions
 if (ffmpegPath) {
-  ffmpeg.setFfmpegPath(ffmpegPath);
+  if (process.env.ELECTRON_RENDERER_URL) {
+    // Development
+    ffmpeg.setFfmpegPath(ffmpegPath);
+  } else {
+    // Production - use unpacked ffmpeg binary
+    const unpackedFfmpegPath = path.join(
+      process.resourcesPath,
+      "app.asar.unpacked",
+      "node_modules",
+      "ffmpeg-static",
+      path.basename(ffmpegPath)
+    );
+
+    if (require("fs").existsSync(unpackedFfmpegPath)) {
+      ffmpeg.setFfmpegPath(unpackedFfmpegPath);
+    }
+  }
 }
 
 class ExportRoutes {
