@@ -173,9 +173,16 @@ class ExportRoutes {
     const resourcePathMap = {};
 
     if (project.scenes) {
+      // First, collect all unique resource paths
+      const uniqueResourcePaths = new Set();
       for (const scene of project.scenes) {
-        await this.collectSceneResources(
-          scene,
+        this.collectUniqueResourcePaths(scene, uniqueResourcePaths);
+      }
+
+      // Process each unique resource only once
+      for (const resourcePath of uniqueResourcePaths) {
+        await this.addResourceToMap(
+          resourcePath,
           projectPath,
           resources,
           optimize,
@@ -187,64 +194,28 @@ class ExportRoutes {
     return { resources, resourcePathMap };
   }
 
-  async collectSceneResources(
-    scene,
-    projectPath,
-    resources,
-    optimize,
-    resourcePathMap,
-  ) {
+  collectUniqueResourcePaths(scene, uniqueResourcePaths) {
     // Background images
     if (scene.backgroundImage) {
-      await this.addResourceToMap(
-        scene.backgroundImage,
-        projectPath,
-        resources,
-        optimize,
-        resourcePathMap,
-      );
+      uniqueResourcePaths.add(scene.backgroundImage);
     }
 
     // Music files
     if (scene.music) {
-      await this.addResourceToMap(
-        scene.music,
-        projectPath,
-        resources,
-        optimize,
-        resourcePathMap,
-      );
+      uniqueResourcePaths.add(scene.music);
     }
 
     // Element images and sounds
     if (scene.elements) {
       for (const element of scene.elements) {
         if (element.image) {
-          await this.addResourceToMap(
-            element.image,
-            projectPath,
-            resources,
-            optimize,
-            resourcePathMap,
-          );
+          uniqueResourcePaths.add(element.image);
         }
         if (element.onClickSound) {
-          await this.addResourceToMap(
-            element.onClickSound,
-            projectPath,
-            resources,
-            optimize,
-            resourcePathMap,
-          );
+          uniqueResourcePaths.add(element.onClickSound);
         }
         if (element.onClickMusicChange) {
-          await this.addResourceToMap(
-            element.onClickMusicChange,
-            projectPath,
-            resources,
-            optimize,
-            resourcePathMap,
-          );
+          uniqueResourcePaths.add(element.onClickMusicChange);
         }
       }
     }
@@ -268,7 +239,6 @@ class ExportRoutes {
         try {
           const avifBuffer = await this.convertImageToAvif(fileBuffer);
           const base64 = avifBuffer.toString('base64');
-          const newFileName = this.replaceExt(fileName, '.avif');
           const newResourcePath = this.replaceExt(resourcePath, '.avif');
           resources.set(newResourcePath, `data:image/avif;base64,${base64}`);
           resourcePathMap[resourcePath] = newResourcePath;
@@ -282,7 +252,6 @@ class ExportRoutes {
         try {
           const opusBuffer = await this.convertAudioToOpus(fileBuffer);
           const base64 = opusBuffer.toString('base64');
-          const newFileName = this.replaceExt(fileName, '.opus');
           const newResourcePath = this.replaceExt(resourcePath, '.opus');
           resources.set(
             newResourcePath,
@@ -457,77 +426,21 @@ class ExportRoutes {
     resourcePathMap,
   ) {
     if (project.scenes) {
+      // First, collect all unique resource paths
+      const uniqueResourcePaths = new Set();
       for (const scene of project.scenes) {
-        await this.addSceneResourcesToZip(
-          scene,
+        this.collectUniqueResourcePaths(scene, uniqueResourcePaths);
+      }
+
+      // Process each unique resource only once
+      for (const resourcePath of uniqueResourcePaths) {
+        await this.addResourceFileToZip(
+          resourcePath,
           projectPath,
           resourcesFolder,
           optimize,
           resourcePathMap,
         );
-      }
-    }
-  }
-
-  async addSceneResourcesToZip(
-    scene,
-    projectPath,
-    resourcesFolder,
-    optimize,
-    resourcePathMap,
-  ) {
-    // Background images
-    if (scene.backgroundImage) {
-      await this.addResourceFileToZip(
-        scene.backgroundImage,
-        projectPath,
-        resourcesFolder,
-        optimize,
-        resourcePathMap,
-      );
-    }
-
-    // Music files
-    if (scene.music) {
-      await this.addResourceFileToZip(
-        scene.music,
-        projectPath,
-        resourcesFolder,
-        optimize,
-        resourcePathMap,
-      );
-    }
-
-    // Element images and sounds
-    if (scene.elements) {
-      for (const element of scene.elements) {
-        if (element.image) {
-          await this.addResourceFileToZip(
-            element.image,
-            projectPath,
-            resourcesFolder,
-            optimize,
-            resourcePathMap,
-          );
-        }
-        if (element.onClickSound) {
-          await this.addResourceFileToZip(
-            element.onClickSound,
-            projectPath,
-            resourcesFolder,
-            optimize,
-            resourcePathMap,
-          );
-        }
-        if (element.onClickMusicChange) {
-          await this.addResourceFileToZip(
-            element.onClickMusicChange,
-            projectPath,
-            resourcesFolder,
-            optimize,
-            resourcePathMap,
-          );
-        }
       }
     }
   }
