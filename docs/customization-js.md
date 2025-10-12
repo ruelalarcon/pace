@@ -18,14 +18,14 @@ After exporting your game as a "Website Folder":
 
 The `Engine.js` file contains a JavaScript class with these main components:
 
-| Component | Key Methods |
-|-----------|-------------|
-| **Constructor** | Initializes game state and configuration |
-| **Scene Management** | `setCurrentScene()`, `setupScene()`, `navigateToScene()` |
+| Component            | Key Methods                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| **Constructor**      | Initializes game state and configuration                          |
+| **Scene Management** | `setCurrentScene()`, `setupScene()`, `navigateToScene()`          |
 | **Element Handling** | `renderElement()`, `handleElementClick()`, `handleElementHover()` |
-| **Text System** | `showTextbox()`, `startTyping()`, `clearTextbox()` |
-| **Audio System** | `playMusic()`, `playSound()`, `stopMusic()` |
-| **Utility Methods** | `getResourceUrl()`, `updateCanvasRect()`, etc. |
+| **Text System**      | `showTextbox()`, `startTyping()`, `clearTextbox()`                |
+| **Audio System**     | `playMusic()`, `playSound()`, `stopMusic()`                       |
+| **Utility Methods**  | `getResourceUrl()`, `updateCanvasRect()`, etc.                    |
 
 ---
 
@@ -68,11 +68,11 @@ this.sceneTextDelay = 500;
 
 **Use cases:**
 
-| Delay | Best For |
-|-------|----------|
-| `0ms` | Instant text for fast-paced games |
-| `300ms` | Default, gives players time to see the scene |
-| `1000ms+` | Dramatic pauses for atmospheric moments |
+| Delay     | Best For                                     |
+| --------- | -------------------------------------------- |
+| `0ms`     | Instant text for fast-paced games            |
+| `300ms`   | Default, gives players time to see the scene |
+| `1000ms+` | Dramatic pauses for atmospheric moments      |
 
 ---
 
@@ -95,12 +95,12 @@ this.textLetterDelay = 0;
 
 **Use cases:**
 
-| Delay | Best For |
-|-------|----------|
-| `10ms` | Fast-paced dialogue |
-| `20ms` | Default, comfortable reading speed |
-| `30-50ms` | Slow, atmospheric narration |
-| `0ms` | Instant text reveal (removes typewriter effect entirely) |
+| Delay     | Best For                                                 |
+| --------- | -------------------------------------------------------- |
+| `10ms`    | Fast-paced dialogue                                      |
+| `20ms`    | Default, comfortable reading speed                       |
+| `30-50ms` | Slow, atmospheric narration                              |
+| `0ms`     | Instant text reveal (removes typewriter effect entirely) |
 
 ---
 
@@ -457,15 +457,18 @@ renderElement(element) {
 ## Common Issues
 
 **Changes not working?**
+
 - Check browser console for JavaScript errors
 - Ensure syntax is correct (commas, braces, semicolons)
 - Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 
 **Timing feels wrong?**
+
 - Adjust `sceneTextDelay` and `textLetterDelay`
 - Test with different values to find what feels right
 
 **Breaking the game?**
+
 - Restore from backup, use git
 - Check that you didn't accidentally delete closing braces
 - Verify you're editing inside the correct method
@@ -478,8 +481,8 @@ Want to customize appearance and styling? Check out [Modifying Appearance](custo
 
 ## Resources
 
-| Resource | Description |
-|----------|-------------|
+| Resource                                                                              | Description                            |
+| ------------------------------------------------------------------------------------- | -------------------------------------- |
 | [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) | Comprehensive JavaScript documentation |
-| [JavaScript.info](https://javascript.info/) | Modern JavaScript tutorial |
-| [Chrome DevTools Documentation](https://developer.chrome.com/docs/devtools/) | Learn to debug effectively |
+| [JavaScript.info](https://javascript.info/)                                           | Modern JavaScript tutorial             |
+| [Chrome DevTools Documentation](https://developer.chrome.com/docs/devtools/)          | Learn to debug effectively             |

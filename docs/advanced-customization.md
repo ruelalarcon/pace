@@ -27,13 +27,13 @@ When you export a game, you get access to two key files that control everything:
 
 This JavaScript file contains the `Engine` class that handles:
 
-| Component | Responsibility |
-|-----------|---------------|
+| Component            | Responsibility                   |
+| -------------------- | -------------------------------- |
 | **Scene Management** | Scene transitions and navigation |
-| **Element System** | Rendering and interactions |
-| **Text System** | Typewriter effect and dialogue |
-| **Audio System** | Music and sound effects playback |
-| **Input Handling** | Clicks and keyboard input |
+| **Element System**   | Rendering and interactions       |
+| **Text System**      | Typewriter effect and dialogue   |
+| **Audio System**     | Music and sound effects playback |
+| **Input Handling**   | Clicks and keyboard input        |
 
 ?> **Note**: The code is well-organized into methods, making it easy to find and modify specific behaviors.
 
@@ -41,13 +41,13 @@ This JavaScript file contains the `Engine` class that handles:
 
 This CSS file controls all visual aspects:
 
-| Category | What it Controls |
-|----------|------------------|
-| **Textbox** | Appearance and position |
-| **Text Styling** | Font, size, colors, shadows |
-| **Element Effects** | Hover effects and animations |
-| **Canvas** | Scene styling and layout |
-| **Responsive** | Mobile and accessibility styles |
+| Category            | What it Controls                |
+| ------------------- | ------------------------------- |
+| **Textbox**         | Appearance and position         |
+| **Text Styling**    | Font, size, colors, shadows     |
+| **Element Effects** | Hover effects and animations    |
+| **Canvas**          | Scene styling and layout        |
+| **Responsive**      | Mobile and accessibility styles |
 
 ?> **Note**: Both files use clear naming conventions and include comments to help you understand what each part does.
 
@@ -93,12 +93,12 @@ Learn how to add new features and modify behavior by editing Engine.js:
 
 To successfully customize PACE exports, you should be comfortable with:
 
-| Technology | What You Need to Know |
-|------------|----------------------|
-| **CSS** | Selectors, properties, values, and the box model |
-| **JavaScript** | Variables, functions, objects, and classes |
-| **HTML** | Basic structure and the DOM |
-| **Browser DevTools** | Inspecting elements and debugging |
+| Technology           | What You Need to Know                            |
+| -------------------- | ------------------------------------------------ |
+| **CSS**              | Selectors, properties, values, and the box model |
+| **JavaScript**       | Variables, functions, objects, and classes       |
+| **HTML**             | Basic structure and the DOM                      |
+| **Browser DevTools** | Inspecting elements and debugging                |
 
 ---
 

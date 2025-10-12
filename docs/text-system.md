@@ -6,13 +6,13 @@ The text system in PACE creates an immersive dialogue experience with typewriter
 
 ## Text Behavior
 
-| Feature | Description |
-|---------|-------------|
-| **Typewriter Effect** | Text appears letter-by-letter with 20ms delay |
-| **Fast-Forward** | Press Space to skip typewriter animation |
-| **Continue** | After typing completes, press Space to advance |
-| **Multiple Lines** | Newlines create separate bubbles requiring Space to continue |
-| **Display** | Semi-transparent textbox at the bottom of the screen |
+| Feature               | Description                                                  |
+| --------------------- | ------------------------------------------------------------ |
+| **Typewriter Effect** | Text appears letter-by-letter with 20ms delay                |
+| **Fast-Forward**      | Press Space to skip typewriter animation                     |
+| **Continue**          | After typing completes, press Space to advance               |
+| **Multiple Lines**    | Newlines create separate bubbles requiring Space to continue |
+| **Display**           | Semi-transparent textbox at the bottom of the screen         |
 
 ---
 
@@ -23,6 +23,7 @@ The text system in PACE creates an immersive dialogue experience with typewriter
 Text that automatically appears when entering a scene.
 
 **Configuration:**
+
 - Found in the Scene Properties inspector
 - Appears after a short delay (300ms)
 - Can lead to automatic navigation with "New Scene After Text"
@@ -32,6 +33,7 @@ Text that automatically appears when entering a scene.
 Text that appears when clicking an element.
 
 **Configuration:**
+
 - Found in the Element Properties inspector under "On-Click Text"
 - Cancels any pending scene text
 - Can be combined with destination scenes for narrative transitions

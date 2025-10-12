@@ -21,9 +21,9 @@ PACE is intentionally designed to be **extremely simple with limited functionali
 
 ### Core Goals
 
-* **Fast Creation**: Build narrative-based experiences with simple interactions quickly
-* **Focused Scope**: No complex mechanics or systems to slow you down
-* **Quick Iteration**: Get your story and scenes working without overhead
+- **Fast Creation**: Build narrative-based experiences with simple interactions quickly
+- **Focused Scope**: No complex mechanics or systems to slow you down
+- **Quick Iteration**: Get your story and scenes working without overhead
 
 ---
 
@@ -35,9 +35,9 @@ For developers, the advantage of PACE comes from its exports. Games are exported
 
 #### What does this mean?
 
-* **Organized Structure:** Clean, understandable code that's easy to navigate
-* **Fully Editable Design:** Change the textbox design, fonts, colors, layout, and behavior, with super simple CSS
-* **Hackable Engine:** The game engine is readable, organized JavaScript ready to be extended
+- **Organized Structure:** Clean, understandable code that's easy to navigate
+- **Fully Editable Design:** Change the textbox design, fonts, colors, layout, and behavior, with super simple CSS
+- **Hackable Engine:** The game engine is readable, organized JavaScript ready to be extended
 
 ---
 
@@ -51,29 +51,32 @@ For developers, the advantage of PACE comes from its exports. Games are exported
 
 ## Features at a Glance
 
-| Feature | Description |
-|---------|-------------|
+| Feature                 | Description                                      |
+| ----------------------- | ------------------------------------------------ |
 | **Visual Scene Editor** | Drag-and-drop interface for positioning elements |
-| **Rich Media Support** | Images, music, and sound effects |
-| **Text System** | Typewriter effects and interactive dialogue |
-| **Export Options** | Standalone HTML or optimized website packages |
-| **Preview Mode** | Test your game instantly without exporting |
+| **Rich Media Support**  | Images, music, and sound effects                 |
+| **Text System**         | Typewriter effects and interactive dialogue      |
+| **Export Options**      | Standalone HTML or optimized website packages    |
+| **Preview Mode**        | Test your game instantly without exporting       |
 
 ---
 
 ## Documentation Sections
 
 ### Getting Started
+
 - [Installation](installation.md) - Download and install PACE
 - [Getting Started](getting-started.md) - Create your first project
 
 ### Core Concepts
+
 - [Working with Scenes](scenes.md) - Learn about scenes and their properties
 - [Working with Elements](elements.md) - Add interactive objects to your scenes
 - [Text System](text-system.md) - Create engaging dialogue and narration
 - [Audio System](audio-system.md) - Add music and sound effects
 
 ### Distribution & Beyond
+
 - [Preview & Export](preview-export.md) - Test and share your games
 - [Advanced Customization](advanced-customization.md) - Modify and extend your games (for developers)
 

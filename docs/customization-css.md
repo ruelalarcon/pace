@@ -18,14 +18,14 @@ After exporting your game as a "Website Folder":
 
 The `Engine.css` file is organized into sections:
 
-| Section | Purpose |
-|---------|---------|
-| **Body and Container** | Overall game layout |
-| **Canvas** | The main game scene area |
-| **Elements** | Interactive objects |
-| **Textbox** | Dialogue and text display |
-| **Animations** | Keyframe animations |
-| **Responsive Design** | Mobile and accessibility styles |
+| Section                | Purpose                         |
+| ---------------------- | ------------------------------- |
+| **Body and Container** | Overall game layout             |
+| **Canvas**             | The main game scene area        |
+| **Elements**           | Interactive objects             |
+| **Textbox**            | Dialogue and text display       |
+| **Animations**         | Keyframe animations             |
+| **Responsive Design**  | Mobile and accessibility styles |
 
 ---
 
@@ -140,7 +140,13 @@ The text inside the textbox is controlled by `.pace-textbox-text`:
 ```css
 .pace-textbox-text {
   font-size: 30px;
-  font-family: 'MS Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family:
+    'MS Gothic',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'Roboto',
+    sans-serif;
   color: var(--text);
   text-shadow: /* ... */;
   line-height: 1.5;
@@ -186,21 +192,21 @@ To use fonts that aren't installed on every computer (like custom or downloadabl
 
 Download a font from a website like:
 
-| Source | Description |
-|--------|-------------|
-| [Google Fonts](https://fonts.google.com/) | Free, open-source fonts |
-| [Font Squirrel](https://www.fontsquirrel.com/) | Free fonts for commercial use |
-| [DaFont](https://www.dafont.com/) | Large collection, check licenses |
-| [itch.io](https://itch.io/game-assets/free/tag-fonts) | Game-specific fonts |
+| Source                                                | Description                      |
+| ----------------------------------------------------- | -------------------------------- |
+| [Google Fonts](https://fonts.google.com/)             | Free, open-source fonts          |
+| [Font Squirrel](https://www.fontsquirrel.com/)        | Free fonts for commercial use    |
+| [DaFont](https://www.dafont.com/)                     | Large collection, check licenses |
+| [itch.io](https://itch.io/game-assets/free/tag-fonts) | Game-specific fonts              |
 
 Font files come in different formats:
 
-| Format | Extension | Description |
-|--------|-----------|-------------|
-| **WOFF2** | `.woff2` | Modern, best compression, recommended |
-| **WOFF** | `.woff` | Good browser support |
-| **TTF** | `.ttf` | TrueType Font, widely supported |
-| **OTF** | `.otf` | OpenType Font, similar to TTF |
+| Format    | Extension | Description                           |
+| --------- | --------- | ------------------------------------- |
+| **WOFF2** | `.woff2`  | Modern, best compression, recommended |
+| **WOFF**  | `.woff`   | Good browser support                  |
+| **TTF**   | `.ttf`    | TrueType Font, widely supported       |
+| **OTF**   | `.otf`    | OpenType Font, similar to TTF         |
 
 ?> **Recommendation**: Use WOFF2 for best performance, with WOFF or TTF as fallback.
 
@@ -259,9 +265,10 @@ Add an `@font-face` rule at the **very top** of your `Engine.css` file, before a
 ```css
 @font-face {
   font-family: 'MyCustomFont';
-  src: url('./fonts/MyCustomFont.woff2') format('woff2'),
-       url('./fonts/MyCustomFont.woff') format('woff'),
-       url('./fonts/MyCustomFont.ttf') format('truetype');
+  src:
+    url('./fonts/MyCustomFont.woff2') format('woff2'),
+    url('./fonts/MyCustomFont.woff') format('woff'),
+    url('./fonts/MyCustomFont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -315,12 +322,14 @@ Let's add the "Press Start 2P" font from Google Fonts:
 #### Font Loading Tips
 
 **Font not showing up?**
+
 - Check the file path in `url()` is correct
 - Make sure the font file is in the right folder
 - Check browser console (F12) for loading errors
 - Try hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 
 **Font looks blurry or wrong size?**
+
 - Some fonts (especially pixel fonts) need smaller sizes (10-16px)
 - Try adding `-webkit-font-smoothing: none;` for pixel fonts
 - Adjust `line-height` if text feels cramped
@@ -464,7 +473,9 @@ Interactive elements use these classes:
 
 ```css
 .pace-element {
-  transition: filter 0.2s ease, transform 0.2s ease;
+  transition:
+    filter 0.2s ease,
+    transform 0.2s ease;
 }
 
 .pace-element:active {
@@ -487,7 +498,9 @@ Interactive elements use these classes:
 
 /* Faster transitions */
 .pace-element {
-  transition: filter 0.1s ease, transform 0.1s ease;
+  transition:
+    filter 0.1s ease,
+    transform 0.1s ease;
 }
 
 /* Add rotation on click */
@@ -659,16 +672,19 @@ The keyboard icon that appears in the continue prompt:
 ### Common Issues
 
 **Changes not appearing?**
+
 - Hard refresh: Ctrl+Shift+R (Windows) or Cmd+Shift+R (Mac)
 - Clear browser cache
 - Check for typos in CSS selectors
 
 **Layout broken?**
+
 - Check for missing semicolons or braces
 - Validate your CSS using browser DevTools
 - Restore from backup and try again
 
 **Colors look wrong?**
+
 - Check color format (hex, rgb, rgba)
 - Verify transparency values (0-1 for alpha)
 - Test in different browsers

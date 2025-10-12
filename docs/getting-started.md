@@ -18,11 +18,11 @@ This guide will walk you through creating your first PACE project and understand
 
 The PACE Editor consists of three main areas:
 
-| Area | Location | Purpose |
-|------|----------|---------|
-| **Tree View** | Left panel | Shows your scenes and elements in a hierarchical structure |
-| **Scene Canvas** | Center | Visual preview of your current scene |
-| **Inspector** | Right panel | Properties panel for the selected scene or element |
+| Area             | Location    | Purpose                                                    |
+| ---------------- | ----------- | ---------------------------------------------------------- |
+| **Tree View**    | Left panel  | Shows your scenes and elements in a hierarchical structure |
+| **Scene Canvas** | Center      | Visual preview of your current scene                       |
+| **Inspector**    | Right panel | Properties panel for the selected scene or element         |
 
 ![Editor Interface](./assets/editor_interface.png 'Editor Interface')
 

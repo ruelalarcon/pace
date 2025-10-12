@@ -50,10 +50,10 @@ Choose between two export formats based on your needs:
 
 Single HTML file with all resources embedded.
 
-| Aspect | Details |
-|--------|---------|
+| Aspect   | Details                                                                            |
+| -------- | ---------------------------------------------------------------------------------- |
 | **Pros** | Easy to share, works offline immediately, no setup required, single file to manage |
-| **Cons** | Larger file size, slower loading time, harder to edit after export |
+| **Cons** | Larger file size, slower loading time, harder to edit after export                 |
 
 **Best for**: Sharing via email or file transfer, simple distribution, offline play, or quick prototypes.
 
@@ -61,10 +61,10 @@ Single HTML file with all resources embedded.
 
 ZIP file containing index.html and separate resource files.
 
-| Aspect | Details |
-|--------|---------|
+| Aspect   | Details                                                                                                     |
+| -------- | ----------------------------------------------------------------------------------------------------------- |
 | **Pros** | Smaller individual files, better for web hosting, efficient loading, easier to edit, better browser caching |
-| **Cons** | Requires extraction/setup, multiple files to manage, needs web server for optimal performance |
+| **Cons** | Requires extraction/setup, multiple files to manage, needs web server for optimal performance               |
 
 **Best for**: Web hosting (GitHub Pages, itch.io, etc.), professional distribution, games with many assets, or projects you may need to modify later.
 
@@ -80,13 +80,13 @@ Compresses images and uses efficient formats.
 
 ?> **Recommendation**: Keep optimization enabled unless you have a specific reason not to.
 
-| Optimization | Result |
-|--------------|--------|
-| **Images** | Compressed to WebP format |
-| **Audio** | Compressed to opus ogg codec |
-| **File Size** | Significantly smaller |
-| **Downloads** | Faster loading times |
-| **Quality** | Good preservation |
+| Optimization  | Result                       |
+| ------------- | ---------------------------- |
+| **Images**    | Compressed to WebP format    |
+| **Audio**     | Compressed to opus ogg codec |
+| **File Size** | Significantly smaller        |
+| **Downloads** | Faster loading times         |
+| **Quality**   | Good preservation            |
 
 #### Disabled
 
@@ -105,6 +105,7 @@ Keeps original file formats and sizes.
 3. Share the file directly with players
 
 **Supported Browsers:**
+
 - Chrome/Edge (recommended)
 - Firefox
 - Safari
@@ -120,12 +121,12 @@ Keeps original file formats and sizes.
 
 **Hosting Options:**
 
-| Platform | Description |
-|----------|-------------|
-| **GitHub Pages** | Free hosting for static sites |
-| **itch.io** | Popular game hosting platform |
-| **Netlify/Vercel** | Modern hosting with easy deployment |
-| **Your own web server** | Traditional hosting |
+| Platform                | Description                         |
+| ----------------------- | ----------------------------------- |
+| **GitHub Pages**        | Free hosting for static sites       |
+| **itch.io**             | Popular game hosting platform       |
+| **Netlify/Vercel**      | Modern hosting with easy deployment |
+| **Your own web server** | Traditional hosting                 |
 
 #### GitHub Pages Quick Setup
 
@@ -151,11 +152,11 @@ Before distributing your game:
 
 ## File Size Considerations
 
-| Game Size | Recommended Format |
-|-----------|-------------------|
-| **Small Games** (< 10MB) | Either format works well |
-| **Medium Games** (10-50MB) | Website folder recommended |
-| **Large Games** (> 50MB) | Website folder strongly recommended |
+| Game Size                  | Recommended Format                  |
+| -------------------------- | ----------------------------------- |
+| **Small Games** (< 10MB)   | Either format works well            |
+| **Medium Games** (10-50MB) | Website folder recommended          |
+| **Large Games** (> 50MB)   | Website folder strongly recommended |
 
 ---
 

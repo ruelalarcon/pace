@@ -33,11 +33,11 @@ Click and drag elements directly on the scene canvas for quick positioning.
 
 Use X Position and Y Position fields for precise placement:
 
-| Value | Position |
-|-------|----------|
-| 0 | Left/top edge |
-| 0.5 | Center of the scene |
-| 1 | Right/bottom edge |
+| Value | Position            |
+| ----- | ------------------- |
+| 0     | Left/top edge       |
+| 0.5   | Center of the scene |
+| 1     | Right/bottom edge   |
 
 ?> **Note**: The position of an element corresponds to the **center** of that element, not its edge.
 
@@ -47,13 +47,13 @@ Use X Position and Y Position fields for precise placement:
 
 ### Basic Properties
 
-| Property | Description | Range/Type |
-|----------|-------------|------------|
-| **Name** | Display name for organization (not shown to players) | Text |
-| **X Position** | Horizontal center position | 0 to 1 |
-| **Y Position** | Vertical center position | 0 to 1 |
-| **Scale** | Relative height of the element | 0 to 1+ (1 = full scene height) |
-| **Corner Radius** | Rounded corners | Pixels |
+| Property          | Description                                          | Range/Type                      |
+| ----------------- | ---------------------------------------------------- | ------------------------------- |
+| **Name**          | Display name for organization (not shown to players) | Text                            |
+| **X Position**    | Horizontal center position                           | 0 to 1                          |
+| **Y Position**    | Vertical center position                             | 0 to 1                          |
+| **Scale**         | Relative height of the element                       | 0 to 1+ (1 = full scene height) |
+| **Corner Radius** | Rounded corners                                      | Pixels                          |
 
 ---
 
@@ -94,6 +94,7 @@ Text that appears when the element is clicked.
 Sound effect that plays when clicked.
 
 **Behavior:**
+
 - Plays immediately when element is clicked
 - Sound volume is set to 70%
 - Each click restarts the sound
@@ -103,6 +104,7 @@ Sound effect that plays when clicked.
 Changes background music when clicked.
 
 **Behavior:**
+
 - Replaces the current scene's music
 - Will not restart if the chosen music is already playing
 - Music loops automatically

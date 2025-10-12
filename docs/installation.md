@@ -6,11 +6,11 @@ PACE Editor is available for Windows and Linux. Choose the appropriate version f
 
 ## System Requirements
 
-| Component | Requirement |
-|-----------|-------------|
-| **Operating System** | Windows 10/11 or modern Linux distribution |
-| **RAM** | 2GB minimum |
-| **Storage** | ~200MB free space for application, plus space for your projects |
+| Component            | Requirement                                                     |
+| -------------------- | --------------------------------------------------------------- |
+| **Operating System** | Windows 10/11 or modern Linux distribution                      |
+| **RAM**              | 2GB minimum                                                     |
+| **Storage**          | ~200MB free space for application, plus space for your projects |
 
 ### Supported Platforms
 
@@ -69,11 +69,13 @@ PACE Editor is available for Windows and Linux. Choose the appropriate version f
    - [pace_v1.0.0_linux_x86_64.AppImage](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_linux_x86_64.AppImage)
 
 2. **Make it executable**:
+
    ```bash
    chmod +x pace_v1.0.0_linux_x86_64.AppImage
    ```
 
 3. **Run PACE**:
+
    ```bash
    ./pace_v1.0.0_linux_x86_64.AppImage
    ```
@@ -88,6 +90,7 @@ PACE Editor is available for Windows and Linux. Choose the appropriate version f
    - [pace_v1.0.0_linux_x64_portable.zip](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_linux_x64_portable.zip)
 
 2. **Extract the ZIP**:
+
    ```bash
    unzip pace_v1.0.0_linux_x64_portable.zip -d ~/pace
    cd ~/pace
@@ -109,10 +112,10 @@ When you first launch PACE:
 2. You can create a new project or open an existing one
 3. Your projects are stored in a default application data location:
 
-| Platform | Default Project Location |
-|----------|-------------------------|
+| Platform    | Default Project Location                                                                        |
+| ----------- | ----------------------------------------------------------------------------------------------- |
 | **Windows** | `%APPDATA%\pace\Projects\` <br/> (typically `C:\Users\YourName\AppData\Roaming\pace\Projects\`) |
-| **Linux** | `~/.config/pace/Projects/` |
+| **Linux**   | `~/.config/pace/Projects/`                                                                      |
 
 ?> **Note:** These locations follow Electron's standard user data directory conventions. You can navigate to the Windows path by typing `%APPDATA%\pace\Projects` in the File Explorer address bar.
 
@@ -123,16 +126,19 @@ When you first launch PACE:
 ### Windows Issues
 
 **"Windows protected your PC" warning:**
+
 - This is normal for new applications
 - Click "More info" then "Run anyway"
 - PACE is open-source and safe to run
 
 **Application won't start:**
+
 - Ensure you have Windows 10 or later
 - Try running as administrator (right-click → "Run as administrator")
 - Check that your antivirus isn't blocking the application
 
 **Missing DLL errors:**
+
 - Install [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
 ---
@@ -140,12 +146,15 @@ When you first launch PACE:
 ### Linux Issues
 
 **AppImage won't run:**
+
 - Make sure you've made it executable: `chmod +x pace_*.AppImage`
 - Install FUSE if needed: `sudo apt install fuse` (Ubuntu/Debian) or `sudo dnf install fuse` (Fedora)
 - Try running from terminal to see error messages
 
 **Missing dependencies:**
+
 - Most dependencies are bundled, but you may need:
+
   ```bash
   # Ubuntu/Debian
   sudo apt install libgtk-3-0 libnotify4 libnss3 libxss1 libxtst6 xdg-utils libatspi2.0-0 libdrm2 libgbm1
@@ -155,6 +164,7 @@ When you first launch PACE:
   ```
 
 **Permission denied:**
+
 - Ensure the file has execute permissions: `chmod +x pace`
 
 ---

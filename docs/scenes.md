@@ -22,9 +22,9 @@ You can select a scene by clicking it in the Tree View on the left of the editor
 
 ### Basic Properties
 
-| Property | Description |
-|----------|-------------|
-| **Name** | The display name of your scene |
+| Property         | Description                                                 |
+| ---------------- | ----------------------------------------------------------- |
+| **Name**         | The display name of your scene                              |
 | **Aspect Ratio** | Controls the dimensions of your scene (e.g., "16:9", "4:3") |
 
 Note that keeping the same aspect ratio across all scenes creates a more consistent player experience.
