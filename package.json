@@ -15,11 +15,11 @@
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write ./**/*.{ts,tsx,js,jsx,json,css,md}",
     "format:check": "prettier --check ./**/*.{ts,tsx,js,jsx,json,css,md}",
-    "dist": "npm run build && electron-builder",
-    "dist-win": "npm run build && electron-builder --win",
-    "dist-mac": "npm run build && electron-builder --mac",
-    "dist-linux": "npm run build && electron-builder --linux",
-    "dist-dir": "npm run build && electron-builder --dir"
+    "dist": "npm run build && electron-builder && node postbuild.js",
+    "dist-win": "npm run build && electron-builder --win && node postbuild.js",
+    "dist-mac": "npm run build && electron-builder --mac && node postbuild.js",
+    "dist-linux": "npm run build && electron-builder --linux && node postbuild.js",
+    "dist-dir": "npm run build && electron-builder --dir && node postbuild.js"
   },
   "keywords": [],
   "author": "",
@@ -74,7 +74,8 @@
   },
   "build": {
     "appId": "com.pace.editor",
-    "productName": "PACE Editor",
+    "productName": "pace",
+    "artifactName": "${name}_v${version}_${os}_${arch}.${ext}",
     "directories": {
       "output": "dist"
     },
@@ -100,6 +101,7 @@
       "icon": "public/favicon.ico"
     },
     "win": {
+      "artifactName": "${name}_v${version}_windows_${arch}.${ext}",
       "target": [
         "nsis",
         "zip"
@@ -109,7 +111,7 @@
     "linux": {
       "target": [
         "AppImage",
-        "tar.gz"
+        "zip"
       ],
       "icon": "public/favicon.png"
     },
