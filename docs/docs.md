@@ -18,7 +18,7 @@ The PACE Editor consists of three main areas:
 - **Scene Canvas** (center): Visual preview of your current scene
 - **Inspector** (right): Properties panel for the selected scene or element
 
-![Editor Interface](./assets/editor_interface.png "Editor Interface")
+![Editor Interface](./assets/editor_interface.png 'Editor Interface')
 
 ## Working with Scenes
 
@@ -48,7 +48,7 @@ When you select a scene, the Inspector (to the right of the editor) shows a vari
   - Supported formats: JPG, PNG, GIF, WebP
   - The image will be scaled to fit the scene's aspect ratio
 
-![Scene with Background Image](./assets/scene_with_background_image.png "Scene with Background Image")
+![Scene with Background Image](./assets/scene_with_background_image.png 'Scene with Background Image')
 
 #### Audio Properties
 
@@ -64,7 +64,7 @@ When you select a scene, the Inspector (to the right of the editor) shows a vari
   - Text appears in the main textbox after a short delay (300ms)
   - Players can press Space to fast-forward or continue
 
-![Scene Text](./assets/scene_text_example.png "Scene Text")
+![Scene Text](./assets/scene_text_example.png 'Scene Text')
 
 - **New Scene After Text**: The scene to navigate to after the player "continues" past the scene text's textbox
   - Only available when Scene Text is not empty
@@ -84,7 +84,7 @@ Once you have created an element, if you are currently viewing the scene contain
 
 Alternatively, you can select an element by expanding a scene in the Tree View (by clicking the small arrow to the left of its name), and clicking on an element within the Tree View.
 
-![Selecting an Element](./assets/selecting_an_element_example.gif "Selecting an Element")
+![Selecting an Element](./assets/selecting_an_element_example.gif 'Selecting an Element')
 
 ### Positioning Elements
 
@@ -155,7 +155,7 @@ The text system in PACE creates an immersive dialogue experience with typewriter
 ### Text Navigation
 
 - When scene text has a "New Scene After Text" set, navigation happens after the player "continues" past the scene text's textbox
-> It is important to note that this can be cancelled if the player, instead of continuing the scene text, presses an element which has text! It may be important to add an element that leads the player to the next scene if it important that the player makes it to the next scene.
+  > It is important to note that this can be cancelled if the player, instead of continuing the scene text, presses an element which has text! It may be important to add an element that leads the player to the next scene if it important that the player makes it to the next scene.
 - When element text has a "Destination Scene" set, navigation happens after the player "continues" past the element text's textbox
 
 ## Audio System
@@ -176,7 +176,7 @@ PACE includes a comprehensive audio system for creating atmospheric games.
 ## Game Preview
 
 1. Click the "Preview" button in the editor header to playtest your game
-> The preview begins on the scene you were currently viewing within the editor
+   > The preview begins on the scene you were currently viewing within the editor
 2. Test all interactions, text, and navigation
 3. Hit the "Exit Preview" button in the page header to return to the editor
 
@@ -190,27 +190,31 @@ When your game is complete, you can export it for distribution.
 2. Choose your settings:
 
 #### Initial Scene
+
 - Select which scene the game starts on
 - Usually your opening scene or main menu
 
 #### Export Format
 
 **Standalone HTML**
+
 - Single HTML file with all resources embedded
 - Easy to share and distribute
 - Larger file size
 - Works offline immediately
 
 **Website Folder**
+
 - ZIP file containing index.html and separate resource files
-- Smaller individual files
+- Smaller total filesize and smaller individual files
 - Better for web hosting
-- More efficient loading
+- Much more efficient loading
 - Easier editing of stylesheets and editing of the engine code itself
 
 #### Optimize Resources
+
 - **Enabled**: Compresses images and uses efficient formats
-> In particular, images are compressed to avif image files, and audio files are compressed to the opus ogg audio codec
+  > In particular, images are compressed to webp image files, and audio files are compressed to the opus ogg audio codec
 - **Disabled**: Keeps original file formats and sizes
 - Recommended: Keep enabled for smaller file sizes
 
@@ -221,4 +225,4 @@ When your game is complete, you can export it for distribution.
 
 ---
 
-*This documentation covers PACE Editor version 1.0. Features and interface may vary in different versions.*
+_This documentation covers PACE Editor version 1.0. Features and interface may vary in different versions._

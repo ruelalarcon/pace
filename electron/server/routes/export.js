@@ -6,10 +6,15 @@ const os = require('os');
 const { randomUUID } = require('crypto');
 const FileUtils = require('../utils/file-utils');
 const MimeTypes = require('../utils/mime-types');
-const sharp = require('sharp');
+const { nativeImage } = require('electron');
 const ffmpegPath = require('ffmpeg-static');
 const ffmpeg = require('fluent-ffmpeg');
 const prettier = require('prettier');
+const { execFile } = require('child_process');
+const { promisify } = require('util');
+const cwebp = require('cwebp-bin').default || require('cwebp-bin');
+
+const execFileAsync = promisify(execFile);
 
 // Configure ffmpeg binary path for audio conversions
 if (ffmpegPath) {
@@ -380,14 +385,14 @@ class ExportRoutes {
 
       if (optimize && this.shouldOptimizeImage(originalExt)) {
         try {
-          const avifBuffer = await this.convertImageToAvif(fileBuffer);
-          const base64 = avifBuffer.toString('base64');
-          const newResourcePath = this.replaceExt(resourcePath, '.avif');
-          resources.set(newResourcePath, `data:image/avif;base64,${base64}`);
+          const webpBuffer = await this.convertImageToWebP(fileBuffer);
+          const base64 = webpBuffer.toString('base64');
+          const newResourcePath = this.replaceExt(resourcePath, '.webp');
+          resources.set(newResourcePath, `data:image/webp;base64,${base64}`);
           resourcePathMap[resourcePath] = newResourcePath;
           return;
         } catch (e) {
-          console.warn(`Failed to convert ${fileName} to AVIF, falling back.`);
+          console.warn(`Failed to convert ${fileName} to WebP:`, e.message);
         }
       }
 
@@ -746,13 +751,13 @@ class ExportRoutes {
 
       if (optimize && this.shouldOptimizeImage(ext)) {
         try {
-          const avifBuffer = await this.convertImageToAvif(fileBuffer);
-          outName = this.replaceExt(fileName, '.avif');
-          resourcesFolder.file(outName, avifBuffer);
+          const webpBuffer = await this.convertImageToWebP(fileBuffer);
+          outName = this.replaceExt(fileName, '.webp');
+          resourcesFolder.file(outName, webpBuffer);
           resourcePathMap[resourcePath] = outName;
           return;
         } catch (e) {
-          console.warn(`Failed to convert ${fileName} to AVIF, falling back.`);
+          console.warn(`Failed to convert ${fileName} to WebP:`, e.message);
         }
       }
 
@@ -817,16 +822,91 @@ class ExportRoutes {
     return ['.mp3', '.wav', '.ogg', '.m4a'].includes(ext);
   }
 
-  async convertImageToAvif(buffer) {
-    return await sharp(buffer)
-      .resize({
-        width: 1920,
-        height: 1920,
-        fit: 'inside',
-        withoutEnlargement: true,
-      })
-      .avif({ quality: 60 })
-      .toBuffer();
+  async convertImageToWebP(buffer) {
+    const inputPath = path.join(
+      os.tmpdir(),
+      `pace-webp-in-${randomUUID()}.png`,
+    );
+    const outputPath = path.join(
+      os.tmpdir(),
+      `pace-webp-out-${randomUUID()}.webp`,
+    );
+
+    try {
+      // Use Electron's nativeImage to resize first
+      const image = nativeImage.createFromBuffer(buffer);
+      const size = image.getSize();
+
+      let processedImage = image;
+
+      // Resize if larger than 1920x1920 while maintaining aspect ratio
+      const maxDimension = 1920;
+      if (size.width > maxDimension || size.height > maxDimension) {
+        const aspectRatio = size.width / size.height;
+        let newWidth = size.width;
+        let newHeight = size.height;
+
+        if (size.width > size.height) {
+          newWidth = maxDimension;
+          newHeight = Math.round(maxDimension / aspectRatio);
+        } else {
+          newHeight = maxDimension;
+          newWidth = Math.round(maxDimension * aspectRatio);
+        }
+
+        processedImage = image.resize({ width: newWidth, height: newHeight });
+      }
+
+      // Save as PNG temporarily
+      const pngBuffer = processedImage.toPNG();
+      await fs.writeFile(inputPath, pngBuffer);
+
+      // Get the cwebp binary path
+      let cwebpPath = cwebp;
+      if (!process.env.ELECTRON_RENDERER_URL) {
+        // Production - use unpacked cwebp binary
+        const unpackedCwebpPath = path.join(
+          process.resourcesPath,
+          'app.asar.unpacked',
+          'node_modules',
+          'cwebp-bin',
+          path.basename(cwebp),
+        );
+
+        if (require('fs').existsSync(unpackedCwebpPath)) {
+          cwebpPath = unpackedCwebpPath;
+        }
+      }
+
+      // Convert to WebP with quality 80 and preserve alpha channel
+      await execFileAsync(cwebpPath, [
+        '-q',
+        '80',
+        '-alpha_q',
+        '100',
+        inputPath,
+        '-o',
+        outputPath,
+      ]);
+
+      // Read the WebP file
+      const webpBuffer = await fs.readFile(outputPath);
+
+      // Clean up temporary files
+      try {
+        await fs.unlink(inputPath);
+        await fs.unlink(outputPath);
+      } catch {}
+
+      return webpBuffer;
+    } catch (error) {
+      // Clean up on error
+      try {
+        await fs.unlink(inputPath);
+        await fs.unlink(outputPath);
+      } catch {}
+      throw error;
+    }
   }
 
   async convertAudioToOpus(buffer) {
