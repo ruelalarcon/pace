@@ -2,6 +2,8 @@
 
 This guide covers how to modify behavior and add features to your PACE game by editing the `Engine.js` file.
 
+---
+
 ## Finding Engine.js
 
 After exporting your game as a "Website Folder":
@@ -10,16 +12,22 @@ After exporting your game as a "Website Folder":
 2. Look for `Engine.js` in the root folder
 3. Open it with any code editor (VS Code, Sublime Text, etc.)
 
+---
+
 ## Engine Structure Overview
 
 The `Engine.js` file contains a JavaScript class with these main components:
 
-- **Constructor**: Initializes game state and configuration
-- **Scene Management**: `setCurrentScene()`, `setupScene()`, `navigateToScene()`
-- **Element Handling**: `renderElement()`, `handleElementClick()`, `handleElementHover()`
-- **Text System**: `showTextbox()`, `startTyping()`, `clearTextbox()`
-- **Audio System**: `playMusic()`, `playSound()`, `stopMusic()`
-- **Utility Methods**: `getResourceUrl()`, `updateCanvasRect()`, etc.
+| Component | Key Methods |
+|-----------|-------------|
+| **Constructor** | Initializes game state and configuration |
+| **Scene Management** | `setCurrentScene()`, `setupScene()`, `navigateToScene()` |
+| **Element Handling** | `renderElement()`, `handleElementClick()`, `handleElementHover()` |
+| **Text System** | `showTextbox()`, `startTyping()`, `clearTextbox()` |
+| **Audio System** | `playMusic()`, `playSound()`, `stopMusic()` |
+| **Utility Methods** | `getResourceUrl()`, `updateCanvasRect()`, etc. |
+
+---
 
 ## Configuration Variables
 
@@ -39,6 +47,8 @@ constructor(project, resources, options = {}) {
 }
 ```
 
+---
+
 #### sceneTextDelay
 
 Controls how long to wait (in milliseconds) before showing scene text when entering a new scene.
@@ -57,9 +67,14 @@ this.sceneTextDelay = 500;
 ```
 
 **Use cases:**
-- `0ms`: Instant text for fast-paced games
-- `300ms`: Default, gives players time to see the scene
-- `1000ms+`: Dramatic pauses for atmospheric moments
+
+| Delay | Best For |
+|-------|----------|
+| `0ms` | Instant text for fast-paced games |
+| `300ms` | Default, gives players time to see the scene |
+| `1000ms+` | Dramatic pauses for atmospheric moments |
+
+---
 
 #### textLetterDelay
 
@@ -79,10 +94,15 @@ this.textLetterDelay = 0;
 ```
 
 **Use cases:**
-- `10ms`: Fast-paced dialogue
-- `20ms`: Default, comfortable reading speed
-- `30-50ms`: Slow, atmospheric narration
-- `0ms`: Instant text reveal (removes typewriter effect entirely)
+
+| Delay | Best For |
+|-------|----------|
+| `10ms` | Fast-paced dialogue |
+| `20ms` | Default, comfortable reading speed |
+| `30-50ms` | Slow, atmospheric narration |
+| `0ms` | Instant text reveal (removes typewriter effect entirely) |
+
+---
 
 ### Audio Variables
 
@@ -106,21 +126,27 @@ this.musicRef.volume = 0.3; // Quieter background music
 this.soundEffectRef.volume = 0.9; // Louder sound effects
 ```
 
+---
+
 ## Common Customizations
+
+> Note: Many of these are rough guidelines or approaches, not usable code.
 
 ### 1. Adjust All Timing
 
-Create a "speed mode" by modifying multiple timing values:
+Edit how long it takes for scene text to appear and how quickly letters appear:
 
 ```javascript
 constructor(project, resources, options = {}) {
   // ... existing code ...
 
-  // Fast mode for quick playthroughs
+  // Faster for quick playthroughs
   this.sceneTextDelay = 100;
   this.textLetterDelay = 5;
 }
 ```
+
+---
 
 ### 2. Add Fade Transitions Between Scenes
 
@@ -149,6 +175,8 @@ setCurrentScene(scene) {
 }
 ```
 
+---
+
 ### 3. Add Element Fade-In Effect
 
 Modify the `renderElement()` method to make elements fade in when a scene loads:
@@ -174,6 +202,8 @@ renderElement(element) {
 }
 ```
 
+---
+
 ### 4. Add Custom Element Click Sound
 
 Make all elements play a default sound when clicked, even without a specific sound set:
@@ -191,6 +221,8 @@ handleElementClick(element) {
   // ... rest of existing click handling ...
 }
 ```
+
+---
 
 ### 5. Add Inventory System
 
@@ -230,26 +262,9 @@ handleElementClick(element) {
 }
 ```
 
-### 6. Add Skip Scene Text Feature
+---
 
-Allow players to skip scene text by pressing a key:
-
-```javascript
-init() {
-  // ... existing init code ...
-
-  // Add ESC key listener to skip scene text
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && this.sceneTextTimer) {
-      clearTimeout(this.sceneTextTimer);
-      this.sceneTextTimer = null;
-      console.log('Scene text skipped');
-    }
-  });
-}
-```
-
-### 7. Change Text Box Click Behavior
+### 6. Change Text Box Click Behavior
 
 Make clicking the textbox (not just pressing Space) advance text:
 
@@ -266,7 +281,9 @@ renderTextbox() {
 }
 ```
 
-### 8. Add Automatic Text Advancement
+---
+
+### 7. Add Automatic Text Advancement
 
 Make text continue automatically after a delay:
 
@@ -301,7 +318,9 @@ startTyping(line) {
 }
 ```
 
-### 9. Add Scene Visit Tracking
+---
+
+### 8. Add Scene Visit Tracking
 
 Track which scenes players have visited:
 
@@ -326,7 +345,9 @@ hasVisitedScene(sceneId) {
 }
 ```
 
-### 10. Add Custom Key Bindings
+---
+
+### 9. Add Custom Key Bindings
 
 Replace Space with other keys for text advancement:
 
@@ -352,11 +373,15 @@ handleTextboxKeydown(e) {
 }
 ```
 
+---
+
 ## Advanced Customizations
 
 ### Add Save/Load System
 
 Implement basic save functionality:
+
+> Note: This only works for hosted sites, as `localStorage` is not accessible for offline html files.
 
 ```javascript
 // Add to Engine class
@@ -404,6 +429,8 @@ loadGame(slotName = 'save1') {
 
 Then you can call these methods from the browser console or add UI buttons.
 
+---
+
 ### Add Conditional Element Visibility
 
 Show/hide elements based on conditions:
@@ -425,44 +452,7 @@ renderElement(element) {
 }
 ```
 
-### Add Debug Mode
-
-Toggle debug information:
-
-```javascript
-constructor(project, resources, options = {}) {
-  // ... existing code ...
-
-  // Debug mode (set to true for development)
-  this.debugMode = false;
-
-  // Add keyboard shortcut to toggle debug mode
-  window.addEventListener('keydown', (e) => {
-    if (e.key === 'F3') {
-      this.debugMode = !this.debugMode;
-      console.log('Debug mode:', this.debugMode);
-    }
-  });
-}
-
-// Add logging throughout methods
-setCurrentScene(scene) {
-  if (this.debugMode) {
-    console.log('Changing scene to:', scene.name, scene);
-  }
-  // ... existing code ...
-}
-```
-
-## Tips for JavaScript Customization
-
-1. **Test frequently**: Save and refresh browser after each change
-2. **Use console.log()**: Add logging to track behavior
-3. **Check browser console**: Look for error messages (F12 → Console tab)
-4. **Start small**: Test one feature at a time
-5. **Comment your changes**: Add `// notes` to explain modifications
-6. **Keep backups**: Save original Engine.js before major changes
-7. **Use browser breakpoints**: Debug complex logic in DevTools
+---
 
 ## Common Issues
 
@@ -476,40 +466,20 @@ setCurrentScene(scene) {
 - Test with different values to find what feels right
 
 **Breaking the game?**
-- Restore from backup
+- Restore from backup, use git
 - Check that you didn't accidentally delete closing braces
 - Verify you're editing inside the correct method
-
-## Debugging JavaScript
-
-### Using Browser Console
-
-1. **Open DevTools**: Press F12
-2. **Go to Console tab**: See error messages and logs
-3. **Add console.log()**: Track variable values
-
-```javascript
-handleElementClick(element) {
-  console.log('Element clicked:', element.name);
-  console.log('Element data:', element);
-  // ... rest of code ...
-}
-```
-
-### Using Breakpoints
-
-1. **Open DevTools**: Press F12
-2. **Go to Sources tab**: Find Engine.js
-3. **Click line number**: Set a breakpoint
-4. **Interact with game**: Code pauses at breakpoint
-5. **Inspect variables**: Hover over variables to see values
 
 ## Next Steps
 
 Want to customize appearance and styling? Check out [Modifying Appearance](customization-css.md) to learn about editing Engine.css.
 
+---
+
 ## Resources
 
-- [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide)
-- [JavaScript.info](https://javascript.info/)
-- [Chrome DevTools Documentation](https://developer.chrome.com/docs/devtools/)
+| Resource | Description |
+|----------|-------------|
+| [MDN JavaScript Guide](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) | Comprehensive JavaScript documentation |
+| [JavaScript.info](https://javascript.info/) | Modern JavaScript tutorial |
+| [Chrome DevTools Documentation](https://developer.chrome.com/docs/devtools/) | Learn to debug effectively |

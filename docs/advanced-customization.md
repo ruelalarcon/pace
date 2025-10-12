@@ -4,6 +4,8 @@
 
 PACE exports games as readable, organized JavaScript, HTML, and CSS files. This makes it easy to customize and extend your game beyond what the visual editor provides.
 
+---
+
 ## Why Customize?
 
 While PACE's visual editor provides everything you need for basic point-and-click games, you might want to:
@@ -15,6 +17,8 @@ While PACE's visual editor provides everything you need for basic point-and-clic
 - Create custom UI elements
 - Add save/load functionality
 
+---
+
 ## Understanding the Export Structure
 
 When you export a game, you get access to two key files that control everything:
@@ -23,25 +27,31 @@ When you export a game, you get access to two key files that control everything:
 
 This JavaScript file contains the `Engine` class that handles:
 
-- Scene management and transitions
-- Element rendering and interactions
-- Text system (typewriter effect, dialogue)
-- Audio playback (music and sound effects)
-- Input handling (clicks, keyboard)
+| Component | Responsibility |
+|-----------|---------------|
+| **Scene Management** | Scene transitions and navigation |
+| **Element System** | Rendering and interactions |
+| **Text System** | Typewriter effect and dialogue |
+| **Audio System** | Music and sound effects playback |
+| **Input Handling** | Clicks and keyboard input |
 
-The code is well-organized into methods, making it easy to find and modify specific behaviors.
+> **Note**: The code is well-organized into methods, making it easy to find and modify specific behaviors.
 
 ### Engine.css - The Visual Styling
 
 This CSS file controls all visual aspects:
 
-- Textbox appearance and position
-- Text styling (font, size, colors, shadows)
-- Element hover effects and animations
-- Scene canvas styling
-- Responsive design rules
+| Category | What it Controls |
+|----------|------------------|
+| **Textbox** | Appearance and position |
+| **Text Styling** | Font, size, colors, shadows |
+| **Element Effects** | Hover effects and animations |
+| **Canvas** | Scene styling and layout |
+| **Responsive** | Mobile and accessibility styles |
 
-Both files use clear naming conventions and include comments to help you understand what each part does.
+> **Note**: Both files use clear naming conventions and include comments to help you understand what each part does.
+
+---
 
 ## What You'll Learn
 
@@ -67,6 +77,8 @@ Learn how to add new features and modify behavior by editing Engine.js:
 - Create new game mechanics
 - Extend the engine with custom methods
 
+---
+
 ## Getting Started
 
 1. **Export your game** using the "Website Folder" format for easiest editing
@@ -75,24 +87,20 @@ Learn how to add new features and modify behavior by editing Engine.js:
 4. **Use a code editor** like VS Code, Sublime Text, or even Notepad++
 5. **Test frequently** by opening your game in a browser after each change
 
+---
+
 ## Prerequisites
 
 To successfully customize PACE exports, you should be comfortable with:
 
-- **CSS**: Selectors, properties, values, and the box model
-- **JavaScript**: Variables, functions, objects, and classes
-- **HTML**: Basic structure and the DOM
-- **Browser DevTools**: Inspecting elements and debugging
+| Technology | What You Need to Know |
+|------------|----------------------|
+| **CSS** | Selectors, properties, values, and the box model |
+| **JavaScript** | Variables, functions, objects, and classes |
+| **HTML** | Basic structure and the DOM |
+| **Browser DevTools** | Inspecting elements and debugging |
 
-If you're new to these technologies, consider using PACE as-is, or learning the basics first through resources like [MDN Web Docs](https://developer.mozilla.org).
-
-## Best Practices
-
-1. **Start small**: Make one change at a time and test
-2. **Keep backups**: Always preserve the original files
-3. **Comment your changes**: Leave notes explaining what you modified
-4. **Test across browsers**: Check Chrome, Firefox, and Safari
-5. **Use DevTools**: Experiment with changes live before editing files
+---
 
 ## Next Steps
 
@@ -101,4 +109,4 @@ Choose a guide based on what you want to customize:
 - **Want to change how things look?** → [Modifying Appearance](customization-css.md)
 - **Want to add new features or change behavior?** → [Extending Functionality](customization-js.md)
 
-Both guides include practical examples and code snippets you can use right away!
+Both guides include practical examples and code snippets.

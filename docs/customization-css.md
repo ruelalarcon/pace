@@ -2,6 +2,8 @@
 
 This guide covers how to customize the visual style of your PACE game by editing the `Engine.css` file.
 
+---
+
 ## Finding Engine.css
 
 After exporting your game as a "Website Folder":
@@ -10,16 +12,22 @@ After exporting your game as a "Website Folder":
 2. Look for `Engine.css` in the root folder
 3. Open it with any text editor or code editor
 
+---
+
 ## CSS Structure Overview
 
 The `Engine.css` file is organized into sections:
 
-- **Body and Container**: Overall game layout
-- **Canvas**: The main game scene area
-- **Elements**: Interactive objects
-- **Textbox**: Dialogue and text display
-- **Animations**: Keyframe animations
-- **Responsive Design**: Mobile and accessibility styles
+| Section | Purpose |
+|---------|---------|
+| **Body and Container** | Overall game layout |
+| **Canvas** | The main game scene area |
+| **Elements** | Interactive objects |
+| **Textbox** | Dialogue and text display |
+| **Animations** | Keyframe animations |
+| **Responsive Design** | Mobile and accessibility styles |
+
+---
 
 ## Customizing the Textbox
 
@@ -42,6 +50,8 @@ The textbox is the most commonly customized element. Here's the default styling:
   backdrop-filter: blur(3px);
 }
 ```
+
+---
 
 ### Change Position
 
@@ -70,6 +80,8 @@ Move the textbox to different locations:
 }
 ```
 
+---
+
 ### Change Colors
 
 Customize the textbox appearance:
@@ -94,6 +106,8 @@ Customize the textbox appearance:
 }
 ```
 
+---
+
 ### Change Size and Padding
 
 Adjust spacing and dimensions:
@@ -117,6 +131,8 @@ Adjust spacing and dimensions:
 }
 ```
 
+---
+
 ## Customizing Text Style
 
 The text inside the textbox is controlled by `.pace-textbox-text`:
@@ -130,6 +146,8 @@ The text inside the textbox is controlled by `.pace-textbox-text`:
   line-height: 1.5;
 }
 ```
+
+---
 
 ### Change Font
 
@@ -158,6 +176,8 @@ Replace the font family:
 }
 ```
 
+---
+
 ### Using Custom Fonts
 
 To use fonts that aren't installed on every computer (like custom or downloadable fonts), you need to include the font files with your game and load them using `@font-face`.
@@ -165,18 +185,24 @@ To use fonts that aren't installed on every computer (like custom or downloadabl
 #### Step 1: Get Your Font Files
 
 Download a font from a website like:
-- [Google Fonts](https://fonts.google.com/) - Free, open-source fonts
-- [Font Squirrel](https://www.fontsquirrel.com/) - Free fonts for commercial use
-- [DaFont](https://www.dafont.com/) - Large collection, check licenses
-- [itch.io](https://itch.io/game-assets/free/tag-fonts) - Game-specific fonts
+
+| Source | Description |
+|--------|-------------|
+| [Google Fonts](https://fonts.google.com/) | Free, open-source fonts |
+| [Font Squirrel](https://www.fontsquirrel.com/) | Free fonts for commercial use |
+| [DaFont](https://www.dafont.com/) | Large collection, check licenses |
+| [itch.io](https://itch.io/game-assets/free/tag-fonts) | Game-specific fonts |
 
 Font files come in different formats:
-- **WOFF2** (`.woff2`) - Modern, best compression, recommended
-- **WOFF** (`.woff`) - Good browser support
-- **TTF** (`.ttf`) - TrueType Font, widely supported
-- **OTF** (`.otf`) - OpenType Font, similar to TTF
 
-**Recommendation**: Use WOFF2 for best performance, with WOFF or TTF as fallback.
+| Format | Extension | Description |
+|--------|-----------|-------------|
+| **WOFF2** | `.woff2` | Modern, best compression, recommended |
+| **WOFF** | `.woff` | Good browser support |
+| **TTF** | `.ttf` | TrueType Font, widely supported |
+| **OTF** | `.otf` | OpenType Font, similar to TTF |
+
+> **Recommendation**: Use WOFF2 for best performance, with WOFF or TTF as fallback.
 
 #### Step 2: Add Font Files to Your Game Folder
 
@@ -284,6 +310,8 @@ Let's add the "Press Start 2P" font from Google Fonts:
 }
 ```
 
+---
+
 #### Font Loading Tips
 
 **Font not showing up?**
@@ -327,6 +355,8 @@ You need separate `@font-face` rules for each weight:
 }
 ```
 
+---
+
 ### Change Text Size and Color
 
 Adjust readability:
@@ -355,6 +385,8 @@ Adjust readability:
 }
 ```
 
+---
+
 ### Remove or Simplify Text Shadow
 
 The default has a complex text shadow. Simplify it:
@@ -379,6 +411,8 @@ The default has a complex text shadow. Simplify it:
     1px 1px 0 #000;
 }
 ```
+
+---
 
 ## Customizing the Continue Prompt
 
@@ -422,6 +456,8 @@ The "Press Space to Continue" text:
 }
 ```
 
+---
+
 ## Customizing Elements
 
 Interactive elements use these classes:
@@ -460,7 +496,11 @@ Interactive elements use these classes:
 }
 ```
 
+---
+
 ## Complete Style Examples
+
+> Note: As mentioned earlier, you may need to download and add custom fonts used in these examples.
 
 ### Example 1: Pixel Art Style
 
@@ -491,6 +531,8 @@ Interactive elements use these classes:
 }
 ```
 
+---
+
 ### Example 2: Modern Minimal
 
 ```css
@@ -517,6 +559,8 @@ Interactive elements use these classes:
   line-height: 1.6;
 }
 ```
+
+---
 
 ### Example 3: Fantasy RPG Style
 
@@ -547,6 +591,8 @@ Interactive elements use these classes:
   line-height: 1.6;
 }
 ```
+
+---
 
 ## Customizing the Space Key Indicator
 
@@ -593,6 +639,8 @@ The keyboard icon that appears in the continue prompt:
 /* Then update the text in Engine.js to not include the key */
 ```
 
+---
+
 ## Debugging CSS Changes
 
 ### Using Browser DevTools
@@ -603,6 +651,10 @@ The keyboard icon that appears in the continue prompt:
 4. **Click on the textbox** or element you want to modify
 5. **Edit styles live** in the Styles panel
 6. **Copy working changes** back to Engine.css
+
+> **Tip**: Use DevTools to experiment with changes before editing files - it's much faster and you can see results instantly.
+
+---
 
 ### Common Issues
 
@@ -621,6 +673,8 @@ The keyboard icon that appears in the continue prompt:
 - Verify transparency values (0-1 for alpha)
 - Test in different browsers
 
+---
+
 ## Tips and Best Practices
 
 1. **Make one change at a time** - Easier to identify issues
@@ -629,6 +683,8 @@ The keyboard icon that appears in the continue prompt:
 4. **Use DevTools** - Experiment live before committing changes
 5. **Comment your changes** - Add `/* notes */` to remember what you did
 6. **Check mobile** - Test responsive behavior at different screen sizes
+
+---
 
 ## Next Steps
 

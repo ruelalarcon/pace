@@ -2,31 +2,34 @@
 
 PACE Editor is available for Windows and Linux. Choose the appropriate version for your operating system.
 
+---
+
 ## System Requirements
 
-### Minimum Requirements
-
-- **Operating System**: Windows 10/11 or modern Linux distribution
-- **RAM**: 4GB minimum, 8GB recommended
-- **Storage**: 200MB free space for application, plus space for your projects
-- **Display**: 1280x720 minimum resolution
+| Component | Requirement |
+|-----------|-------------|
+| **Operating System** | Windows 10/11 or modern Linux distribution |
+| **RAM** | 2GB minimum |
+| **Storage** | ~200MB free space for application, plus space for your projects |
 
 ### Supported Platforms
 
 - Windows 10 and 11 (64-bit)
 - Linux (64-bit) with AppImage support or portable ZIP
 
+---
+
 ## Download
 
-All releases are available on the [PACE GitHub Releases page](https://github.com/ruelalarcon/pace/releases).
+> All releases are available on the [PACE GitHub Releases page](https://github.com/ruelalarcon/pace/releases).
 
-Latest version: **v1.0.0**
+**Latest version:** v1.0.0
+
+---
 
 ## Windows Installation
 
-### Option 1: Installer (Recommended)
-
-**Best for**: Most users who want a traditional installation
+### Option 1: Installer
 
 1. **Download** the installer:
    - [pace_v1.0.0_windows_x64.exe](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_windows_x64.exe)
@@ -40,9 +43,9 @@ Latest version: **v1.0.0**
    - Find PACE in your Start Menu
    - Or use the desktop shortcut if you created one during installation
 
-### Option 2: Portable ZIP
+---
 
-**Best for**: Users who don't want to install, or want to run from USB drives
+### Option 2: Portable ZIP
 
 1. **Download** the portable ZIP:
    - [pace_v1.0.0_windows_x64_portable.zip](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_windows_x64_portable.zip)
@@ -56,13 +59,11 @@ Latest version: **v1.0.0**
    - Open the extracted folder
    - Double-click `pace.exe` to launch
 
-> **Note**: The portable version stores projects in the same folder as the executable by default.
+---
 
 ## Linux Installation
 
-### Option 1: AppImage (Recommended)
-
-**Best for**: Most Linux users, no installation required
+### Option 1: AppImage
 
 1. **Download** the AppImage:
    - [pace_v1.0.0_linux_x86_64.AppImage](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_linux_x86_64.AppImage)
@@ -79,11 +80,9 @@ Latest version: **v1.0.0**
 
    Or double-click the file in your file manager.
 
-> **Tip**: You can move the AppImage to `~/Applications` or `~/.local/bin` for easier access.
+---
 
 ### Option 2: Portable ZIP
-
-**Best for**: Users who want to extract and run without AppImage dependencies
 
 1. **Download** the portable ZIP:
    - [pace_v1.0.0_linux_x64_portable.zip](https://github.com/ruelalarcon/pace/releases/download/v1.0.0/pace_v1.0.0_linux_x64_portable.zip)
@@ -100,6 +99,8 @@ Latest version: **v1.0.0**
    ./pace
    ```
 
+---
+
 ## First Launch
 
 When you first launch PACE:
@@ -107,8 +108,13 @@ When you first launch PACE:
 1. The **Dashboard** will appear
 2. You can create a new project or open an existing one
 3. Your projects are stored in a default location:
-   - **Windows**: `C:\Users\YourName\Documents\PACE Projects`
-   - **Linux**: `~/Documents/PACE Projects`
+
+| Platform | Default Project Location |
+|----------|-------------------------|
+| **Windows** | `C:\Users\YourName\Documents\PACE Projects` |
+| **Linux** | `~/Documents/PACE Projects` |
+
+---
 
 ## Troubleshooting
 
@@ -126,6 +132,8 @@ When you first launch PACE:
 
 **Missing DLL errors:**
 - Install [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+
+---
 
 ### Linux Issues
 
@@ -147,13 +155,15 @@ When you first launch PACE:
 **Permission denied:**
 - Ensure the file has execute permissions: `chmod +x pace`
 
+---
+
 ## Uninstalling
 
 ### Windows (Installer Version)
 
 1. Open Windows Settings
 2. Go to "Apps" or "Apps & Features"
-3. Find "PACE Editor" in the list
+3. Find PACE in the list
 4. Click "Uninstall"
 
 ### Windows (Portable Version)
@@ -164,6 +174,8 @@ Simply delete the folder containing the PACE files.
 
 Delete the AppImage file or the extracted portable folder.
 
+---
+
 ## Updating
 
 To update PACE:
@@ -171,7 +183,10 @@ To update PACE:
 1. Download the latest version from the [releases page](https://github.com/ruelalarcon/pace/releases)
 2. For installers: Run the new installer (it will replace the old version)
 3. For portable versions: Extract to a new location or replace the old files
-4. Your projects are stored separately and won't be affected by updates
+
+> **Note:** Your projects are stored separately and won't be affected by updates.
+
+---
 
 ## Getting Help
 

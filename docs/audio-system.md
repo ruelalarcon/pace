@@ -2,19 +2,19 @@
 
 PACE includes a comprehensive audio system for creating atmospheric games with music and sound effects.
 
+---
+
 ## Audio File Support
-
-### Supported Formats
-
-- **MP3**: Wide compatibility, good compression
-- **WAV**: Uncompressed, high quality
-- **OGG**: Open format, good compression
 
 ### Upload Locations
 
-- **Scene Music**: Upload in Scene Properties inspector
-- **Element Sounds**: Upload in Element Properties inspector
-- **Music Changes**: Upload in Element Properties inspector
+| Audio Type | Location |
+|------------|----------|
+| **Scene Music** | Scene Properties inspector |
+| **Element Sounds** | Element Properties inspector |
+| **Music Changes** | Element Properties inspector |
+
+---
 
 ## Music System
 
@@ -22,6 +22,7 @@ PACE includes a comprehensive audio system for creating atmospheric games with m
 
 Background music loops continuously while a scene is active.
 
+**Behavior:**
 - Set in Scene Properties under "Music"
 - Loops automatically without gaps
 - Transitions smoothly between scenes
@@ -44,10 +45,13 @@ For the very first scene the player loads into, the music **will not play** unti
 
 Elements can change the background music when clicked:
 
+**Configuration:**
 - Set in Element Properties under "On-Click Music Change"
 - Replaces the current scene's music
 - Won't restart if the chosen music is already playing
 - Useful for dynamic music changes based on player actions
+
+---
 
 ## Sound Effects
 
@@ -55,6 +59,7 @@ Elements can change the background music when clicked:
 
 Elements can play sound effects when clicked:
 
+**Configuration:**
 - Set in Element Properties under "On-Click Sound"
 - Plays immediately when element is clicked
 - Volume is set to 70% to avoid overpowering music
@@ -62,10 +67,14 @@ Elements can play sound effects when clicked:
 
 ### Sound Behavior
 
-- **One-Shot Playback**: Sounds play once when triggered
-- **Immediate Response**: No delay between click and sound
-- **Overlap**: Multiple sounds can play simultaneously
-- **Volume Balance**: Sound effects are quieter than music by default
+| Aspect | Behavior |
+|--------|----------|
+| **One-Shot Playback** | Sounds play once when triggered |
+| **Immediate Response** | No delay between click and sound |
+| **Overlap** | Multiple sounds can play simultaneously |
+| **Volume Balance** | Sound effects are quieter than music by default |
+
+---
 
 ## Best Practices
 
@@ -85,10 +94,15 @@ Elements can play sound effects when clicked:
 
 ### File Size Optimization
 
+> **Tip**: Enable "Optimize Resources" when exporting to significantly reduce file sizes while maintaining quality.
+
+**Optimization details:**
 - Enable "Optimize Resources" when exporting to compress audio files
 - Optimized exports convert audio to the opus ogg codec for smaller files
 - Consider the trade-off between quality and download time
 - Test your exported game to ensure audio quality is acceptable
+
+---
 
 ## Troubleshooting
 
