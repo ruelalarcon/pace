@@ -39,7 +39,7 @@ PACE intelligently handles music playback:
 
 For the very first scene the player loads into, the music **will not play** until the player interacts with the page by pressing a key or clicking something.
 
-> **Important**: This is due to a restriction modern browsers have for audio in webpages. In some cases, it may be wise to have the first scene be a "title" screen with an element that acts as a "play" button to proceed to the next scene and truly begin the game.
+!> **Important**: This is due to a restriction modern browsers have for audio in webpages. In some cases, it may be wise to have the first scene be a "title" screen with an element that acts as a "play" button to proceed to the next scene and truly begin the game.
 
 ### Music Changes via Elements
 
@@ -94,7 +94,7 @@ Elements can play sound effects when clicked:
 
 ### File Size Optimization
 
-> **Tip**: Enable "Optimize Resources" when exporting to significantly reduce file sizes while maintaining quality.
+?> **Tip**: Enable "Optimize Resources" when exporting to significantly reduce file sizes while maintaining quality.
 
 **Optimization details:**
 - Enable "Optimize Resources" when exporting to compress audio files

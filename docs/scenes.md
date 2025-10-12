@@ -56,7 +56,7 @@ Background music that plays when this scene is active.
 - Music loops automatically
 - If the same music is already playing from the previous scene, it won't restart
 
-> **Smart Transitions:** PACE won't restart music if it's already playing, creating seamless transitions between scenes with the same soundtrack.
+?> **Smart Transitions:** PACE won't restart music if it's already playing, creating seamless transitions between scenes with the same soundtrack.
 
 ---
 
@@ -78,7 +78,7 @@ The scene to navigate to after the player "continues" past the scene text's text
 - Only available when Scene Text is not empty
 - Creates automatic scene transitions after narrative text
 
-> **Important:** If elements have text, clicking them will cancel the scene text and prevent automatic navigation. Consider this when designing your scene flow.
+!> **Important:** If elements have text, clicking them will cancel the scene text and prevent automatic navigation. Consider this when designing your scene flow.
 
 ---
 

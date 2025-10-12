@@ -21,7 +21,7 @@ PACE Editor is available for Windows and Linux. Choose the appropriate version f
 
 ## Download
 
-> All releases are available on the [PACE GitHub Releases page](https://github.com/ruelalarcon/pace/releases).
+?> All releases are available on the [PACE GitHub Releases page](https://github.com/ruelalarcon/pace/releases).
 
 **Latest version:** v1.0.0
 
@@ -107,12 +107,14 @@ When you first launch PACE:
 
 1. The **Dashboard** will appear
 2. You can create a new project or open an existing one
-3. Your projects are stored in a default location:
+3. Your projects are stored in a default application data location:
 
 | Platform | Default Project Location |
 |----------|-------------------------|
-| **Windows** | `C:\Users\YourName\Documents\PACE Projects` |
-| **Linux** | `~/Documents/PACE Projects` |
+| **Windows** | `%APPDATA%\pace\Projects\` <br/> (typically `C:\Users\YourName\AppData\Roaming\pace\Projects\`) |
+| **Linux** | `~/.config/pace/Projects/` |
+
+?> **Note:** These locations follow Electron's standard user data directory conventions. You can navigate to the Windows path by typing `%APPDATA%\pace\Projects` in the File Explorer address bar.
 
 ---
 
@@ -184,7 +186,7 @@ To update PACE:
 2. For installers: Run the new installer (it will replace the old version)
 3. For portable versions: Extract to a new location or replace the old files
 
-> **Note:** Your projects are stored separately and won't be affected by updates.
+?> **Note:** Your projects are stored separately and won't be affected by updates.
 
 ---
 

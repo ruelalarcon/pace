@@ -78,7 +78,7 @@ Controls whether resources are compressed during export.
 
 Compresses images and uses efficient formats.
 
-> **Recommendation**: Keep optimization enabled unless you have a specific reason not to.
+?> **Recommendation**: Keep optimization enabled unless you have a specific reason not to.
 
 | Optimization | Result |
 |--------------|--------|
@@ -92,7 +92,7 @@ Compresses images and uses efficient formats.
 
 Keeps original file formats and sizes.
 
-> **Use when**: You need specific file formats or encounter compatibility issues (rare cases).
+?> **Use when**: You need specific file formats or encounter compatibility issues (rare cases).
 
 ---
 

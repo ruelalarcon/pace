@@ -1,6 +1,6 @@
 # Advanced Customization
 
-> **Warning**: This section is intended for developers with knowledge of web development (HTML, CSS, JavaScript). If you're not familiar with programming, you can skip this section and use PACE as-is through the visual editor.
+!> **Warning**: This section is intended for developers with knowledge of web development (HTML, CSS, JavaScript). If you're not familiar with programming, you can skip this section and use PACE as-is through the visual editor.
 
 PACE exports games as readable, organized JavaScript, HTML, and CSS files. This makes it easy to customize and extend your game beyond what the visual editor provides.
 
@@ -35,7 +35,7 @@ This JavaScript file contains the `Engine` class that handles:
 | **Audio System** | Music and sound effects playback |
 | **Input Handling** | Clicks and keyboard input |
 
-> **Note**: The code is well-organized into methods, making it easy to find and modify specific behaviors.
+?> **Note**: The code is well-organized into methods, making it easy to find and modify specific behaviors.
 
 ### Engine.css - The Visual Styling
 
@@ -49,7 +49,7 @@ This CSS file controls all visual aspects:
 | **Canvas** | Scene styling and layout |
 | **Responsive** | Mobile and accessibility styles |
 
-> **Note**: Both files use clear naming conventions and include comments to help you understand what each part does.
+?> **Note**: Both files use clear naming conventions and include comments to help you understand what each part does.
 
 ---
 

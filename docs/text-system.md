@@ -44,7 +44,7 @@ Text that appears when clicking an element.
 
 When scene text has a "New Scene After Text" set, navigation happens after the player "continues" past the scene text's textbox.
 
-> **Important**: This can be cancelled if the player clicks an element which has text instead of continuing the scene text. It may be important to add an element that leads the player to the next scene if it's critical that the player reaches the next scene.
+!> **Important**: This can be cancelled if the player clicks an element which has text instead of continuing the scene text. It may be important to add an element that leads the player to the next scene if it's critical that the player reaches the next scene.
 
 ### Element Text Navigation
 

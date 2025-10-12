@@ -130,7 +130,7 @@ this.soundEffectRef.volume = 0.9; // Louder sound effects
 
 ## Common Customizations
 
-> Note: Many of these are rough guidelines or approaches, not usable code.
+?> Note: Many of these are rough guidelines or approaches, not usable code.
 
 ### 1. Adjust All Timing
 
@@ -381,7 +381,7 @@ handleTextboxKeydown(e) {
 
 Implement basic save functionality:
 
-> Note: This only works for hosted sites, as `localStorage` is not accessible for offline html files.
+?> Note: This only works for hosted sites, as `localStorage` is not accessible for offline html files.
 
 ```javascript
 // Add to Engine class

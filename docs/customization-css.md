@@ -202,7 +202,7 @@ Font files come in different formats:
 | **TTF** | `.ttf` | TrueType Font, widely supported |
 | **OTF** | `.otf` | OpenType Font, similar to TTF |
 
-> **Recommendation**: Use WOFF2 for best performance, with WOFF or TTF as fallback.
+?> **Recommendation**: Use WOFF2 for best performance, with WOFF or TTF as fallback.
 
 #### Step 2: Add Font Files to Your Game Folder
 
@@ -277,7 +277,7 @@ Now you can use your custom font anywhere in the CSS:
 }
 ```
 
-> **Tip**: Always include a fallback font (like `Arial, sans-serif`) in case the custom font fails to load.
+?> **Tip**: Always include a fallback font (like `Arial, sans-serif`) in case the custom font fails to load.
 
 #### Complete Example: Adding a Pixel Font
 
@@ -500,7 +500,7 @@ Interactive elements use these classes:
 
 ## Complete Style Examples
 
-> Note: As mentioned earlier, you may need to download and add custom fonts used in these examples.
+?> Note: As mentioned earlier, you may need to download and add custom fonts used in these examples.
 
 ### Example 1: Pixel Art Style
 
@@ -652,7 +652,7 @@ The keyboard icon that appears in the continue prompt:
 5. **Edit styles live** in the Styles panel
 6. **Copy working changes** back to Engine.css
 
-> **Tip**: Use DevTools to experiment with changes before editing files - it's much faster and you can see results instantly.
+?> **Tip**: Use DevTools to experiment with changes before editing files - it's much faster and you can see results instantly.
 
 ---
 

@@ -39,7 +39,7 @@ Use X Position and Y Position fields for precise placement:
 | 0.5 | Center of the scene |
 | 1 | Right/bottom edge |
 
-> **Note**: The position of an element corresponds to the **center** of that element, not its edge.
+?> **Note**: The position of an element corresponds to the **center** of that element, not its edge.
 
 ---
 

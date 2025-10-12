@@ -10,7 +10,7 @@ This guide will walk you through creating your first PACE project and understand
 2. Click "New Project" on the dashboard
 3. Enter a project name and click "Create"
 
-> **Tip:** Choose a descriptive name for your project - you can only rename it by renaming its folder.
+?> **Tip:** Choose a descriptive name for your project - you can only rename it by renaming its folder in the Projects directory (`%APPDATA%\pace\Projects\` on Windows or `~/.config/pace/Projects/` on Linux).
 
 ---
 
