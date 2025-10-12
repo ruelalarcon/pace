@@ -77,7 +77,7 @@ Your projects are stored in the following locations:
 Each project contains:
 
 - `project.json` - Project metadata and scene definitions
-- `assets/` - Images, audio, and other media files
+- Images, audio, and other media files
 
 ## Building from Source
 
